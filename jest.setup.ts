@@ -1,0 +1,3 @@
+process.env.CIELO_MERCHANT_ID = 'TEST_ENV_MERCHANT_ID';
+process.env.CIELO_MERCHANT_KEY = 'TEST_ENV_MERCHANT_KEY';
+process.env.CIELO_ENVIRONMENT = 'sandbox';
