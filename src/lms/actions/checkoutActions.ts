@@ -1,8 +1,8 @@
 "use server";
 
 import { CieloSandboxService, CieloPaymentRequest } from "../services/CieloService";
-import { paymentRepository } from "../repositories/MockPaymentRepository";
-import { userRepository } from "../repositories/MockUserRepository";
+import { getPaymentRepository } from "../repositories";
+import { getUserRepository } from "../repositories";
 import { getCourseById } from "./adminCourseActions";
 
 const cieloService = new CieloSandboxService();
@@ -18,7 +18,7 @@ export async function processCheckoutAction(courseId: string, formData: FormData
     const securityCode = formData.get("securityCode") as string;
 
     // 1. Criar transação PENDING
-    const transaction = await paymentRepository.create({
+    const transaction = await getPaymentRepository().create({
         userId: STUDENT_MOCK_ID,
         courseId: courseId,
         amount: course.price,
@@ -29,7 +29,7 @@ export async function processCheckoutAction(courseId: string, formData: FormData
         // 2. Enviar para Cielo (mock service)
         const paymentRequest: CieloPaymentRequest = {
             merchantOrderId: transaction.id,
-            amount: Math.round(course.price * 100), // cielo espera centavos
+            amount: course.price, // price já está em centavos (ex: 19999 = R$ 199,99)
             creditCard: {
                 cardNumber: cardNumber.replace(/\D/g, ''),
                 holder,
@@ -47,22 +47,22 @@ export async function processCheckoutAction(courseId: string, formData: FormData
 
             if (captureResponse.status === 2) {
                 // Atualiza repository como PAGO
-                await paymentRepository.updateStatus(transaction.id, 'CAPTURED', captureResponse.paymentId);
+                await getPaymentRepository().updateStatus(transaction.id, 'CAPTURED', captureResponse.paymentId);
 
                 // 4. Efetivar matrícula
-                await userRepository.enrollInCourse(STUDENT_MOCK_ID, courseId);
+                await getUserRepository().enrollInCourse(STUDENT_MOCK_ID, courseId);
 
                 return { success: true, transactionId: transaction.id };
             }
         }
 
         // Se chegou aqui não autorizou/capturou
-        await paymentRepository.updateStatus(transaction.id, 'FAILED', authResponse.paymentId);
+        await getPaymentRepository().updateStatus(transaction.id, 'FAILED', authResponse.paymentId);
         return { success: false, error: authResponse.returnMessage || "Payment failed" };
 
     } catch (err: any) {
         console.error("Payment error", err);
-        await paymentRepository.updateStatus(transaction.id, 'FAILED');
+        await getPaymentRepository().updateStatus(transaction.id, 'FAILED');
         return { success: false, error: err.message || "Unknown error processing payment" };
     }
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { userRepository } from "@/lms/repositories/MockUserRepository";
+import { getUserRepository } from "@/lms/repositories";
 import { getCourseById } from "./adminCourseActions";
 
 // Em um cenário real, pegaríamos o ID da sessão (NextAuth ou Supabase Auth)
@@ -8,7 +8,7 @@ import { getCourseById } from "./adminCourseActions";
 const STUDENT_MOCK_ID = 'student-1';
 
 export async function getStudentDashboardData() {
-    const user = await userRepository.findById(STUDENT_MOCK_ID);
+    const user = await getUserRepository().findById(STUDENT_MOCK_ID);
     if (!user) {
         throw new Error("Student not found in mock auth");
     }

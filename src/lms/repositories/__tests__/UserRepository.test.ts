@@ -1,4 +1,4 @@
-import { userRepository, MockUserRepository } from './MockUserRepository';
+import { userRepository, MockUserRepository } from '../MockUserRepository';
 
 describe('MockUserRepository', () => {
     beforeEach(() => {

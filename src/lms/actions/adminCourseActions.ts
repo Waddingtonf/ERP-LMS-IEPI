@@ -1,15 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { courseRepository } from "@/lms/repositories/MockCourseRepository";
+import { getCourseRepository } from "@/lms/repositories";
 import { Course, Material, Module } from "@/lms/repositories/CourseRepository";
 
 export async function getCourses(): Promise<Course[]> {
-    return courseRepository.findAll();
+    return getCourseRepository().findAll();
 }
 
 export async function getCourseById(id: string): Promise<Course | null> {
-    return courseRepository.findById(id);
+    return getCourseRepository().findById(id);
 }
 
 export async function createCourseAction(formData: FormData) {
@@ -17,7 +17,7 @@ export async function createCourseAction(formData: FormData) {
     const description = formData.get("description") as string;
     const price = parseFloat(formData.get("price") as string);
 
-    const newCourse = await courseRepository.create({
+    const newCourse = await getCourseRepository().create({
         title,
         description,
         price,
@@ -30,7 +30,7 @@ export async function createCourseAction(formData: FormData) {
 export async function addModuleAction(courseId: string, formData: FormData) {
     const title = formData.get("title") as string;
 
-    await courseRepository.addModule(courseId, { title });
+    await getCourseRepository().addModule(courseId, { title });
     revalidatePath(`/admin/cursos/${courseId}`);
     revalidatePath("/admin/cursos");
 }
@@ -44,7 +44,7 @@ export async function addMaterialAction(
     const type = formData.get("type") as "PDF" | "VIDEO" | "LINK";
     const url = formData.get("url") as string;
 
-    await courseRepository.addMaterial(courseId, moduleId, {
+    await getCourseRepository().addMaterial(courseId, moduleId, {
         title,
         type,
         url,
