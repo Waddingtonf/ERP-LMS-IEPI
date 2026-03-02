@@ -32,7 +32,7 @@ const courseData = {
     ]
 }
 
-export default function ClassroomPage({ params }: { params: { aulaId: string } }) {
+export default function ClassroomPage({ params }: { params: Promise<{ aulaId: string }> }) {
     const [activeLesson, setActiveLesson] = useState(courseData.modules[0].lessons[2])
     const [expandedModules, setExpandedModules] = useState<string[]>(["m1", "m2"])
     const [completedLocally, setCompletedLocally] = useState<Set<string>>(new Set(["l1", "l2"]))

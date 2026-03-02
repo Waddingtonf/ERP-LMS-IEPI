@@ -10,8 +10,9 @@ import { Save, ArrowLeft, PlusCircle, GripVertical, Trash2, Settings, BookOpen }
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
-export default async function EditCursoPage({ params }: { params: { cursoId: string } }) {
-    const course = await getCourseById(params.cursoId)
+export default async function EditCursoPage({ params }: { params: Promise<{ cursoId: string }> }) {
+    const { cursoId } = await params
+    const course = await getCourseById(cursoId)
 
     if (!course) {
         notFound()

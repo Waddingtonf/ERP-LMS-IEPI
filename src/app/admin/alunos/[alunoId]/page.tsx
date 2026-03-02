@@ -23,7 +23,7 @@ const student = {
     ]
 }
 
-export default function EditAlunoPage({ params }: { params: { alunoId: string } }) {
+export default function EditAlunoPage({ params }: { params: Promise<{ alunoId: string }> }) {
     return (
         <div className="space-y-6 max-w-5xl">
             <div className="flex items-center gap-4 mb-8">

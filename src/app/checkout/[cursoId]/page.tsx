@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { use, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -31,14 +31,15 @@ const paymentSchema = z.object({
     installments: z.string().min(1, "Selecione o número de parcelas"),
 })
 
-export default function CheckoutPage({ params }: { params: { cursoId: string } }) {
+export default function CheckoutPage({ params }: { params: Promise<{ cursoId: string }> }) {
+    const { cursoId } = use(params)
     const [step, setStep] = useState<1 | 2 | 3>(1)
     const [isProcessing, setIsProcessing] = useState(false)
     const [files, setFiles] = useState<{ rg: File | null; historico: File | null }>({ rg: null, historico: null })
     const router = useRouter()
 
     // Busca curso no catálogo pelo cursoId da URL (fallback para course-1 se não encontrado)
-    const catalogEntry = CATALOG.find(c => c.id === params.cursoId) ?? CATALOG[0]
+    const catalogEntry = CATALOG.find(c => c.id === cursoId) ?? CATALOG[0]
     const course = {
         title:           catalogEntry.title,
         price:           catalogEntry.price / 100,   // centavos → reais
@@ -86,7 +87,7 @@ export default function CheckoutPage({ params }: { params: { cursoId: string } }
             formData.append("installments", paymentData.installments)
 
             // Chama o Gateway CIELO Sandbox
-            const result = await processCheckoutAction(params.cursoId, formData)
+            const result = await processCheckoutAction(cursoId, formData)
 
             if (result?.success) {
                 toast.success(`Pagamento Aprovado na Cielo (Transação: ${result.transactionId})`)
