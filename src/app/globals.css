@@ -270,3 +270,72 @@ html { scroll-behavior: smooth; }
   border-top: 1px solid var(--border-light);
   margin: 0;
 }
+
+/* ── Inputs / Selects / Textareas (fundo claro) ──────────────────────────
+   Contraste WCAG AA:
+   Texto #0d0525 em branco → 19:1 ✓   Placeholder #8f84aa → descritivo ✓
+   Borda repouso #d0c9e8 — foco var(--iepi-purple) + ring 3px
+──────────────────────────────────────────────────────────────────────── */
+.iepi-input,
+.iepi-select,
+.iepi-textarea {
+  width: 100%;
+  background-color: var(--iepi-white);
+  border: 1.5px solid #d0c9e8;
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  color: var(--text-heading);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+  appearance: none;
+}
+.iepi-input::placeholder,
+.iepi-textarea::placeholder { color: #8f84aa; }
+.iepi-input:focus,
+.iepi-select:focus,
+.iepi-textarea:focus {
+  border-color: var(--iepi-purple);
+  box-shadow: 0 0 0 3px rgba(108, 30, 217, 0.14);
+}
+.iepi-input:hover,
+.iepi-select:hover,
+.iepi-textarea:hover { border-color: #a899d4; }
+
+/* Select — seta customizada */
+.iepi-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b5f8a' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+/* Label */
+.iepi-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-body);
+  margin-bottom: 0.375rem;
+}
+
+/* Pill-button de filtro (fundo claro) */
+.iepi-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.375rem 0.875rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1.5px solid #d0c9e8;
+  background-color: var(--iepi-white);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.iepi-pill:hover  { border-color: var(--iepi-purple); color: var(--iepi-purple); }
+.iepi-pill.active { background-color: var(--iepi-purple); border-color: var(--iepi-purple); color: #fff; }
