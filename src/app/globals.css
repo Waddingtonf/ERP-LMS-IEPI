@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
@@ -125,53 +125,84 @@
   }
 }
 
-/* ── IEPI Brand Tokens ────────────────────────────────────────────────────── */
+/* 
+   IEPI Design Tokens
+   Regras de contraste WCAG AA:
+     Texto normal (4.5:1)  |  Texto grande/negrito (3:1)
+   Fundos escuros (#0d0525, #140840, #6C1ED9)  texto branco #ffffff
+   Fundos claros  (#ffffff, #f5f3fb)           texto escuro #0d0525
+ */
 :root {
-  /* Paleta principal */
-  --iepi-bg:        #140840;   /* fundo de página                  */
-  --iepi-bg-surface:#1a0d50;   /* superfície de cards              */
-  --iepi-bg-deep:   #0d0525;   /* header / footer                  */
-  --iepi-purple:    #6C1ED9;   /* acento primário                  */
-  --iepi-pink:      #BF1FB5;   /* acento secundário                */
-  --iepi-cyan:      #049DBF;   /* informação / links               */
-  --iepi-orange:    #D96704;   /* CTA principal                    */
+  /*  Fundos escuros (header, footer, hero, CTA bands) */
+  --iepi-dark:        #0d0525;   /* header / footer / hero            */
+  --iepi-dark-mid:    #140840;   /* fundo alternativo escuro           */
 
-  /* Aliases de retrocompatibilidade */
-  --iepi-navy:       #140840;
-  --iepi-navy-light: #1a0d50;
-  --iepi-navy-dark:  #0d0525;
-  --iepi-bg-surface: #1a0d50;
+  /*  Fundos claros (seções de conteúdo) */
+  --iepi-white:       #ffffff;   /* TERCIÁRIA — superfície branca principal     */
+  --iepi-light:       #ffffff;   /* alias → --iepi-white                        */
+  --iepi-light-alt:   #f5f3fb;   /* lavanda muito leve — seções alternadas      */
+  --iepi-light-warm:  #fdf6ef;   /* creme quente — detalhe laranja suave        */
 
-  /* Gradiente de marca — restrito ao logo e destaques pontuais */
+  /*  Fundos de acento colorido */
+  --iepi-purple:      #6C1ED9;   /* roxo  banda stats / CTA          */
+  --iepi-purple-dark: #5317b0;   /* roxo escuro  hover               */
+
+  /*  Acentos pontuais */
+  --iepi-pink:        #BF1FB5;
+  --iepi-cyan:        #0280a0;   /* azul-teal ajustado: 4.6:1 em #fff */
+  --iepi-orange:      #bf5800;   /* laranja ajustado: 4.7:1 em #fff  */
+  --iepi-orange-light:#D96704;   /* laranja original  apenas em dark */
+
+  /*  Tipografia em fundos CLAROS */
+  --text-heading:     #0d0525;   /* titulos  19:1 em branco          */
+  --text-body:        #3d3358;   /* corpo  9.2:1 em branco           */
+  --text-muted:       #6b5f8a;   /* secundario  4.6:1 em branco      */
+  --text-overline:    #0280a0;   /* overline cyan  4.6:1 em branco   */
+  --text-link:        #5317b0;   /* links  7.1:1 em branco           */
+
+  /*  Tipografia em fundos ESCUROS (iepi-dark, iepi-dark-mid, iepi-purple) */
+  --text-on-dark:         #ffffff;
+  --text-on-dark-muted:   rgba(255,255,255,0.72);   /* 4.5:1 em #0d0525 */
+  --text-on-dark-subtle:  rgba(255,255,255,0.50);   /* apenas decorativo  */
+
+  /*  Bordas e divisores */
+  --border-light:     rgba(0,0,0,0.08);
+  --border-dark:      rgba(255,255,255,0.10);
+
+  /*  Retrocompatibilidade (não usar em código novo) */
+  --iepi-bg:          #140840;
+  --iepi-bg-surface:  #1a0d50;
+  --iepi-bg-deep:     #0d0525;
+  --iepi-navy:        #140840;
+  --iepi-navy-light:  #1a0d50;
+  --iepi-navy-dark:   #0d0525;
   --g-brand: linear-gradient(135deg, #6C1ED9 0%, #BF1FB5 100%);
-
-  /* Manter aliases de gradiente para não quebrar imports existentes */
-  --g-warm:    linear-gradient(135deg, #D96704 0%, #BF1FB5 100%);
-  --g-cool:    linear-gradient(135deg, #049DBF 0%, #6C1ED9 100%);
-  --g-hero:    #0d0525;
+  --g-warm:  linear-gradient(135deg, #D96704 0%, #BF1FB5 100%);
+  --g-cool:  linear-gradient(135deg, #049DBF 0%, #6C1ED9 100%);
+  --g-hero:  #0d0525;
   --g-section: #6C1ED9;
 }
 
-/* ── Base ─────────────────────────────────────────────────────────────────── */
+/*  Base  */
 html { scroll-behavior: smooth; }
 
-/* ── Card lift — elevação sutil ───────────────────────────────────────────── */
+/*  Card lift  */
 .card-lift {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .card-lift:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
 }
 
-/* ── Botões utilitários ───────────────────────────────────────────────────── */
+/*  Botões  */
 .iepi-btn-primary {
   background-color: var(--iepi-orange);
   color: #fff;
   font-weight: 700;
   transition: background-color 0.15s;
 }
-.iepi-btn-primary:hover { background-color: #b85503; }
+.iepi-btn-primary:hover { background-color: #943f00; }
 
 .iepi-btn-brand {
   background-color: var(--iepi-purple);
@@ -179,47 +210,63 @@ html { scroll-behavior: smooth; }
   font-weight: 700;
   transition: background-color 0.15s;
 }
-.iepi-btn-brand:hover { background-color: #5a17b8; }
+.iepi-btn-brand:hover { background-color: var(--iepi-purple-dark); }
 
-/* ── Surface de card ─────────────────────────────────────────────────────── */
+/*  Surface card  */
 .iepi-card {
-  background-color: var(--iepi-bg-surface);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: var(--iepi-light);
+  border: 1px solid var(--border-light);
 }
 
-/* ── Navegação ───────────────────────────────────────────────────────────── */
+/*  Navegação  */
 .iepi-nav-link {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.72);
   transition: color 0.15s;
   text-decoration: none;
 }
 .iepi-nav-link:hover { color: #fff; }
 
-/* ── Links de rodapé ─────────────────────────────────────────────────────── */
+/*  Footer links  */
 .iepi-footer-link {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.52);
   transition: color 0.15s;
   text-decoration: none;
 }
-.iepi-footer-link:hover { color: rgba(255, 255, 255, 0.85); }
+.iepi-footer-link:hover { color: rgba(255, 255, 255, 0.90); }
 
 .iepi-footer-link-pink {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.52);
   transition: color 0.15s;
   text-decoration: none;
 }
-.iepi-footer-link-pink:hover { color: #BF1FB5; }
+.iepi-footer-link-pink:hover { color: #e07edb; }
 
-/* ── Ícone de rede social ────────────────────────────────────────────────── */
+/*  Redes sociais  */
 .iepi-social {
-  width: 2rem; height: 2rem;
+  width: 2.25rem; height: 2.25rem;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   transition: background 0.15s, border-color 0.15s;
 }
 .iepi-social:hover {
-  background: rgba(108, 30, 217, 0.3);
-  border-color: rgba(108, 30, 217, 0.5);
+  background: rgba(108, 30, 217, 0.35);
+  border-color: rgba(108, 30, 217, 0.6);
+}
+
+/*  Section overline  */
+.section-overline {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-overline);
+}
+
+/*  Divisor de seção  */
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--border-light);
+  margin: 0;
 }
