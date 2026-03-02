@@ -124,3 +124,40 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ── IEPI Brand Tokens ─────────────────────────────────────────────────────── */
+:root {
+  --iepi-navy:        #180e4f;
+  --iepi-navy-light:  #251870;
+  --iepi-navy-dark:   #0e0933;
+  --iepi-orange:      #f97316;
+  --iepi-orange-dark: #ea580c;
+  --iepi-purple:      #6d28d9;
+  --iepi-text-muted:  #a5a8c7;
+}
+
+/* ── Utility classes ──────────────────────────────────────────────────────── */
+.iepi-btn-orange {
+  @apply bg-orange-500 hover:bg-orange-600 text-white font-semibold transition-colors;
+}
+
+.iepi-section-navy {
+  background-color: var(--iepi-navy);
+}
+
+.iepi-card-dark {
+  background-color: var(--iepi-navy-light);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* smooth scroll */
+html { scroll-behavior: smooth; }
+
+/* card hover lift */
+.card-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+}
