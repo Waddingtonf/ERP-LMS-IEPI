@@ -32,6 +32,11 @@ export class MockPaymentRepository implements IPaymentRepository {
     async findByUserId(userId: string): Promise<PaymentTransaction[]> {
         return this.transactions.filter(t => t.userId === userId);
     }
+
+    /** Clear all transactions — useful in beforeEach */
+    reset(): void {
+        this.transactions = [];
+    }
 }
 
 export const paymentRepository = new MockPaymentRepository();

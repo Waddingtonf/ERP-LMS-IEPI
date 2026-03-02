@@ -40,8 +40,9 @@ export class CieloSandboxService {
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        // Simple validation throw
-        if (!request.creditCard.cardNumber || request.creditCard.cardNumber.length < 14) {
+        // Validate: must contain only digits and be at least 14 chars
+        const cleanCard = request.creditCard.cardNumber.trim();
+        if (!cleanCard || !/^\d+$/.test(cleanCard) || cleanCard.length < 14) {
             throw new Error('Invalid Credit Card Number');
         }
 

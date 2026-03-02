@@ -19,7 +19,11 @@ export interface EnrollmentResult {
 }
 
 export class EnrollmentService {
-    private cieloService = new CieloSandboxService();
+    private cieloService: CieloSandboxService;
+
+    constructor(cieloService?: CieloSandboxService) {
+        this.cieloService = cieloService ?? new CieloSandboxService();
+    }
 
     /**
      * Processa o pagamento via Cielo e efetiva a matrícula em caso de sucesso.

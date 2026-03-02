@@ -43,6 +43,14 @@ export class MockUserRepository implements IUserRepository {
             user.enrolledCourseIds.push(courseId);
         }
     }
+
+    /** Restore the repo to its initial seeded state — useful in beforeEach */
+    reset(): void {
+        this.users = [
+            { id: 'admin-1', name: 'Admin User', email: 'admin@iepi.com.br', role: 'ADMIN', enrolledCourseIds: [] },
+            { id: 'student-1', name: 'Test Student', email: 'student@test.com', role: 'STUDENT', enrolledCourseIds: [] },
+        ];
+    }
 }
 
 // Singleton instance for the mock
