@@ -38,7 +38,7 @@ function CourseCard({ c }: { c: CatalogCourse }) {
             style={{ backgroundColor: "var(--iepi-navy-light)", border: "1px solid rgba(255,255,255,0.08)" }}
         >
             {/* Brand gradient header */}
-            <div className="p-4 min-h-[76px] flex items-start" style={{ background: "var(--g-brand)" }}>
+            <div className="p-4 min-h-[76px] flex items-start" style={{ backgroundColor: "var(--iepi-purple)" }}>
                 <h3 className="text-white font-extrabold text-sm leading-snug">{c.title}</h3>
             </div>
 
@@ -165,7 +165,7 @@ export default function CursosPage() {
                                 onClick={() => { setTypeFilter(typeFilter === f ? "Todos" : f as CourseType); setPage(1) }}
                                 className="hidden lg:flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-colors"
                                 style={{
-                                    background: typeFilter === f ? "var(--g-brand)" : "rgba(255,255,255,0.07)",
+                                    backgroundColor: typeFilter === f ? "var(--iepi-purple)" : "rgba(255,255,255,0.07)",
                                     color: typeFilter === f ? "#fff" : "rgba(255,255,255,0.5)",
                                     border: typeFilter === f ? "none" : "1px solid rgba(255,255,255,0.1)"
                                 }}

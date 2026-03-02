@@ -26,7 +26,7 @@ export default function SobrePage() {
             </section>
 
             {/* Stats */}
-            <section className="py-12" style={{ background: "var(--g-section)" }}>
+            <section className="py-12" style={{ backgroundColor: "var(--iepi-purple)" }}>
                 <div className="container mx-auto px-4 max-w-5xl">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                         {stats.map((s) => (
@@ -74,7 +74,7 @@ export default function SobrePage() {
                                 style={{ backgroundColor: "var(--iepi-navy)" }}
                             >
                                 <div className="flex justify-center mb-4">
-                                    <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "var(--g-brand)" }}>
+                                    <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ backgroundColor: "var(--iepi-purple)" }}>
                                         <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                             <path strokeLinecap="round" strokeLinejoin="round" d={v.icon}/>
                                         </svg>

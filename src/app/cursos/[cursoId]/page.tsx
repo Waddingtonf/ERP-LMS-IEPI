@@ -159,7 +159,7 @@ export default async function CourseDetailPage({ params }: Props) {
                             <Link
                                 href={`/checkout/${course.id}`}
                                 className="block w-full text-center py-3.5 font-extrabold text-white rounded-xl text-sm uppercase tracking-wide transition-all hover:scale-[1.02] hover:shadow-lg"
-                                style={{ background: "var(--g-brand)" }}
+                                style={{ backgroundColor: "var(--iepi-purple)" }}
                             >
                                 Inscreva-se agora
                             </Link>

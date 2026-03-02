@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
@@ -6,8 +6,8 @@ import Link from "next/link";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "IEPI — Instituto de Educação e Pesquisa Integrada",
-  description: "O melhor do ensino em saúde você encontra aqui. Cursos de Graduação, Pós-graduação e Livres.",
+  title: "IEPI  Instituto de Educação e Pesquisa Integrada",
+  description: "Cursos de Graduação, Pós-graduação e Livres na área da saúde. O melhor ensino em saúde você encontra no IEPI.",
 };
 
 export default function RootLayout({
@@ -22,34 +22,38 @@ export default function RootLayout({
         style={{ backgroundColor: "var(--iepi-bg)" }}
       >
 
-        {/* ── HEADER ──────────────────────────────────────────────────────── */}
+        {/* HEADER */}
         <header
           className="sticky top-0 z-50"
-          style={{ backgroundColor: "var(--iepi-bg-deep)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+          style={{ backgroundColor: "var(--iepi-bg-deep)", borderBottom: "1px solid rgba(255,255,255,0.07)" }}
         >
-          <div className="container mx-auto px-4 h-16 flex items-center justify-between max-w-7xl">
+          <div className="container mx-auto px-6 flex items-center justify-between max-w-7xl" style={{ height: 68 }}>
 
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group">
+            <Link href="/" className="flex items-center gap-2.5 shrink-0">
               <div
-                className="w-9 h-9 rounded-full flex items-center justify-center text-white font-extrabold text-lg leading-none select-none"
-                style={{ backgroundColor: "var(--iepi-purple)" }}
+                className="w-8 h-8 rounded flex items-center justify-center text-white font-black text-base leading-none select-none"
+                style={{ backgroundColor: "var(--iepi-orange)" }}
               >
                 +
               </div>
-              <span className="font-extrabold text-xl text-white tracking-tight">
-                IEP<span style={{ color: "var(--iepi-pink)" }}>I</span>
-              </span>
+              <div className="flex flex-col leading-none gap-0.5">
+                <span className="font-black text-white text-lg tracking-tight leading-none">IEPI</span>
+                <span className="text-[9px] font-medium tracking-widest uppercase hidden sm:block" style={{ color: "rgba(255,255,255,0.38)" }}>
+                  Instituto de Educação e Pesquisa
+                </span>
+              </div>
             </Link>
 
-            {/* Nav links */}
-            <nav className="hidden md:flex items-center gap-7">
+            {/* Nav */}
+            <nav className="hidden lg:flex items-center gap-7">
               {[
-                { label: "Ensino",     href: "/cursos"    },
-                { label: "Pesquisa",   href: "/sobre"     },
-                { label: "Inovação",   href: "/sobre"     },
-                { label: "Eventos",    href: "/#eventos"  },
-                { label: "Biblioteca", href: "/#noticias" },
+                { label: "Cursos",   href: "/cursos"    },
+                { label: "Sobre",    href: "/sobre"     },
+                { label: "Pesquisa", href: "/sobre"     },
+                { label: "Eventos",  href: "/#eventos"  },
+                { label: "Noticias", href: "/#noticias" },
+                { label: "Contato",  href: "/contato"   },
               ].map(({ label, href }) => (
                 <Link key={label} href={href} className="iepi-nav-link text-sm font-medium">
                   {label}
@@ -57,96 +61,110 @@ export default function RootLayout({
               ))}
             </nav>
 
-            {/* CTA */}
-            <Link
-              href="/login"
-              className="flex items-center gap-2 text-sm font-bold text-white px-5 py-2 rounded-full transition-colors"
-              style={{ backgroundColor: "var(--iepi-orange)" }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-              </svg>
-              <span className="hidden sm:inline">Portal do Aluno</span>
-              <span className="sm:hidden">Portal</span>
-            </Link>
+            {/* Actions */}
+            <div className="flex items-center gap-3">
+              <Link
+                href="/login"
+                className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium transition-colors iepi-nav-link"
+              >
+                <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                </svg>
+                Area do aluno
+              </Link>
+              <Link
+                href="/cursos"
+                className="inline-flex items-center text-sm font-bold text-white px-5 py-2.5 rounded transition-colors"
+                style={{ backgroundColor: "var(--iepi-orange)" }}
+              >
+                Inscreva-se
+              </Link>
+            </div>
           </div>
         </header>
 
-        {/* ── MAIN ────────────────────────────────────────────────────────── */}
+        {/* MAIN */}
         <main className="flex-1">{children}</main>
 
-        {/* ── FOOTER ──────────────────────────────────────────────────────── */}
-        <footer
-          className="pt-14 pb-8"
-          style={{ backgroundColor: "var(--iepi-bg-deep)", borderTop: "1px solid rgba(255,255,255,0.08)" }}
-        >
-          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+        {/* FOOTER */}
+        <footer style={{ backgroundColor: "var(--iepi-bg-deep)", borderTop: "3px solid var(--iepi-purple)" }}>
+          <div className="container mx-auto px-6 max-w-7xl py-14">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
 
               {/* Brand */}
-              <div className="lg:col-span-2">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-extrabold text-lg" style={{ backgroundColor: "var(--iepi-purple)" }}>+</div>
-                  <span className="font-extrabold text-xl text-white">IEP<span style={{ color: "var(--iepi-pink)" }}>I</span></span>
+              <div className="sm:col-span-2 lg:col-span-1">
+                <div className="flex items-center gap-2.5 mb-5">
+                  <div className="w-8 h-8 rounded flex items-center justify-center text-white font-black text-base" style={{ backgroundColor: "var(--iepi-orange)" }}>+</div>
+                  <div className="flex flex-col leading-none gap-0.5">
+                    <span className="font-black text-white text-lg tracking-tight">IEPI</span>
+                    <span className="text-[9px] font-medium tracking-widest uppercase" style={{ color: "rgba(255,255,255,0.3)" }}>Instituto de Educacao e Pesquisa</span>
+                  </div>
                 </div>
-                <p className="text-sm text-white/50 leading-relaxed max-w-xs">
-                  Instituto de Educação e Pesquisa Integrada. Transformando vidas através da educação qualificada, acessível e voltada para o mercado de saúde.
+                <p className="text-sm leading-relaxed mb-5" style={{ color: "rgba(255,255,255,0.42)" }}>
+                  Transformando vidas por meio da educacao qualificada e voltada para o mercado de saude no Nordeste ha mais de 15 anos.
                 </p>
-                <div className="flex gap-3 mt-5">
-                  {[["I","Instagram"],["F","Facebook"],["Y","YouTube"],["Li","LinkedIn"]].map(([abbr, label]) => (
-                    <a key={label} href="#" aria-label={label} className="iepi-social">
-                      <span className="text-white/75 text-xs font-bold leading-none">{abbr}</span>
+                <div className="flex gap-2">
+                  {["Instagram","Facebook","YouTube","LinkedIn"].map((label) => (
+                    <a key={label} href="#" aria-label={label} className="iepi-social" title={label}>
+                      <span className="text-white/55 text-[10px] font-bold">{label[0]}</span>
                     </a>
                   ))}
                 </div>
               </div>
 
-              {/* Ensino */}
+              {/* Cursos */}
               <div>
-                <h4 className="text-white font-semibold mb-4">Ensino</h4>
-                <ul className="space-y-2 text-sm">
-                  {["Graduação","Pós-Graduação","Cursos Livres","Residência","Extensão","Estágios","Vagas Técnicas"].map(t => (
-                    <li key={t}><a href="#" className="iepi-footer-link">{t}</a></li>
+                <h4 className="text-white font-semibold text-sm mb-4 pb-2.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>Cursos</h4>
+                <ul className="space-y-2.5">
+                  {["Graduação","Pos-Graduação","Especializacao","Residencia","Cursos Livres","Extensao"].map(t => (
+                    <li key={t}><a href="/cursos" className="iepi-footer-link text-sm">{t}</a></li>
                   ))}
                 </ul>
               </div>
 
-              {/* Pesquisa */}
+              {/* Institucional */}
               <div>
-                <h4 className="text-white font-semibold mb-4">Pesquisa</h4>
-                <ul className="space-y-2 text-sm">
-                  {["Campus","Comitês","Comitê de Ética","Pesquisa Clínica","PIBIC","Estatística","Mais..."].map(t => (
-                    <li key={t}><a href="#" className="iepi-footer-link">{t}</a></li>
+                <h4 className="text-white font-semibold text-sm mb-4 pb-2.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>Institucional</h4>
+                <ul className="space-y-2.5">
+                  {["Sobre o IEPI","Corpo Docente","Pesquisa","Estagios","Comite de Etica","PIBIC"].map(t => (
+                    <li key={t}><a href="/sobre" className="iepi-footer-link text-sm">{t}</a></li>
                   ))}
                 </ul>
               </div>
 
               {/* Contato */}
               <div>
-                <h4 className="text-white font-semibold mb-4">Fale Conosco</h4>
-                <ul className="space-y-2 text-sm text-white/50">
-                  <li>☎ (84) 4009-5108</li>
-                  <li>☎ (84) 98416-2808</li>
-                  <li className="pt-1 leading-relaxed">Av. Miguel Castro, 1355<br/>Natal-RN, 59082-000</li>
+                <h4 className="text-white font-semibold text-sm mb-4 pb-2.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>Fale Conosco</h4>
+                <ul className="space-y-3 text-sm" style={{ color: "rgba(255,255,255,0.45)" }}>
+                  <li className="flex items-start gap-2">
+                    <span className="shrink-0 mt-0.5" style={{ color: "var(--iepi-orange)" }}>Tel.</span>
+                    <span>(84) 4009-5108 | (84) 98416-2808</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="shrink-0 mt-0.5" style={{ color: "var(--iepi-orange)" }}>E-mail</span>
+                    <a href="mailto:atendimento@iepi.edu.br" className="iepi-footer-link-pink">atendimento@iepi.edu.br</a>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="shrink-0 mt-0.5" style={{ color: "var(--iepi-orange)" }}>End.</span>
+                    <span>Av. Miguel Castro, 1355, Natal-RN</span>
+                  </li>
+                  <li className="text-xs pt-1" style={{ color: "rgba(255,255,255,0.28)" }}>
+                    Seg-Sex 08h-20h | Sab 08h-14h
+                  </li>
                 </ul>
-                <div className="mt-5">
-                  <h4 className="text-white font-semibold mb-3">Redes Sociais</h4>
-                  <ul className="space-y-1 text-sm">
-                    {["@institutoiepi","@institutoiepi","@institutoiepi"].map((h,i) => (
-                      <li key={i}><a href="#" className="iepi-footer-link-pink">{h}</a></li>
-                    ))}
-                  </ul>
-                </div>
               </div>
             </div>
+          </div>
 
-            {/* Bottom bar */}
-            <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-              <p className="text-xs text-white/30">© {new Date().getFullYear()} IEPI — Instituto de Educação e Pesquisa Integrada. Todos os direitos reservados.</p>
-              <div className="flex gap-4 text-xs">
+          {/* Bottom bar */}
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+            <div className="container mx-auto px-6 max-w-7xl py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <p className="text-xs" style={{ color: "rgba(255,255,255,0.22)" }}>
+                {` ${new Date().getFullYear()} IEPI  Instituto de Educação e Pesquisa Integrada. Todos os direitos reservados.`}
+              </p>
+              <div className="flex gap-5 text-xs">
                 <a href="#" className="iepi-footer-link">Termos de Uso</a>
                 <a href="#" className="iepi-footer-link">Privacidade</a>
-                <a href="#" className="iepi-footer-link">Cookies</a>
               </div>
             </div>
           </div>
@@ -154,4 +172,5 @@ export default function RootLayout({
 
       </body>
     </html>
-  );}
+  );
+}

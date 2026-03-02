@@ -30,7 +30,7 @@ export default function ContatoPage() {
                                     className="flex items-start gap-4 p-5 rounded-xl"
                                     style={{ backgroundColor: "var(--iepi-navy-light)", border: "1px solid rgba(255,255,255,0.07)" }}
                                 >
-                                    <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0" style={{ background: "var(--g-brand)" }}>
+                                    <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: "var(--iepi-purple)" }}>
                                         <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                                             <path strokeLinecap="round" strokeLinejoin="round" d={item.icon}/>
                                         </svg>
@@ -90,7 +90,7 @@ export default function ContatoPage() {
                                 <button
                                     type="submit"
                                     className="w-full py-3 text-white font-bold text-sm uppercase tracking-wide rounded-lg transition-all hover:opacity-90"
-                                    style={{ background: "var(--g-brand)" }}
+                                    style={{ backgroundColor: "var(--iepi-purple)" }}
                                 >
                                     Enviar Mensagem
                                 </button>
