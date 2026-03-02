@@ -1,35 +1,31 @@
 "use server";
 
-import { getUserRepository } from "@/lms/repositories";
-import { getCourseById } from "./adminCourseActions";
+import { getUserRepository, getCourseRepository } from "@/lms/repositories";
+import { Course } from "@/lms/repositories/CourseRepository";
 
-// Em um cenário real, pegaríamos o ID da sessão (NextAuth ou Supabase Auth)
-// Para o sandbox, vamos fixar o ID do nosso aluno de teste.
-const STUDENT_MOCK_ID = 'student-1';
+/** Sandbox only. In production derive this from the authenticated session. */
+const SANDBOX_STUDENT_ID = 'student-1';
 
 export async function getStudentDashboardData() {
-    const user = await getUserRepository().findById(STUDENT_MOCK_ID);
-    if (!user) {
-        throw new Error("Student not found in mock auth");
-    }
+    const user = await getUserRepository().findById(SANDBOX_STUDENT_ID);
+    if (!user) throw new Error('Student not found');
 
-    // Buscar os curos que ele está matriculado
     const enrolledCourses = await Promise.all(
-        user.enrolledCourseIds.map(id => getCourseById(id))
+        user.enrolledCourseIds.map(id => getCourseRepository().findById(id))
     );
 
     return {
         user,
-        // Remover nulls e mapear para a estrutura da view
-        enrollments: enrolledCourses.filter(Boolean).map(course => ({
-            id: `e-${course!.id}`,
-            courseId: course!.id,
-            title: course!.title,
-            // Para o sandbox, estamos simulando o tipo e progresso
-            type: "Curso Online",
-            progress: 0, // Mock: recém matriculado
-            lastAccessed: "Módulo 1",
-            thumbnail: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=600&auto=format&fit=crop"
-        }))
+        enrollments: enrolledCourses
+            .filter((c): c is Course => c !== null)
+            .map(course => ({
+                id:           `e-${course.id}`,
+                courseId:     course.id,
+                title:        course.title,
+                type:         'Curso Online',
+                progress:     0,
+                lastAccessed: 'Módulo 1',
+                thumbnail:    'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=600&auto=format&fit=crop',
+            })),
     };
 }

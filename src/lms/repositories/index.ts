@@ -1,75 +1,54 @@
 /**
  * Repository Factory
  *
- * Seleciona automaticamente entre implementações Mock (desenvolvimento/sandbox)
- * e Supabase (produção) com base na variável de ambiente NEXT_PUBLIC_SUPABASE_URL.
- *
- * Para usar MockRepositories: defina NEXT_PUBLIC_SUPABASE_URL contendo "dummy"
- * Para usar SupabaseRepositories: configure a URL real do Supabase
+ * Resolves the correct repository implementation based on the environment:
+ * - Mock     → when NEXT_PUBLIC_SUPABASE_URL is absent or contains "dummy"
+ * - Supabase → when a real Supabase URL is configured
  */
 
 import { IUserRepository } from './UserRepository';
 import { ICourseRepository } from './CourseRepository';
 import { IPaymentRepository } from './PaymentRepository';
 
-// Lazy imports para evitar carregar código desnecessário no bundle
 function isMockMode(): boolean {
-    return (
-        !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-        process.env.NEXT_PUBLIC_SUPABASE_URL.includes('dummy')
-    );
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    return !url || url.includes('dummy');
 }
 
-// ─── User Repository ──────────────────────────────────────────────────────────
+function loadRepository<T>(
+    mockModule: string,    mockClass: string,
+    supabaseModule: string, supabaseClass: string,
+): T {
+    const [modulePath, className] = isMockMode()
+        ? [mockModule, mockClass]
+        : [supabaseModule, supabaseClass];
 
-let _userRepo: IUserRepository | null = null;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const mod = require(modulePath);
+    return new mod[className]() as T;
+}
+
+let _user:    IUserRepository    | null = null;
+let _course:  ICourseRepository  | null = null;
+let _payment: IPaymentRepository | null = null;
 
 export function getUserRepository(): IUserRepository {
-    if (_userRepo) return _userRepo;
-
-    if (isMockMode()) {
-        const { MockUserRepository } = require('./MockUserRepository');
-        _userRepo = new MockUserRepository();
-    } else {
-        const { SupabaseUserRepository } = require('./SupabaseUserRepository');
-        _userRepo = new SupabaseUserRepository();
-    }
-
-    return _userRepo!;
+    return (_user ??= loadRepository<IUserRepository>(
+        './MockUserRepository',     'MockUserRepository',
+        './SupabaseUserRepository', 'SupabaseUserRepository',
+    ));
 }
-
-// ─── Course Repository ────────────────────────────────────────────────────────
-
-let _courseRepo: ICourseRepository | null = null;
 
 export function getCourseRepository(): ICourseRepository {
-    if (_courseRepo) return _courseRepo;
-
-    if (isMockMode()) {
-        const { MockCourseRepository } = require('./MockCourseRepository');
-        _courseRepo = new MockCourseRepository();
-    } else {
-        const { SupabaseCourseRepository } = require('./SupabaseCourseRepository');
-        _courseRepo = new SupabaseCourseRepository();
-    }
-
-    return _courseRepo!;
+    return (_course ??= loadRepository<ICourseRepository>(
+        './MockCourseRepository',     'MockCourseRepository',
+        './SupabaseCourseRepository', 'SupabaseCourseRepository',
+    ));
 }
 
-// ─── Payment Repository ───────────────────────────────────────────────────────
-
-let _paymentRepo: IPaymentRepository | null = null;
-
 export function getPaymentRepository(): IPaymentRepository {
-    if (_paymentRepo) return _paymentRepo;
-
-    if (isMockMode()) {
-        const { MockPaymentRepository } = require('./MockPaymentRepository');
-        _paymentRepo = new MockPaymentRepository();
-    } else {
-        const { SupabasePaymentRepository } = require('./SupabasePaymentRepository');
-        _paymentRepo = new SupabasePaymentRepository();
-    }
-
-    return _paymentRepo!;
+    return (_payment ??= loadRepository<IPaymentRepository>(
+        './MockPaymentRepository',     'MockPaymentRepository',
+        './SupabasePaymentRepository', 'SupabasePaymentRepository',
+    ));
 }

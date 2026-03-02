@@ -1,22 +1,29 @@
 /**
  * EnrollmentService
  *
- * Encapsula toda a lógica de negócio relacionada a matrículas:
- * - Verificação de pré-requisitos
- * - Criação de matrícula após pagamento capturado
- * - Cancelamento de matrícula
- * - Consulta de status do aluno em um curso
+ * Business logic for student enrollments:
+ * - Pre-requisite validation (course exists, user exists, not already enrolled)
+ * - Payment processing via Cielo
+ * - Enrollment activation on successful capture
  */
 
 import { getUserRepository, getCourseRepository, getPaymentRepository } from '../repositories';
 import { PaymentTransaction } from '../repositories/PaymentRepository';
-import { CieloSandboxService } from './CieloService';
+import { CieloPaymentRequest, CieloSandboxService } from './CieloService';
 
 export interface EnrollmentResult {
     success: boolean;
     transactionId?: string;
     error?: string;
 }
+
+/** Card data supplied by the checkout form */
+export type CardData = {
+    cardNumber: string;
+    holder: string;
+    expirationDate: string;
+    securityCode: string;
+};
 
 export class EnrollmentService {
     private cieloService: CieloSandboxService;
@@ -25,18 +32,11 @@ export class EnrollmentService {
         this.cieloService = cieloService ?? new CieloSandboxService();
     }
 
-    /**
-     * Processa o pagamento via Cielo e efetiva a matrícula em caso de sucesso.
-     */
+    /** Processes payment via Cielo and activates the enrollment on success. */
     async enrollWithPayment(
         userId: string,
         courseId: string,
-        cardData: {
-            cardNumber: string;
-            holder: string;
-            expirationDate: string;
-            securityCode: string;
-        }
+        cardData: CardData,
     ): Promise<EnrollmentResult> {
         const course = await getCourseRepository().findById(courseId);
         if (!course) return { success: false, error: 'Curso não encontrado' };
@@ -44,12 +44,10 @@ export class EnrollmentService {
         const user = await getUserRepository().findById(userId);
         if (!user) return { success: false, error: 'Usuário não encontrado' };
 
-        // Verificar se já está matriculado
         if (user.enrolledCourseIds.includes(courseId)) {
             return { success: false, error: 'Aluno já está matriculado neste curso' };
         }
 
-        // Criar transação PENDING
         const transaction = await getPaymentRepository().create({
             userId,
             courseId,
@@ -58,32 +56,21 @@ export class EnrollmentService {
         });
 
         try {
-            // Autorizar via Cielo
-            const authResp = await this.cieloService.createTransaction({
-                merchantOrderId: transaction.id,
-                amount: course.price,
-                creditCard: {
-                    cardNumber: cardData.cardNumber.replace(/\D/g, ''),
-                    holder: cardData.holder,
-                    expirationDate: cardData.expirationDate,
-                    securityCode: cardData.securityCode,
-                    brand: 'Visa',
-                },
-            });
+            const authResp = await this.cieloService.createTransaction(
+                this.buildPaymentRequest(transaction.id, course.price, cardData),
+            );
 
             if (authResp.status !== 1) {
                 await getPaymentRepository().updateStatus(transaction.id, 'FAILED', authResp.paymentId);
                 return { success: false, error: authResp.returnMessage };
             }
 
-            // Capturar
             const captureResp = await this.cieloService.captureTransaction(authResp.paymentId);
             if (captureResp.status !== 2) {
                 await getPaymentRepository().updateStatus(transaction.id, 'AUTHORIZED', authResp.paymentId);
                 return { success: false, error: 'Capture failed' };
             }
 
-            // Efetivar matrícula
             await getPaymentRepository().updateStatus(transaction.id, 'CAPTURED', captureResp.paymentId);
             await getUserRepository().enrollInCourse(userId, courseId);
 
@@ -95,21 +82,34 @@ export class EnrollmentService {
         }
     }
 
-    /**
-     * Retorna as transações de pagamento de um aluno.
-     */
+    /** Returns all payment transactions for a given student. */
     async getStudentTransactions(userId: string): Promise<PaymentTransaction[]> {
         return getPaymentRepository().findByUserId(userId);
     }
 
-    /**
-     * Verifica se um aluno está matriculado em um curso.
-     */
+    /** Returns true if the student is already enrolled in the given course. */
     async isEnrolled(userId: string, courseId: string): Promise<boolean> {
         const user = await getUserRepository().findById(userId);
         return user?.enrolledCourseIds.includes(courseId) ?? false;
     }
+
+    private buildPaymentRequest(
+        transactionId: string,
+        amount: number,
+        cardData: CardData,
+    ): CieloPaymentRequest {
+        return {
+            merchantOrderId: transactionId,
+            amount,
+            creditCard: {
+                cardNumber:     cardData.cardNumber.replace(/\D/g, ''),
+                holder:         cardData.holder,
+                expirationDate: cardData.expirationDate,
+                securityCode:   cardData.securityCode,
+                brand:          'Visa',
+            },
+        };
+    }
 }
 
-// Singleton
 export const enrollmentService = new EnrollmentService();

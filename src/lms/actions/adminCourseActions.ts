@@ -13,42 +13,32 @@ export async function getCourseById(id: string): Promise<Course | null> {
 }
 
 export async function createCourseAction(formData: FormData) {
-    const title = formData.get("title") as string;
-    const description = formData.get("description") as string;
-    const price = parseFloat(formData.get("price") as string);
+    const title       = formData.get('title')       as string;
+    const description = formData.get('description') as string;
+    const price       = Number(formData.get('price'));
 
-    const newCourse = await getCourseRepository().create({
-        title,
-        description,
-        price,
-    });
-
-    revalidatePath("/admin/cursos");
-    return newCourse;
+    const course = await getCourseRepository().create({ title, description, price });
+    revalidatePath('/admin/cursos');
+    return course;
 }
 
 export async function addModuleAction(courseId: string, formData: FormData) {
-    const title = formData.get("title") as string;
+    const title = formData.get('title') as string;
 
     await getCourseRepository().addModule(courseId, { title });
     revalidatePath(`/admin/cursos/${courseId}`);
-    revalidatePath("/admin/cursos");
+    revalidatePath('/admin/cursos');
 }
 
 export async function addMaterialAction(
     courseId: string,
     moduleId: string,
-    formData: FormData
+    formData: FormData,
 ) {
-    const title = formData.get("title") as string;
-    const type = formData.get("type") as "PDF" | "VIDEO" | "LINK";
-    const url = formData.get("url") as string;
+    const title = formData.get('title') as string;
+    const type  = formData.get('type')  as Material['type'];
+    const url   = formData.get('url')   as string;
 
-    await getCourseRepository().addMaterial(courseId, moduleId, {
-        title,
-        type,
-        url,
-    });
-
+    await getCourseRepository().addMaterial(courseId, moduleId, { title, type, url });
     revalidatePath(`/admin/cursos/${courseId}`);
 }
