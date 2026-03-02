@@ -25,7 +25,7 @@ export default function RootLayout({
         {/* ── HEADER ──────────────────────────────────────────────────────── */}
         <header
           className="sticky top-0 z-50"
-          style={{ backgroundColor: "var(--iepi-bg-deep)", borderBottom: "1px solid rgba(108,30,217,0.35)" }}
+          style={{ backgroundColor: "var(--iepi-bg-deep)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
         >
           <div className="container mx-auto px-4 h-16 flex items-center justify-between max-w-7xl">
 
@@ -33,7 +33,7 @@ export default function RootLayout({
             <Link href="/" className="flex items-center gap-2 group">
               <div
                 className="w-9 h-9 rounded-full flex items-center justify-center text-white font-extrabold text-lg leading-none select-none"
-                style={{ background: "var(--g-brand)" }}
+                style={{ backgroundColor: "var(--iepi-purple)" }}
               >
                 +
               </div>
@@ -60,8 +60,8 @@ export default function RootLayout({
             {/* CTA */}
             <Link
               href="/login"
-              className="flex items-center gap-2 text-sm font-bold text-white px-5 py-2 rounded-full transition-all hover:scale-105 hover:brightness-110"
-              style={{ background: "var(--g-brand)", boxShadow: "0 0 20px rgba(191,31,181,0.35)" }}
+              className="flex items-center gap-2 text-sm font-bold text-white px-5 py-2 rounded-full transition-colors"
+              style={{ backgroundColor: "var(--iepi-orange)" }}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
@@ -78,7 +78,7 @@ export default function RootLayout({
         {/* ── FOOTER ──────────────────────────────────────────────────────── */}
         <footer
           className="pt-14 pb-8"
-          style={{ backgroundColor: "var(--iepi-bg-deep)", borderTop: "1px solid rgba(108,30,217,0.35)" }}
+          style={{ backgroundColor: "var(--iepi-bg-deep)", borderTop: "1px solid rgba(255,255,255,0.08)" }}
         >
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
@@ -86,7 +86,7 @@ export default function RootLayout({
               {/* Brand */}
               <div className="lg:col-span-2">
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-extrabold text-lg" style={{ background: "var(--g-brand)" }}>+</div>
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-extrabold text-lg" style={{ backgroundColor: "var(--iepi-purple)" }}>+</div>
                   <span className="font-extrabold text-xl text-white">IEP<span style={{ color: "var(--iepi-pink)" }}>I</span></span>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed max-w-xs">
@@ -141,7 +141,7 @@ export default function RootLayout({
             </div>
 
             {/* Bottom bar */}
-            <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4" style={{ borderTop: "1px solid rgba(108,30,217,0.2)" }}>
+            <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
               <p className="text-xs text-white/30">© {new Date().getFullYear()} IEPI — Instituto de Educação e Pesquisa Integrada. Todos os direitos reservados.</p>
               <div className="flex gap-4 text-xs">
                 <a href="#" className="iepi-footer-link">Termos de Uso</a>
@@ -154,4 +154,4 @@ export default function RootLayout({
 
       </body>
     </html>
-  );
+  );}
