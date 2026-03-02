@@ -2,10 +2,10 @@
 
 /*  dados de exemplo  */
 const COURSES = [
-  { id: "1", type: "Pós-Graduação",  title: "MBA em Gestão de Saúde e Hospitalar",      hours: "360 h",  modality: "EAD"        },
-  { id: "2", type: "Especialização", title: "Especialização em Enfermagem UTI Adulto",   hours: "480 h",  modality: "Híbrido"    },
-  { id: "3", type: "Curso Livre",    title: "Suporte Básico de Vida  Urgências",        hours: "80 h",   modality: "Presencial"  },
-  { id: "4", type: "Graduação",      title: "Licenciatura em Ciências Biológicas",        hours: "3200 h", modality: "Presencial"  },
+  { id: "course-10", type: "Pós-Graduação",  title: "Gestão em Saúde e Liderança",           hours: "360h", modality: "Vespertino/Noturno" },
+  { id: "course-3",  type: "Especialização", title: "Feridas, Estomias e Incontinências",     hours: "360h", modality: "Mat./Vesp."         },
+  { id: "course-1",  type: "Curso Livre",    title: "Oncologia para Técnicos",                hours: "360h", modality: "Mat./Vesp."         },
+  { id: "course-4",  type: "Pós-Graduação",  title: "Enfermagem Oncológica",                  hours: "360h", modality: "Mat./Vesp."         },
 ];
 
 const NEWS = [
@@ -204,7 +204,7 @@ export default function Home() {
             {COURSES.map((c) => (
               <Link
                 key={c.id}
-                href={`/checkout/${c.id}`}
+                href={`/cursos/${c.id}`}
                 className="card-lift flex flex-col rounded-xl overflow-hidden group"
                 style={{ backgroundColor: "var(--iepi-white)", border: "1px solid var(--border-light)", boxShadow: "0 1px 4px rgba(0,0,0,0.07)" }}
               >
