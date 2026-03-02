@@ -2,7 +2,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'STUDENT' | 'ADMIN';
+  role: 'STUDENT' | 'ADMIN' | 'DOCENTE' | 'FINANCEIRO' | 'PEDAGOGICO';
   enrolledCourseIds: string[];
 }
 

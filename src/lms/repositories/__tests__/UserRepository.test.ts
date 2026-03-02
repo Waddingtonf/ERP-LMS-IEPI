@@ -35,7 +35,7 @@ describe('MockUserRepository — CRUD', () => {
 
     // ── findByEmail ───────────────────────────────────────────────────────────
     it('finds user by email (admin)', async () => {
-        const user = await repo.findByEmail('admin@iepi.com.br');
+        const user = await repo.findByEmail('ana.rodrigues@iepi.edu.br');
         expect(user).toBeDefined();
         expect(user?.role).toBe('ADMIN');
     });
@@ -47,7 +47,7 @@ describe('MockUserRepository — CRUD', () => {
 
     it('is case-sensitive for email lookup', async () => {
         // Emails should not match across different cases (security: no accidental match)
-        const user = await repo.findByEmail('ADMIN@IEPI.COM.BR');
+        const user = await repo.findByEmail('ANA.RODRIGUES@IEPI.EDU.BR');
         expect(user).toBeNull();
     });
 

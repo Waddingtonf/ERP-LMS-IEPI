@@ -2,20 +2,30 @@ import { IUserRepository, User } from './UserRepository';
 
 export class MockUserRepository implements IUserRepository {
     private users: User[] = [
+        // ─── Aluno ─────────────────────────────────────────────────────────
+        {
+            id: 'student-1',
+            name: 'João Silva',
+            email: 'joao.silva@aluno.iepi.edu.br',
+            role: 'STUDENT',
+            enrolledCourseIds: [],
+        },
+        // ─── Administrador ─────────────────────────────────────────────────
         {
             id: 'admin-1',
-            name: 'Admin User',
-            email: 'admin@iepi.com.br',
+            name: 'Ana Rodrigues',
+            email: 'ana.rodrigues@iepi.edu.br',
             role: 'ADMIN',
             enrolledCourseIds: [],
         },
+        // ─── Docente ───────────────────────────────────────────────────────
         {
-            id: 'student-1',
-            name: 'Test Student',
-            email: 'student@test.com',
-            role: 'STUDENT',
+            id: 'docente-1',
+            name: 'Prof. Marcos Oliveira',
+            email: 'marcos.oliveira@iepi.edu.br',
+            role: 'DOCENTE',
             enrolledCourseIds: [],
-        }
+        },
     ];
 
     async findById(id: string): Promise<User | null> {
@@ -47,8 +57,9 @@ export class MockUserRepository implements IUserRepository {
     /** Restore the repo to its initial seeded state — useful in beforeEach */
     reset(): void {
         this.users = [
-            { id: 'admin-1', name: 'Admin User', email: 'admin@iepi.com.br', role: 'ADMIN', enrolledCourseIds: [] },
-            { id: 'student-1', name: 'Test Student', email: 'student@test.com', role: 'STUDENT', enrolledCourseIds: [] },
+            { id: 'student-1', name: 'João Silva',           email: 'joao.silva@aluno.iepi.edu.br', role: 'STUDENT',  enrolledCourseIds: [] },
+            { id: 'admin-1',   name: 'Ana Rodrigues',        email: 'ana.rodrigues@iepi.edu.br',    role: 'ADMIN',    enrolledCourseIds: [] },
+            { id: 'docente-1', name: 'Prof. Marcos Oliveira', email: 'marcos.oliveira@iepi.edu.br', role: 'DOCENTE',  enrolledCourseIds: [] },
         ];
     }
 }

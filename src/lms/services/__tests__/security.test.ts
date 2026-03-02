@@ -58,7 +58,7 @@ describe('Security — UserRepository Input Handling', () => {
             // but it must NOT alter other records
             expect(user.name).toBe(payload);
             const admin = await repo.findById('admin-1');
-            expect(admin?.name).toBe('Admin User'); // not affected
+            expect(admin?.name).toBe('Ana Rodrigues'); // not affected
         });
     });
 

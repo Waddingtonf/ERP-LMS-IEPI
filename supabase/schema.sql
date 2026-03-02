@@ -19,7 +19,7 @@ create table if not exists public.profiles (
     name            text        not null,
     email           text        not null unique,
     role            text        not null default 'STUDENT'
-                                check (role in ('STUDENT', 'ADMIN', 'TEACHER', 'FINANCIAL', 'PEDAGOGICAL')),
+                                check (role in ('STUDENT', 'ADMIN', 'DOCENTE', 'FINANCEIRO', 'PEDAGOGICO')),
     enrolled_course_ids text[]  not null default '{}',
     avatar_url      text,
     phone           text,
@@ -240,3 +240,80 @@ create policy "Admin vê todas transações"
     using (
         exists (select 1 from public.profiles where id = auth.uid() and role = 'ADMIN')
     );
+
+-- =============================================================================
+-- SEED DATA — Usuários de Teste
+-- =============================================================================
+-- INSTRUÇÕES:
+--   1. Execute este bloco no SQL Editor do Supabase (com service_role key)
+--   2. Os UUIDs abaixo são fixos para facilitar testes — não altere em dev
+--   3. Em produção, remova ou substitua por usuários reais
+--
+-- Senha padrão de todos os usuários de teste: Iepi@2026#
+-- =============================================================================
+
+do $$
+declare
+    v_aluno_id    uuid := 'aaaaaaaa-0000-0000-0000-000000000001';
+    v_admin_id    uuid := 'aaaaaaaa-0000-0000-0000-000000000002';
+    v_docente_id  uuid := 'aaaaaaaa-0000-0000-0000-000000000003';
+begin
+
+    -- ── 1. Aluno ──────────────────────────────────────────────────────────────
+    insert into auth.users (
+        id, email, encrypted_password, email_confirmed_at,
+        raw_app_meta_data, raw_user_meta_data,
+        created_at, updated_at, role, aud
+    ) values (
+        v_aluno_id,
+        'joao.silva@aluno.iepi.edu.br',
+        crypt('Iepi@2026#', gen_salt('bf')),
+        now(),
+        '{"provider":"email","providers":["email"],"role":"STUDENT"}'::jsonb,
+        '{"name":"João Silva"}'::jsonb,
+        now(), now(), 'authenticated', 'authenticated'
+    ) on conflict (id) do nothing;
+
+    insert into public.profiles (id, name, email, role, enrolled_course_ids)
+    values (v_aluno_id, 'João Silva', 'joao.silva@aluno.iepi.edu.br', 'STUDENT', '{}')
+    on conflict (id) do nothing;
+
+    -- ── 2. Administrador ──────────────────────────────────────────────────────
+    insert into auth.users (
+        id, email, encrypted_password, email_confirmed_at,
+        raw_app_meta_data, raw_user_meta_data,
+        created_at, updated_at, role, aud
+    ) values (
+        v_admin_id,
+        'ana.rodrigues@iepi.edu.br',
+        crypt('Iepi@2026#', gen_salt('bf')),
+        now(),
+        '{"provider":"email","providers":["email"],"role":"ADMIN"}'::jsonb,
+        '{"name":"Ana Rodrigues"}'::jsonb,
+        now(), now(), 'authenticated', 'authenticated'
+    ) on conflict (id) do nothing;
+
+    insert into public.profiles (id, name, email, role, enrolled_course_ids)
+    values (v_admin_id, 'Ana Rodrigues', 'ana.rodrigues@iepi.edu.br', 'ADMIN', '{}')
+    on conflict (id) do nothing;
+
+    -- ── 3. Docente ────────────────────────────────────────────────────────────
+    insert into auth.users (
+        id, email, encrypted_password, email_confirmed_at,
+        raw_app_meta_data, raw_user_meta_data,
+        created_at, updated_at, role, aud
+    ) values (
+        v_docente_id,
+        'marcos.oliveira@iepi.edu.br',
+        crypt('Iepi@2026#', gen_salt('bf')),
+        now(),
+        '{"provider":"email","providers":["email"],"role":"DOCENTE"}'::jsonb,
+        '{"name":"Prof. Marcos Oliveira"}'::jsonb,
+        now(), now(), 'authenticated', 'authenticated'
+    ) on conflict (id) do nothing;
+
+    insert into public.profiles (id, name, email, role, enrolled_course_ids)
+    values (v_docente_id, 'Prof. Marcos Oliveira', 'marcos.oliveira@iepi.edu.br', 'DOCENTE', '{}')
+    on conflict (id) do nothing;
+
+end $$;
