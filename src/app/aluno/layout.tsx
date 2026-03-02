@@ -1,5 +1,5 @@
-import { Bell, BookOpen, LogOut, Settings, User } from "lucide-react"
-import Link from "next/link"
+import AlunoNav from "./_components/AlunoNav"
+import { Bell, Search } from "lucide-react"
 
 export default function AlunoLayout({
     children,
@@ -7,64 +7,54 @@ export default function AlunoLayout({
     children: React.ReactNode
 }) {
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row">
-            <aside className="w-full md:w-64 bg-violet-900 text-white flex flex-col">
-                <div className="p-6 flex items-center gap-3 border-b border-violet-800">
-                    <div className="w-8 h-8 bg-violet-500 rounded-lg flex items-center justify-center font-bold">
-                        IE
-                    </div>
-                    <span className="font-semibold text-lg tracking-tight">Portal do Aluno</span>
-                </div>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-violet-50/30 to-slate-50 flex flex-col md:flex-row">
+            <AlunoNav />
 
-                <nav className="flex-1 py-6 px-4 space-y-2">
-                    <Link href="/aluno" className="flex items-center gap-3 px-4 py-3 bg-violet-800/50 rounded-lg text-sm font-medium transition-colors hover:bg-violet-800">
-                        <BookOpen className="w-5 h-5 text-violet-300" />
-                        Meus Cursos
-                    </Link>
-                    <Link href="/aluno/historico" className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors hover:bg-violet-800 text-violet-100">
-                        <svg className="w-5 h-5 text-violet-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
-                        Histórico Escolar
-                    </Link>
-                    <Link href="/aluno/financeiro" className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors hover:bg-violet-800 text-violet-100">
-                        <Settings className="w-5 h-5 text-violet-300" />
-                        Financeiro
-                    </Link>
-                    <Link href="/aluno/perfil" className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors hover:bg-violet-800 text-violet-100">
-                        <User className="w-5 h-5 text-violet-300" />
-                        Meu Perfil
-                    </Link>
-                </nav>
-
-                <div className="p-4 border-t border-violet-800">
-                    <button className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-sm font-medium transition-colors hover:bg-violet-800 text-red-300 hover:text-red-200">
-                        <LogOut className="w-5 h-5" />
-                        Sair
-                    </button>
-                </div>
-            </aside>
-
+            {/* Main content area */}
             <main className="flex-1 flex flex-col h-screen overflow-hidden">
-                <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
-                    <h1 className="text-xl font-semibold text-slate-800">Área Acadêmica</h1>
-                    <div className="flex items-center gap-4">
-                        <button className="relative p-2 text-slate-500 hover:text-violet-700 transition-colors">
+                {/* Sticky Header */}
+                <header className="h-16 shrink-0 bg-white/80 backdrop-blur-md border-b border-slate-200/70 flex items-center justify-between px-6 md:px-8 sticky top-0 z-30">
+                    <div className="flex items-center gap-3 flex-1 max-w-md ml-10 md:ml-0">
+                        <div className="relative flex-1 hidden sm:block">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <input
+                                type="search"
+                                placeholder="Buscar aulas, materiais..."
+                                className="w-full pl-9 pr-4 py-2 text-sm bg-slate-100/80 border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-400 focus:bg-white transition-all placeholder:text-slate-400"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <button
+                            className="relative p-2.5 text-slate-500 hover:text-violet-700 hover:bg-violet-50 rounded-xl transition-all"
+                            aria-label="Notificações"
+                        >
                             <Bell className="w-5 h-5" />
-                            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white animate-pulse" />
                         </button>
-                        <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
-                            <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
-                                <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix" alt="Avatar" />
+
+                        <div className="flex items-center gap-3 pl-3 border-l border-slate-200 ml-1">
+                            <div className="w-9 h-9 rounded-xl overflow-hidden ring-2 ring-violet-200 shadow-sm">
+                                <img
+                                    src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix"
+                                    alt="Avatar"
+                                    className="w-full h-full object-cover"
+                                />
                             </div>
                             <div className="hidden sm:block">
-                                <div className="text-sm font-medium text-slate-700">João Silva</div>
-                                <div className="text-xs text-slate-500">Aluno(a)</div>
+                                <div className="text-sm font-semibold text-slate-800 leading-tight">João Silva</div>
+                                <div className="text-[11px] text-violet-500 font-medium">Aluno(a)</div>
                             </div>
                         </div>
                     </div>
                 </header>
 
-                <div className="flex-1 overflow-auto p-8">
-                    {children}
+                {/* Page content */}
+                <div className="flex-1 overflow-auto">
+                    <div className="p-6 md:p-8 max-w-6xl mx-auto w-full">
+                        {children}
+                    </div>
                 </div>
             </main>
         </div>

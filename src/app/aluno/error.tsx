@@ -22,7 +22,7 @@ export default function AlunoError({
             </div>
             <button
                 onClick={reset}
-                className="bg-violet-600 hover:bg-violet-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+                className="bg-violet-600 hover:bg-violet-700 active:scale-[0.97] text-white font-semibold py-3 px-8 rounded-xl transition-all shadow-sm shadow-violet-200"
             >
                 Tentar novamente
             </button>
