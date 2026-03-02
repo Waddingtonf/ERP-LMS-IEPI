@@ -77,13 +77,6 @@ export default function RootLayout({
                 </svg>
                 Área do aluno
               </Link>
-              <Link
-                href="/cursos"
-                className="inline-flex items-center text-sm font-bold text-white px-5 py-2.5 rounded-lg transition-colors"
-                style={{ backgroundColor: "var(--iepi-orange-light)" }}
-              >
-                Inscreva-se
-              </Link>
             </div>
           </div>
         </header>
