@@ -134,4 +134,112 @@ export default async function StudentDashboard() {
             </div>
 
             {/* Meus Cursos */}
-            <div>\n                <div className="flex items-center justify-between mb-5">\n                    <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">\n                        <BookOpen className="w-5 h-5 text-violet-600" /> Meus Cursos\n                    </h2>\n                    {enrollments.length > 0 && (\n                        <span className="text-sm text-slate-500">{enrollments.length} matr\u00edcula{enrollments.length !== 1 ? 's' : ''}</span>\n                    )}\n                </div>\n\n                {enrollments.length === 0 ? (\n                    <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-14 flex flex-col items-center text-center">\n                        <div className="w-16 h-16 rounded-2xl bg-violet-50 flex items-center justify-center mb-4">\n                            <BookOpen className="w-8 h-8 text-violet-400" />\n                        </div>\n                        <h3 className="text-lg font-semibold text-slate-800 mb-2">Nenhuma matr\u00edcula ativa</h3>\n                        <p className="text-slate-500 text-sm mb-6 max-w-sm">Explore nosso cat\u00e1logo e adquira seu primeiro curso com pagamento via CIELO Sandbox.</p>\n                        <Link href="/checkout/course-1">\n                            <button className="bg-violet-600 hover:bg-violet-700 active:scale-[0.98] text-white font-semibold py-2.5 px-6 rounded-xl text-sm transition-all shadow-sm shadow-violet-200">\n                                Simular Compra\n                            </button>\n                        </Link>\n                    </div>\n                ) : (\n                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">\n                        {enrollments.map((enrollment) => (\n                            <div\n                                key={enrollment.id}\n                                className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col sm:flex-row"\n                            >\n                                <div className="relative w-full sm:w-44 h-40 sm:h-auto shrink-0 overflow-hidden">\n                                    <img\n                                        src={enrollment.thumbnail}\n                                        alt={enrollment.title}\n                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"\n                                    />\n                                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent sm:bg-gradient-to-r" />\n                                    <div className="absolute top-3 left-3 bg-black/50 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">\n                                        {enrollment.type}\n                                    </div>\n                                </div>\n                                <div className="flex-1 p-5 flex flex-col">\n                                    <h4 className="font-bold text-base text-slate-900 leading-snug mb-1 line-clamp-2">{enrollment.title}</h4>\n                                    <p className="text-xs text-slate-500 mb-auto">Iniciado: {enrollment.lastAccessed}</p>\n\n                                    <div className="mt-4 space-y-3">\n                                        <div>\n                                            <div className="flex justify-between items-center text-xs mb-1.5">\n                                                <span className="text-slate-500 font-medium">Progresso</span>\n                                                <span className="text-violet-600 font-bold">{enrollment.progress}%</span>\n                                            </div>\n                                            <Progress\n                                                value={enrollment.progress}\n                                                className="h-1.5 bg-slate-100 [&>div]:bg-gradient-to-r [&>div]:from-violet-500 [&>div]:to-indigo-500 [&>div]:transition-all [&>div]:duration-700"\n                                            />\n                                        </div>\n\n                                        {enrollment.progress < 100 ? (\n                                            <Link href={`/aluno/aulas/${enrollment.courseId}`} className="block">\n                                                <button className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 active:scale-[0.98] text-white text-sm font-semibold py-2.5 rounded-xl transition-all">\n                                                    <PlayCircle className="w-4 h-4" />\n                                                    Continuar\n                                                </button>\n                                            </Link>\n                                        ) : (\n                                            <div className="w-full flex items-center justify-center gap-2 bg-emerald-50 text-emerald-700 text-sm font-semibold py-2.5 rounded-xl">\n                                                <CheckCircle className="w-4 h-4" />\n                                                Conclu\u00eddo\n                                            </div>\n                                        )}\n                                    </div>\n                                </div>\n                            </div>\n                        ))}\n                    </div>\n                )}\n            </div>\n\n            {/* Achievement Section */}\n            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">\n                <h3 className="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">\n                    <Trophy className="w-5 h-5 text-amber-500" /> Conquistas\n                </h3>\n                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">\n                    {[\n                        { icon: "🎯", label: "Primeiro Login", earned: true },\n                        { icon: "🔥", label: "7 dias seguidos", earned: true },\n                        { icon: "📚", label: "5 aulas", earned: false },\n                        { icon: "🏆", label: "1° Certificado", earned: false },\n                    ].map((badge) => (\n                        <div\n                            key={badge.label}\n                            className={`flex flex-col items-center gap-2 p-4 rounded-xl border text-center transition-all ${\n                                badge.earned\n                                    ? "border-amber-200 bg-amber-50 shadow-sm"\n                                    : "border-slate-200 bg-slate-50 opacity-50 grayscale"\n                            }`}\n                        >\n                            <span className="text-2xl">{badge.icon}</span>\n                            <span className={`text-xs font-semibold ${\n                                badge.earned ? "text-amber-800" : "text-slate-500"\n                            }`}>{badge.label}</span>\n                        </div>\n                    ))}\n                </div>\n            </div>\n        </div>\n    )\n}
+            <div>
+                <div className="flex items-center justify-between mb-5">
+                    <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <BookOpen className="w-5 h-5 text-violet-600" /> Meus Cursos
+                    </h2>
+                    {enrollments.length > 0 && (
+                        <span className="text-sm text-slate-500">{enrollments.length} matrícula{enrollments.length !== 1 ? 's' : ''}</span>
+                    )}
+                </div>
+
+                {enrollments.length === 0 ? (
+                    <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-14 flex flex-col items-center text-center">
+                        <div className="w-16 h-16 rounded-2xl bg-violet-50 flex items-center justify-center mb-4">
+                            <BookOpen className="w-8 h-8 text-violet-400" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-slate-800 mb-2">Nenhuma matrícula ativa</h3>
+                        <p className="text-slate-500 text-sm mb-6 max-w-sm">Explore nosso catálogo e adquira seu primeiro curso com pagamento via CIELO Sandbox.</p>
+                        <Link href="/checkout/course-1">
+                            <button className="bg-violet-600 hover:bg-violet-700 active:scale-[0.98] text-white font-semibold py-2.5 px-6 rounded-xl text-sm transition-all shadow-sm shadow-violet-200">
+                                Simular Compra
+                            </button>
+                        </Link>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        {enrollments.map((enrollment) => (
+                            <div
+                                key={enrollment.id}
+                                className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col sm:flex-row"
+                            >
+                                <div className="relative w-full sm:w-44 h-40 sm:h-auto shrink-0 overflow-hidden">
+                                    <img
+                                        src={enrollment.thumbnail}
+                                        alt={enrollment.title}
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent sm:bg-gradient-to-r" />
+                                    <div className="absolute top-3 left-3 bg-black/50 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                                        {enrollment.type}
+                                    </div>
+                                </div>
+                                <div className="flex-1 p-5 flex flex-col">
+                                    <h4 className="font-bold text-base text-slate-900 leading-snug mb-1 line-clamp-2">{enrollment.title}</h4>
+                                    <p className="text-xs text-slate-500 mb-auto">Iniciado: {enrollment.lastAccessed}</p>
+
+                                    <div className="mt-4 space-y-3">
+                                        <div>
+                                            <div className="flex justify-between items-center text-xs mb-1.5">
+                                                <span className="text-slate-500 font-medium">Progresso</span>
+                                                <span className="text-violet-600 font-bold">{enrollment.progress}%</span>
+                                            </div>
+                                            <Progress
+                                                value={enrollment.progress}
+                                                className="h-1.5 bg-slate-100 [&>div]:bg-gradient-to-r [&>div]:from-violet-500 [&>div]:to-indigo-500 [&>div]:transition-all [&>div]:duration-700"
+                                            />
+                                        </div>
+
+                                        {enrollment.progress < 100 ? (
+                                            <Link href={`/aluno/aulas/${enrollment.courseId}`} className="block">
+                                                <button className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 active:scale-[0.98] text-white text-sm font-semibold py-2.5 rounded-xl transition-all">
+                                                    <PlayCircle className="w-4 h-4" />
+                                                    Continuar
+                                                </button>
+                                            </Link>
+                                        ) : (
+                                            <div className="w-full flex items-center justify-center gap-2 bg-emerald-50 text-emerald-700 text-sm font-semibold py-2.5 rounded-xl">
+                                                <CheckCircle className="w-4 h-4" />
+                                                Concluído
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* Achievement Section */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 className="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <Trophy className="w-5 h-5 text-amber-500" /> Conquistas
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {[
+                        { icon: "🎯", label: "Primeiro Login", earned: true },
+                        { icon: "🔥", label: "7 dias seguidos", earned: true },
+                        { icon: "📚", label: "5 aulas", earned: false },
+                        { icon: "🏆", label: "1° Certificado", earned: false },
+                    ].map((badge) => (
+                        <div
+                            key={badge.label}
+                            className={`flex flex-col items-center gap-2 p-4 rounded-xl border text-center transition-all ${
+                                badge.earned
+                                    ? "border-amber-200 bg-amber-50 shadow-sm"
+                                    : "border-slate-200 bg-slate-50 opacity-50 grayscale"
+                            }`}
+                        >
+                            <span className="text-2xl">{badge.icon}</span>
+                            <span className={`text-xs font-semibold ${
+                                badge.earned ? "text-amber-800" : "text-slate-500"
+                            }`}>{badge.label}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    )
+}
