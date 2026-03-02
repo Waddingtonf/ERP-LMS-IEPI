@@ -17,7 +17,7 @@ export default function SobrePage() {
             <section className="py-24 px-4" style={{ backgroundColor: "var(--iepi-navy-dark)" }}>
                 <div className="container mx-auto max-w-4xl text-center">
                     <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6 uppercase">
-                        Sobre o <span className="text-orange-400">IEPI</span>
+                        Sobre o <span style={{ color: "var(--iepi-pink)" }}>IEPI</span>
                     </h1>
                     <p className="text-lg text-white/60 max-w-2xl mx-auto">
                         Transformando o futuro através da educação superior e profissionalizante de excelência há mais de 15 anos.
@@ -26,7 +26,7 @@ export default function SobrePage() {
             </section>
 
             {/* Stats */}
-            <section className="py-12 bg-orange-500">
+            <section className="py-12" style={{ background: "var(--g-section)" }}>
                 <div className="container mx-auto px-4 max-w-5xl">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                         {stats.map((s) => (
@@ -64,7 +64,7 @@ export default function SobrePage() {
             </section>
 
             {/* MVV */}
-            <section className="py-16 px-4 bg-orange-500">
+            <section className="py-16 px-4" style={{ backgroundColor: "var(--iepi-bg-deep)" }}>
                 <div className="container mx-auto max-w-5xl">
                     <div className="grid md:grid-cols-3 gap-6">
                         {values.map((v) => (
@@ -74,7 +74,7 @@ export default function SobrePage() {
                                 style={{ backgroundColor: "var(--iepi-navy)" }}
                             >
                                 <div className="flex justify-center mb-4">
-                                    <div className="w-14 h-14 rounded-full bg-orange-500 flex items-center justify-center">
+                                    <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "var(--g-brand)" }}>
                                         <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                             <path strokeLinecap="round" strokeLinejoin="round" d={v.icon}/>
                                         </svg>

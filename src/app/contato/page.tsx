@@ -5,7 +5,7 @@ export default function ContatoPage() {
             <section className="py-20 px-4" style={{ backgroundColor: "var(--iepi-navy-dark)" }}>
                 <div className="container mx-auto max-w-4xl text-center">
                     <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 uppercase">
-                        Fale <span className="text-orange-400">Conosco</span>
+                        Fale <span style={{ color: "var(--iepi-pink)" }}>Conosco</span>
                     </h1>
                     <p className="text-white/60 text-lg">
                         Dúvidas, sugestões ou suporte? Nossa equipe está pronta para te atender.
@@ -30,7 +30,7 @@ export default function ContatoPage() {
                                     className="flex items-start gap-4 p-5 rounded-xl"
                                     style={{ backgroundColor: "var(--iepi-navy-light)", border: "1px solid rgba(255,255,255,0.07)" }}
                                 >
-                                    <div className="w-11 h-11 rounded-full bg-orange-500 flex items-center justify-center shrink-0">
+                                    <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0" style={{ background: "var(--g-brand)" }}>
                                         <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                                             <path strokeLinecap="round" strokeLinejoin="round" d={item.icon}/>
                                         </svg>
@@ -54,7 +54,7 @@ export default function ContatoPage() {
                                     <label className="block text-white/70 text-xs font-semibold mb-1.5 uppercase tracking-wide">Nome Completo</label>
                                     <input
                                         placeholder="Como devemos te chamar"
-                                        className="w-full px-4 py-3 rounded-lg text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                        className="w-full px-4 py-3 rounded-lg text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#6C1ED9]"
                                         style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)" }}
                                     />
                                 </div>
@@ -64,7 +64,7 @@ export default function ContatoPage() {
                                         <input
                                             type="email"
                                             placeholder="seu@email.com"
-                                            className="w-full px-4 py-3 rounded-lg text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                            className="w-full px-4 py-3 rounded-lg text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#6C1ED9]"
                                             style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)" }}
                                         />
                                     </div>
@@ -73,7 +73,7 @@ export default function ContatoPage() {
                                         <input
                                             type="tel"
                                             placeholder="(XX) 9xxxx-xxxx"
-                                            className="w-full px-4 py-3 rounded-lg text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                            className="w-full px-4 py-3 rounded-lg text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#6C1ED9]"
                                             style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)" }}
                                         />
                                     </div>
@@ -83,13 +83,14 @@ export default function ContatoPage() {
                                     <textarea
                                         rows={4}
                                         placeholder="Descreva sua dúvida ou mensagem..."
-                                        className="w-full px-4 py-3 rounded-lg text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+                                        className="w-full px-4 py-3 rounded-lg text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#6C1ED9] resize-none"
                                         style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)" }}
                                     />
                                 </div>
                                 <button
                                     type="submit"
-                                    className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm uppercase tracking-wide rounded-lg transition-colors"
+                                    className="w-full py-3 text-white font-bold text-sm uppercase tracking-wide rounded-lg transition-all hover:opacity-90"
+                                    style={{ background: "var(--g-brand)" }}
                                 >
                                     Enviar Mensagem
                                 </button>

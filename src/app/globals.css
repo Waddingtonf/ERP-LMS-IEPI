@@ -125,29 +125,59 @@
   }
 }
 
-/* ── IEPI Brand Tokens ─────────────────────────────────────────────────────── */
+/* ── IEPI Brand Tokens — Paleta de Marketing ──────────────────────────────── */
 :root {
-  --iepi-navy:        #180e4f;
-  --iepi-navy-light:  #251870;
-  --iepi-navy-dark:   #0e0933;
-  --iepi-orange:      #f97316;
-  --iepi-orange-dark: #ea580c;
-  --iepi-purple:      #6d28d9;
-  --iepi-text-muted:  #a5a8c7;
+  /* ─── Nova Paleta ───────────────────────────── */
+  --iepi-bg:           #140840;   /* Roxo Escuro — fundo principal         */
+  --iepi-bg-surface:   #1e0e60;   /* Superfície de cards                   */
+  --iepi-bg-deep:      #0d0525;   /* Header / Footer                       */
+  --iepi-purple:       #6C1ED9;   /* Lilás — botões secundários / hovers   */
+  --iepi-pink:         #BF1FB5;   /* Rosa — destaques / badges / acento    */
+  --iepi-cyan:         #049DBF;   /* Ciano — informação / CTA secundário   */
+  --iepi-orange:       #D96704;   /* Laranja — CTA principal / urgência    */
+
+  /* ─── Aliases de retrocompatibilidade ──────── */
+  --iepi-navy:         #140840;
+  --iepi-navy-light:   #1e0e60;
+  --iepi-navy-dark:    #0d0525;
+
+  /* ─── Gradientes prontos ────────────────────── */
+  --g-brand:   linear-gradient(135deg, #BF1FB5 0%, #6C1ED9 100%);
+  --g-warm:    linear-gradient(135deg, #D96704 0%, #BF1FB5 100%);
+  --g-cool:    linear-gradient(135deg, #049DBF 0%, #6C1ED9 100%);
+  --g-hero:    linear-gradient(160deg, #0d0525 0%, #140840 50%, #1e0e60 100%);
+  --g-section: linear-gradient(135deg, #6C1ED9 0%, #BF1FB5 100%);
 }
 
 /* ── Utility classes ──────────────────────────────────────────────────────── */
-.iepi-btn-orange {
-  @apply bg-orange-500 hover:bg-orange-600 text-white font-semibold transition-colors;
+.iepi-btn-primary {
+  background: var(--iepi-orange);
+  color: #fff;
+  font-weight: 700;
+  transition: filter 0.2s ease, transform 0.15s ease;
+}
+.iepi-btn-primary:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
 }
 
-.iepi-section-navy {
-  background-color: var(--iepi-navy);
+.iepi-btn-brand {
+  background: var(--g-brand);
+  color: #fff;
+  font-weight: 700;
+  transition: filter 0.2s ease, transform 0.15s ease;
+}
+.iepi-btn-brand:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
-.iepi-card-dark {
-  background-color: var(--iepi-navy-light);
-  border: 1px solid rgba(255,255,255,0.08);
+.iepi-section-bg   { background-color: var(--iepi-bg); }
+.iepi-section-deep { background-color: var(--iepi-bg-deep); }
+
+.iepi-card {
+  background-color: var(--iepi-bg-surface);
+  border: 1px solid rgba(108, 30, 217, 0.25);
 }
 
 /* smooth scroll */
@@ -155,9 +185,52 @@ html { scroll-behavior: smooth; }
 
 /* card hover lift */
 .card-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
 }
 .card-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+  transform: translateY(-5px);
+  box-shadow: 0 16px 40px rgba(108, 30, 217, 0.35);
+}
+
+/* glow on important elements */
+.iepi-glow-pink  { box-shadow: 0 0 24px rgba(191, 31, 181, 0.4); }
+.iepi-glow-cyan  { box-shadow: 0 0 24px rgba(4, 157, 191, 0.4); }
+.iepi-glow-orange{ box-shadow: 0 0 20px rgba(217, 103, 4, 0.5); }
+
+/* gradient text */
+.iepi-text-gradient {
+  background: var(--g-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.iepi-text-gradient-warm {
+  background: var(--g-warm);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* nav / footer hover links */
+.iepi-nav-link   { color: rgba(255,255,255,0.75); transition: color 0.2s; text-decoration: none; }
+.iepi-nav-link:hover { color: #049DBF; }
+
+.iepi-footer-link { color: rgba(255,255,255,0.5); transition: color 0.2s; text-decoration: none; }
+.iepi-footer-link:hover { color: #049DBF; }
+
+.iepi-footer-link-pink { color: rgba(255,255,255,0.5); transition: color 0.2s; text-decoration: none; }
+.iepi-footer-link-pink:hover { color: #BF1FB5; }
+
+/* social icon circle */
+.iepi-social {
+  width: 2rem; height: 2rem;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(108,30,217,0.25);
+  border: 1px solid rgba(108,30,217,0.4);
+  transition: background 0.2s, transform 0.15s;
+}
+.iepi-social:hover {
+  background: var(--g-brand);
+  transform: scale(1.1);
 }

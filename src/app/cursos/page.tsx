@@ -37,8 +37,8 @@ function CourseCard({ c }: { c: CatalogCourse }) {
             className="card-lift flex flex-col rounded-2xl overflow-hidden"
             style={{ backgroundColor: "var(--iepi-navy-light)", border: "1px solid rgba(255,255,255,0.08)" }}
         >
-            {/* Orange header */}
-            <div className="bg-orange-500 p-4 min-h-[76px] flex items-start">
+            {/* Brand gradient header */}
+            <div className="p-4 min-h-[76px] flex items-start" style={{ background: "var(--g-brand)" }}>
                 <h3 className="text-white font-extrabold text-sm leading-snug">{c.title}</h3>
             </div>
 
@@ -73,7 +73,7 @@ function CourseCard({ c }: { c: CatalogCourse }) {
                 </p>
                 <Link
                     href={`/cursos/${c.id}`}
-                    className="block w-full text-center py-2.5 text-xs font-extrabold text-white rounded-lg uppercase tracking-wide transition-colors hover:bg-orange-500"
+                    className="block w-full text-center py-2.5 text-xs font-extrabold text-white rounded-lg uppercase tracking-wide transition-colors hover:bg-[#D96704]"
                     style={{ backgroundColor: "var(--iepi-navy-dark)", border: "1px solid rgba(255,255,255,0.12)" }}
                 >
                     Inscreva&#8209;se
@@ -133,7 +133,7 @@ export default function CursosPage() {
                                 value={search}
                                 onChange={e => { setSearch(e.target.value); setPage(1) }}
                                 placeholder="Buscar curso..."
-                                className="w-full pl-9 pr-3 py-2 text-xs text-white placeholder-white/35 rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500"
+                                className="w-full pl-9 pr-3 py-2 text-xs text-white placeholder-white/35 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#6C1ED9]"
                                 style={{ backgroundColor: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
                             />
                         </div>
@@ -142,7 +142,7 @@ export default function CursosPage() {
                         <select
                             value={typeFilter}
                             onChange={e => { setTypeFilter(e.target.value as CourseType | "Todos"); setPage(1) }}
-                            className="px-3 py-2 text-xs text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer"
+                            className="px-3 py-2 text-xs text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-[#6C1ED9] cursor-pointer"
                             style={{ backgroundColor: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
                         >
                             {TYPE_FILTERS.map(f => <option key={f} value={f}>{f === "Todos" ? "Tipo de Curso" : f}</option>)}
@@ -152,7 +152,7 @@ export default function CursosPage() {
                         <select
                             value={instrFilter}
                             onChange={e => { setInstrFilter(e.target.value); setPage(1) }}
-                            className="px-3 py-2 text-xs text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer"
+                            className="px-3 py-2 text-xs text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-[#6C1ED9] cursor-pointer"
                             style={{ backgroundColor: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
                         >
                             {INSTRUCTOR_FILTERS.map(f => <option key={f} value={f}>{f === "Todos" ? "Público-Alvo" : f}</option>)}
@@ -165,9 +165,9 @@ export default function CursosPage() {
                                 onClick={() => { setTypeFilter(typeFilter === f ? "Todos" : f as CourseType); setPage(1) }}
                                 className="hidden lg:flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-colors"
                                 style={{
-                                    backgroundColor: typeFilter === f ? "#f97316" : "rgba(255,255,255,0.07)",
+                                    background: typeFilter === f ? "var(--g-brand)" : "rgba(255,255,255,0.07)",
                                     color: typeFilter === f ? "#fff" : "rgba(255,255,255,0.5)",
-                                    border: "1px solid rgba(255,255,255,0.1)"
+                                    border: typeFilter === f ? "none" : "1px solid rgba(255,255,255,0.1)"
                                 }}
                             >
                                 {f}
@@ -195,13 +195,13 @@ export default function CursosPage() {
 
                     <p className="text-xs mb-6" style={{ color: "rgba(255,255,255,0.38)" }}>
                         {filtered.length} {filtered.length === 1 ? "curso encontrado" : "cursos encontrados"}
-                        {typeFilter !== "Todos" && <> para <span className="text-orange-400 font-semibold">"{typeFilter}"</span></>}
+                        {typeFilter !== "Todos" && <> para <span className="font-semibold" style={{ color: "var(--iepi-pink)" }}>"{typeFilter}"</span></>}
                     </p>
 
                     {paginated.length === 0 ? (
                         <div className="text-center py-24">
                             <p className="text-lg" style={{ color: "rgba(255,255,255,0.35)" }}>Nenhum curso encontrado.</p>
-                            <button onClick={reset} className="mt-4 text-sm text-orange-400 hover:text-orange-300 underline">Limpar filtros</button>
+                            <button onClick={reset} className="mt-4 text-sm underline hover:text-white transition-colors" style={{ color: "var(--iepi-pink)" }}>Limpar filtros</button>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5">
@@ -214,7 +214,7 @@ export default function CursosPage() {
                         <div className="flex items-center justify-center gap-1.5 mt-12">
                             <button
                                 onClick={() => go(page - 1)} disabled={page === 1}
-                                className="w-8 h-8 rounded-full flex items-center justify-center disabled:opacity-25 transition-colors text-white hover:bg-orange-500"
+                                className="w-8 h-8 rounded-full flex items-center justify-center disabled:opacity-25 transition-colors text-white hover:bg-[#6C1ED9]"
                                 style={{ border: "1px solid rgba(255,255,255,0.15)" }}
                             >
                                 <Ico d={P.chevL} cls="w-3.5 h-3.5" />
@@ -225,7 +225,7 @@ export default function CursosPage() {
                                     key={p} onClick={() => go(p)}
                                     className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors"
                                     style={{
-                                        backgroundColor: p === page ? "#f97316" : "transparent",
+                                        backgroundColor: p === page ? "var(--iepi-purple)" : "transparent",
                                         color: p === page ? "#fff" : "rgba(255,255,255,0.45)",
                                         border: "1px solid rgba(255,255,255,0.15)"
                                     }}
@@ -234,7 +234,7 @@ export default function CursosPage() {
 
                             <button
                                 onClick={() => go(page + 1)} disabled={page === totalPages}
-                                className="w-8 h-8 rounded-full flex items-center justify-center disabled:opacity-25 transition-colors text-white hover:bg-orange-500"
+                                className="w-8 h-8 rounded-full flex items-center justify-center disabled:opacity-25 transition-colors text-white hover:bg-[#6C1ED9]"
                                 style={{ border: "1px solid rgba(255,255,255,0.15)" }}
                             >
                                 <Ico d={P.chevR} cls="w-3.5 h-3.5" />

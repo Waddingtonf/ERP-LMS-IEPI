@@ -9,7 +9,7 @@ interface Props { params: Promise<{ cursoId: string }> }
 function Row({ icon, label, value }: { icon: string; label: string; value: string }) {
     return (
         <div className="flex items-start gap-3 py-3 border-b border-white/8">
-            <span className="text-orange-400 mt-0.5 text-base leading-none">{icon}</span>
+            <span className="mt-0.5 text-base leading-none" style={{ color: "var(--iepi-cyan)" }}>{icon}</span>
             <div>
                 <p className="text-[11px] uppercase tracking-widest font-semibold mb-0.5" style={{ color: "rgba(255,255,255,0.38)" }}>
                     {label}
@@ -44,13 +44,13 @@ export default async function CourseDetailPage({ params }: Props) {
                         <span>/</span>
                         <Link href="/cursos" className="hover:text-white transition-colors">Cursos</Link>
                         <span>/</span>
-                        <span className="text-orange-400 font-semibold truncate max-w-[200px]">{course.title}</span>
+                        <span className="font-semibold truncate max-w-[200px]" style={{ color: "var(--iepi-pink)" }}>{course.title}</span>
                     </nav>
 
                     <div className="flex flex-wrap items-center gap-3 mb-4">
                         <span
                             className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide"
-                            style={{ backgroundColor: "rgba(249,115,22,0.2)", color: "#f97316", border: "1px solid rgba(249,115,22,0.3)" }}
+                            style={{ backgroundColor: "rgba(108,30,217,0.2)", color: "var(--iepi-pink)", border: "1px solid rgba(108,30,217,0.3)" }}
                         >
                             {course.type}
                         </span>
@@ -141,7 +141,7 @@ export default async function CourseDetailPage({ params }: Props) {
                             {/* Price */}
                             <div className="mb-5">
                                 <p className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: "rgba(255,255,255,0.4)" }}>Investimento</p>
-                                <p className="text-3xl font-extrabold text-orange-400">{totalPrice}</p>
+                                <p className="text-3xl font-extrabold" style={{ color: "var(--iepi-pink)" }}>{totalPrice}</p>
                                 <p className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.4)" }}>
                                     ou {course.maxInstallments}x de {installmentPrice} sem juros
                                 </p>
@@ -159,16 +159,15 @@ export default async function CourseDetailPage({ params }: Props) {
                             <Link
                                 href={`/checkout/${course.id}`}
                                 className="block w-full text-center py-3.5 font-extrabold text-white rounded-xl text-sm uppercase tracking-wide transition-all hover:scale-[1.02] hover:shadow-lg"
-                                style={{ backgroundColor: "#f97316" }}
+                                style={{ background: "var(--g-brand)" }}
                             >
                                 Inscreva-se agora
                             </Link>
 
                             <Link
                                 href="/cursos"
-                                className="block w-full text-center mt-3 text-xs py-2 rounded-lg transition-colors"
+                                className="block w-full text-center mt-3 text-xs py-2 rounded-lg transition-colors hover:text-white"
                                 style={{ color: "rgba(255,255,255,0.4)" }}
-                                onMouseEnter={() => {}}
                             >
                                 ← Voltar aos cursos
                             </Link>
