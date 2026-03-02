@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { processCheckoutAction } from "@/lms/actions/checkoutActions"
+import { CATALOG, formatPrice } from "@/lms/data/catalog"
 
 // Validation schemas
 const profileSchema = z.object({
@@ -36,11 +37,12 @@ export default function CheckoutPage({ params }: { params: { cursoId: string } }
     const [files, setFiles] = useState<{ rg: File | null; historico: File | null }>({ rg: null, historico: null })
     const router = useRouter()
 
-    // MOCK: Em produção viria do DB (ex: await getCourseById no server component passando p/ client)
+    // Busca curso no catálogo pelo cursoId da URL (fallback para course-1 se não encontrado)
+    const catalogEntry = CATALOG.find(c => c.id === params.cursoId) ?? CATALOG[0]
     const course = {
-        title: "Gestão Estratégica em RH (Sandbox CIELO)",
-        price: 199.99,
-        maxInstallments: 12
+        title:           catalogEntry.title,
+        price:           catalogEntry.price / 100,   // centavos → reais
+        maxInstallments: catalogEntry.maxInstallments,
     }
 
     const profileForm = useForm<z.infer<typeof profileSchema>>({

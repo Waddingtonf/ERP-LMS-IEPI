@@ -16,7 +16,7 @@ describe('MockCourseRepository — CRUD', () => {
     it('seeded course-1 has the expected price in cents', async () => {
         const courses = await repo.findAll();
         const course = courses.find(c => c.id === 'course-1');
-        expect(course?.price).toBe(19999); // R$ 199,99
+        expect(course?.price).toBe(49900); // R$ 499,00 (Oncologia para Técnicos)
     });
 
     // ── findById ─────────────────────────────────────────────────────────────

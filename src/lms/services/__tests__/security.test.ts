@@ -89,7 +89,7 @@ describe('Security — CourseRepository Input Handling', () => {
         const all = await repo.findAll();
         // All other courses remain unchanged
         const original = all.find(c => c.id === 'course-1');
-        expect(original?.title).toBe('Curso de Especialização Sandbox');
+        expect(original?.title).toBe('Oncologia para Técnicos');
     });
 });
 

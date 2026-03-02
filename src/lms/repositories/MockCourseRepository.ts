@@ -1,24 +1,20 @@
 import { ICourseRepository, Course, Module, Material } from './CourseRepository';
+import { CATALOG } from '../data/catalog';
 
 export class MockCourseRepository implements ICourseRepository {
-    private courses: Course[] = [
-        {
-            id: 'course-1',
-            title: 'Curso de Especialização Sandbox',
-            description: 'Aprenda como utilizar todas as funcionalidades do nosso ambiente de testes CIELO.',
-            price: 19999, // R$ 199,99
-            modules: [
-                {
-                    id: 'module-1',
-                    title: 'Introdução ao Sistema',
-                    materials: [
-                        { id: 'mat-1', title: 'Boas-vindas (Video)', type: 'VIDEO', url: 'https://vimeo.com/123456' },
-                        { id: 'mat-2', title: 'Apostila Completa (PDF)', type: 'PDF', url: 'https://example.com/apostila.pdf' }
-                    ]
-                }
-            ]
-        }
-    ];
+    private courses: Course[] = CATALOG.map(c => ({
+        ...c,
+        modules: [
+            {
+                id: `${c.id}-mod-1`,
+                title: 'Módulo Introdutório',
+                materials: [
+                    { id: `${c.id}-mat-1`, title: 'Boas-vindas', type: 'VIDEO' as const, url: 'https://vimeo.com/123456' },
+                    { id: `${c.id}-mat-2`, title: 'Apostila Completa', type: 'PDF' as const, url: 'https://example.com/apostila.pdf' },
+                ],
+            },
+        ],
+    }));
 
     async findAll(): Promise<Course[]> {
         return this.courses;

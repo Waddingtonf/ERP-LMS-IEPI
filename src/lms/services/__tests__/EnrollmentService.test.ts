@@ -118,8 +118,8 @@ describe('EnrollmentService — Happy Path', () => {
     it('passes the course price (in cents) to Cielo', async () => {
         await service.enrollWithPayment('student-1', 'course-1', validCard);
         const arg = (mockCielo.createTransaction as jest.Mock).mock.calls[0][0];
-        // seeded course-1 price = 19999
-        expect(arg.amount).toBe(19999);
+        // seeded course-1 price = 49900 (Oncologia para Técnicos)
+        expect(arg.amount).toBe(49900);
     });
 });
 

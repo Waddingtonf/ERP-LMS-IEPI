@@ -15,7 +15,16 @@ export interface Course {
     id: string;
     title: string;
     description: string;
-    price: number;
+    price: number;           // em centavos
+    type: string;            // "Curso Livre" | "Pós-Graduação" | etc
+    instructor: string;      // público-alvo profissional
+    hours: string;           // "360h"
+    startDate: string;       // "DD/MM/YYYY"
+    endDate: string;
+    schedule: string;        // "Matutino ou Vespertino"
+    corenRequired: boolean;
+    maxInstallments: number;
+    imageUrl?: string;
     modules: Module[];
 }
 
