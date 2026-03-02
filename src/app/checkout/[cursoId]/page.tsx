@@ -84,7 +84,7 @@ export default function CheckoutPage({ params }: { params: { cursoId: string } }
             formData.append("installments", paymentData.installments)
 
             // Chama o Gateway CIELO Sandbox
-            const result = await processCheckoutAction('course-1', formData) // Hardcoded 'course-1' do mock repo
+            const result = await processCheckoutAction(params.cursoId, formData)
 
             if (result?.success) {
                 toast.success(`Pagamento Aprovado na Cielo (Transação: ${result.transactionId})`)
@@ -92,8 +92,9 @@ export default function CheckoutPage({ params }: { params: { cursoId: string } }
             } else {
                 toast.error(`Pagamento Recusado: ${result?.error}`)
             }
-        } catch (error: any) {
-            toast.error(`Erro no processamento: ${error.message}`)
+        } catch (error: unknown) {
+            const msg = error instanceof Error ? error.message : 'Erro desconhecido no processamento'
+            toast.error(`Erro no processamento: ${msg}`)
         } finally {
             setIsProcessing(false)
         }

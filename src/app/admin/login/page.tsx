@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Settings, LogIn } from "lucide-react"
+import { mockLoginAction } from "@/lms/actions/authActions"
 
 export default function AdminLoginPage() {
     return (
@@ -22,7 +23,8 @@ export default function AdminLoginPage() {
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-slate-800 py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-slate-700">
-                    <form className="space-y-6" action="/admin" method="GET">
+                    <form className="space-y-6" action={mockLoginAction}>
+                        <input type="hidden" name="role" value="ADMIN" />
                         <div>
                             <Label htmlFor="email" className="text-slate-300">E-mail Corporativo</Label>
                             <div className="mt-1">

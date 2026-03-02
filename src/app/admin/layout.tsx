@@ -1,5 +1,6 @@
 import { LayoutDashboard, Users, BookOpen, FileCheck, DollarSign, LogOut } from "lucide-react"
 import Link from "next/link"
+import { logoutAction } from "@/lms/actions/authActions"
 
 export default function AdminLayout({
     children,
@@ -40,10 +41,12 @@ export default function AdminLayout({
                 </nav>
 
                 <div className="p-4 border-t border-slate-800">
-                    <button className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 text-red-400 hover:text-red-300">
-                        <LogOut className="w-5 h-5" />
-                        Sair do Painel
-                    </button>
+                    <form action={logoutAction}>
+                        <button type="submit" className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 text-red-400 hover:text-red-300">
+                            <LogOut className="w-5 h-5" />
+                            Sair do Painel
+                        </button>
+                    </form>
                 </div>
             </aside>
 

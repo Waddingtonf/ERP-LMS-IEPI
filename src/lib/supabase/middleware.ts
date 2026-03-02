@@ -1,20 +1,54 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import {
+    MOCK_ROLE_COOKIE,
+    ROUTE_ROLES,
+    ROLE_LOGIN_PAGE,
+    type Role,
+} from '@/lib/auth/roles'
 
-export async function updateSession(request: NextRequest) {
-    let supabaseResponse = NextResponse.next({
-        request,
-    })
+/** Returns the first ROUTE_ROLES key whose prefix matches the request path, or null. */
+function matchedRoute(pathname: string): string | null {
+    return Object.keys(ROUTE_ROLES).find(prefix => pathname.startsWith(prefix)) ?? null;
+}
 
-    // MOCK MODE: Bypass auth for visual presentation without a real Supabase DB
-    const isMockMode = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('dummy')
+/** Redirects to the correct login page for the given route, preserving the original URL as `next`. */
+function redirectToLogin(request: NextRequest, route: string): NextResponse {
+    const loginPath = ROLE_LOGIN_PAGE[route] ?? '/login';
+    const url = request.nextUrl.clone();
+    url.pathname = loginPath;
+    url.searchParams.set('next', request.nextUrl.pathname);
+    return NextResponse.redirect(url);
+}
 
+export async function updateSession(request: NextRequest): Promise<NextResponse> {
+    const isMockMode =
+        !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+        process.env.NEXT_PUBLIC_SUPABASE_URL.includes('dummy');
+
+    const route = matchedRoute(request.nextUrl.pathname);
+
+    // ── Mock / Sandbox mode ────────────────────────────────────────────────────
     if (isMockMode) {
-        // Just redirect to login if no auth is present (mocking the behavior)
-        // But since we want to allow viewing the dashboards, we will let them pass
-        // if they are coming FROM the login page, or we just allow everything in Mock mode.
-        return supabaseResponse
+        if (!route) return NextResponse.next({ request });
+
+        const mockRole = request.cookies.get(MOCK_ROLE_COOKIE)?.value as Role | undefined;
+
+        if (!mockRole) return redirectToLogin(request, route);
+
+        const allowed = ROUTE_ROLES[route];
+        if (!allowed.includes(mockRole)) {
+            // Authenticated but wrong role → 403 page
+            const url = request.nextUrl.clone();
+            url.pathname = '/403';
+            return NextResponse.redirect(url);
+        }
+
+        return NextResponse.next({ request });
     }
+
+    // ── Production / Supabase mode ─────────────────────────────────────────────
+    let supabaseResponse = NextResponse.next({ request });
 
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,42 +56,35 @@ export async function updateSession(request: NextRequest) {
         {
             cookies: {
                 getAll() {
-                    return request.cookies.getAll()
+                    return request.cookies.getAll();
                 },
                 setAll(cookiesToSet) {
-                    cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
-                    supabaseResponse = NextResponse.next({
-                        request,
-                    })
+                    cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+                    supabaseResponse = NextResponse.next({ request });
                     cookiesToSet.forEach(({ name, value, options }) =>
                         supabaseResponse.cookies.set(name, value, options)
-                    )
+                    );
                 },
             },
         }
-    )
+    );
 
-    const {
-        data: { user },
-    } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser();
 
-    if (
-        !user &&
-        (request.nextUrl.pathname.startsWith('/aluno') ||
-            request.nextUrl.pathname.startsWith('/admin') ||
-            request.nextUrl.pathname.startsWith('/docente') ||
-            request.nextUrl.pathname.startsWith('/financeiro') ||
-            request.nextUrl.pathname.startsWith('/pedagogico'))
-    ) {
-        const url = request.nextUrl.clone()
-        if (request.nextUrl.pathname.startsWith('/admin')) {
-            url.pathname = '/admin/login'
-        } else {
-            url.pathname = '/login'
+    if (!route) return supabaseResponse;
+
+    if (!user) return redirectToLogin(request, route);
+
+    // Role claim comes from the user's JWT app_metadata.role (set via Supabase RLS policy)
+    const userRole = (user.app_metadata?.role ?? user.user_metadata?.role) as Role | undefined;
+    if (userRole) {
+        const allowed = ROUTE_ROLES[route];
+        if (!allowed.includes(userRole)) {
+            const url = request.nextUrl.clone();
+            url.pathname = '/403';
+            return NextResponse.redirect(url);
         }
-        return NextResponse.redirect(url)
     }
 
-    return supabaseResponse
+    return supabaseResponse;
 }
-

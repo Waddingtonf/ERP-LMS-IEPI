@@ -15,6 +15,7 @@ import {
     Shield,
     ChevronRight,
 } from "lucide-react"
+import { logoutAction } from "@/lms/actions/authActions"
 
 const navItems = [
     {
@@ -136,13 +137,15 @@ export default function AlunoNav() {
 
                 {/* Logout */}
                 <div className="p-3 border-t border-violet-800/50">
-                    <Link
-                        href="/login"
-                        className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-medium transition-all hover:bg-red-500/15 text-violet-300 hover:text-red-300 group"
-                    >
-                        <LogOut className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                        Sair da Conta
-                    </Link>
+                    <form action={logoutAction}>
+                        <button
+                            type="submit"
+                            className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-medium transition-all hover:bg-red-500/15 text-violet-300 hover:text-red-300 group"
+                        >
+                            <LogOut className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                            Sair da Conta
+                        </button>
+                    </form>
                 </div>
             </aside>
         </>

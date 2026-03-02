@@ -24,7 +24,7 @@ export default async function TurmasPage() {
             <div className="grid gap-6 md:grid-cols-2">
                 {turmasComAlunos.map((turma) => {
                     const alunosEmRisco = turma.alunos.filter(
-                        (a) => a.status === "Em risco" || a.status === "Crítico" || a.status === "Reprovado"
+                        (a) => a.status === "Em risco" || a.status === "Reprovado"
                     ).length;
 
                     return (
