@@ -339,3 +339,94 @@ html { scroll-behavior: smooth; }
 }
 .iepi-pill:hover  { border-color: var(--iepi-purple); color: var(--iepi-purple); }
 .iepi-pill.active { background-color: var(--iepi-purple); border-color: var(--iepi-purple); color: #fff; }
+/* ─────────────────────────────────────────────────────────────────────────
+   Marketing / Conversion utilities
+───────────────────────────────────────────────────────────────────────── */
+.iepi-badge-urgency {
+  display: inline-flex; align-items: center; gap: .375rem;
+  padding: .3rem .85rem; border-radius: 9999px;
+  font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  background-color: rgba(217,103,4,.18); color: var(--iepi-orange-light);
+  border: 1px solid rgba(217,103,4,.30);
+}
+.iepi-lead-card {
+  background-color: var(--iepi-white); border-radius: 1.25rem;
+  padding: 2rem 1.75rem; box-shadow: 0 20px 60px rgba(0,0,0,.28);
+}
+.iepi-whatsapp-float {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+  width: 3.5rem; height: 3.5rem; border-radius: 50%;
+  background-color: #25d366; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 18px rgba(37,211,102,.45);
+  transition: transform .2s ease, box-shadow .2s ease; text-decoration: none;
+}
+.iepi-whatsapp-float:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(37,211,102,.60); }
+.iepi-header-cta {
+  display: inline-flex; align-items: center; gap: .375rem;
+  padding: .5rem 1.125rem; border-radius: .5rem;
+  font-size: .8125rem; font-weight: 700;
+  background-color: var(--iepi-orange-light); color: #fff;
+  transition: background-color .15s; text-decoration: none; white-space: nowrap;
+}
+.iepi-header-cta:hover { background-color: var(--iepi-orange); }
+.iepi-urgency-bar {
+  background-color: var(--iepi-purple); padding: .45rem 1rem;
+  font-size: .72rem; font-weight: 600; text-align: center;
+  color: rgba(255,255,255,.90); letter-spacing: .02em;
+}
+.iepi-urgency-bar strong { color: #fff; }
+.iepi-urgency-bar a { color: #fff; font-weight: 700; text-decoration: underline; }
+.iepi-urgency-bar a:hover { color: var(--iepi-orange-light); }
+.iepi-trust-chip {
+  display: inline-flex; align-items: center; gap: .375rem;
+  padding: .35rem .75rem; border-radius: 9999px;
+  font-size: .7rem; font-weight: 700;
+  background-color: rgba(255,255,255,.08); color: rgba(255,255,255,.72);
+  border: 1px solid rgba(255,255,255,.12);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Marketing / Conversion utilities
+───────────────────────────────────────────────────────────────────────── */
+.iepi-badge-urgency {
+  display: inline-flex; align-items: center; gap: .375rem;
+  padding: .3rem .85rem; border-radius: 9999px;
+  font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  background-color: rgba(217,103,4,.18); color: var(--iepi-orange-light);
+  border: 1px solid rgba(217,103,4,.30);
+}
+.iepi-lead-card {
+  background-color: var(--iepi-white); border-radius: 1.25rem;
+  padding: 2rem 1.75rem; box-shadow: 0 20px 60px rgba(0,0,0,.28);
+}
+.iepi-whatsapp-float {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+  width: 3.5rem; height: 3.5rem; border-radius: 50%;
+  background-color: #25d366; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 18px rgba(37,211,102,.45);
+  transition: transform .2s ease, box-shadow .2s ease; text-decoration: none;
+}
+.iepi-whatsapp-float:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(37,211,102,.60); }
+.iepi-header-cta {
+  display: inline-flex; align-items: center; gap: .375rem;
+  padding: .5rem 1.125rem; border-radius: .5rem;
+  font-size: .8125rem; font-weight: 700;
+  background-color: var(--iepi-orange-light); color: #fff;
+  transition: background-color .15s; text-decoration: none; white-space: nowrap;
+}
+.iepi-header-cta:hover { background-color: var(--iepi-orange); }
+.iepi-urgency-bar {
+  background-color: var(--iepi-purple); padding: .45rem 1rem;
+  font-size: .72rem; font-weight: 600; text-align: center;
+  color: rgba(255,255,255,.90); letter-spacing: .02em;
+}
+.iepi-urgency-bar strong { color: #fff; }
+.iepi-urgency-bar a { color: #fff; font-weight: 700; text-decoration: underline; }
+.iepi-urgency-bar a:hover { color: var(--iepi-orange-light); }
+.iepi-trust-chip {
+  display: inline-flex; align-items: center; gap: .375rem;
+  padding: .35rem .75rem; border-radius: 9999px;
+  font-size: .7rem; font-weight: 700;
+  background-color: rgba(255,255,255,.08); color: rgba(255,255,255,.72);
+  border: 1px solid rgba(255,255,255,.12);
+}
