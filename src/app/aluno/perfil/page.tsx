@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Save, Shield, Eye, EyeOff, Camera, CheckCircle, Lock } from "lucide-react"
+import { Save, Shield, Eye, EyeOff, Camera, CheckCircle, Lock, MapPin, Stethoscope } from "lucide-react"
 import { useState } from "react"
 
 export default function PerfilPage() {
@@ -75,6 +75,90 @@ export default function PerfilPage() {
                                     <Input id="telefone" defaultValue="(11) 99999-9999" className="rounded-xl border-slate-200 focus:ring-violet-400" />
                                 </div>
                             </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="nascimento" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Data de Nascimento</Label>
+                                    <Input id="nascimento" type="date" defaultValue="1990-05-15" className="rounded-xl border-slate-200 focus:ring-violet-400" />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="sexo" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Sexo</Label>
+                                    <select id="sexo" defaultValue="F" className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-400">
+                                        <option value="">Selecione</option>
+                                        <option value="F">Feminino</option>
+                                        <option value="M">Masculino</option>
+                                        <option value="O">Outro / Prefiro não informar</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Address */}
+                    <div className="pt-5 border-t border-slate-100 space-y-4">
+                        <h4 className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                            <MapPin className="w-4 h-4 text-violet-500" /> Endereço
+                        </h4>
+                        <div className="grid grid-cols-3 gap-4">
+                            <div className="space-y-1.5 col-span-1">
+                                <Label htmlFor="cep" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">CEP</Label>
+                                <Input id="cep" defaultValue="01310-100" placeholder="00000-000" className="rounded-xl border-slate-200 focus:ring-violet-400" />
+                            </div>
+                            <div className="space-y-1.5 col-span-2">
+                                <Label htmlFor="logradouro" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Logradouro</Label>
+                                <Input id="logradouro" defaultValue="Av. Paulista" className="rounded-xl border-slate-200 focus:ring-violet-400" />
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-4 gap-4">
+                            <div className="space-y-1.5 col-span-1">
+                                <Label htmlFor="numero" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Número</Label>
+                                <Input id="numero" defaultValue="1000" className="rounded-xl border-slate-200 focus:ring-violet-400" />
+                            </div>
+                            <div className="space-y-1.5 col-span-3">
+                                <Label htmlFor="complemento" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Complemento</Label>
+                                <Input id="complemento" placeholder="Apto, Bloco, Sala…" className="rounded-xl border-slate-200 focus:ring-violet-400" />
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <Label htmlFor="cidade" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Cidade</Label>
+                                <Input id="cidade" defaultValue="São Paulo" className="rounded-xl border-slate-200 focus:ring-violet-400" />
+                            </div>
+                            <div className="space-y-1.5">
+                                <Label htmlFor="estado" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Estado</Label>
+                                <select id="estado" defaultValue="SP" className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-400">
+                                    {["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"].map(uf => (
+                                        <option key={uf} value={uf}>{uf}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Professional info */}
+                    <div className="pt-5 border-t border-slate-100 space-y-4">
+                        <h4 className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                            <Stethoscope className="w-4 h-4 text-violet-500" /> Informações Profissionais
+                        </h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <Label htmlFor="coren" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">COREN</Label>
+                                <Input id="coren" defaultValue="COREN-SP 123456" placeholder="Ex.: COREN-SP 000000" className="rounded-xl border-slate-200 focus:ring-violet-400" />
+                                <p className="text-[10px] text-slate-400">Obrigatório para emissão de certificados de cursos com pontuação COREN.</p>
+                            </div>
+                            <div className="space-y-1.5">
+                                <Label htmlFor="categoria" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Categoria COREN</Label>
+                                <select id="categoria" defaultValue="ENF" className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-400">
+                                    <option value="">Não se aplica</option>
+                                    <option value="ENF">Enfermeiro(a)</option>
+                                    <option value="TEC">Técnico(a) de Enfermagem</option>
+                                    <option value="AUX">Auxiliar de Enfermagem</option>
+                                    <option value="OBT">Obstetra</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label htmlFor="instituicao" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Instituição / Empresa onde trabalha</Label>
+                            <Input id="instituicao" placeholder="Hospital, clínica ou empresa" className="rounded-xl border-slate-200 focus:ring-violet-400" />
                         </div>
                     </div>
 

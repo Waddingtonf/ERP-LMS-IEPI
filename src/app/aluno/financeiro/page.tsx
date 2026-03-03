@@ -2,38 +2,44 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Download, FileText, CheckCircle2, Clock, AlertCircle, QrCode, Shield, TrendingDown, Wallet } from "lucide-react"
+import { Download, FileText, CheckCircle2, Clock, AlertCircle, QrCode, Shield, TrendingDown, Wallet, CalendarDays } from "lucide-react"
 import { useState } from "react"
 
-const invoices = [
-    {
-        id: "FAT-001",
-        description: "Mensalidade 01/12 - Pós-Graduação em RH",
-        dueDate: "2026-01-10",
+const PARCELAS = Array.from({ length: 12 }, (_, i) => {
+    const parcela = i + 1
+    // Reference date: January 2026
+    const due = new Date(2026, 0 + i, 10)
+    const today = new Date("2026-02-15")
+    let status: "paid" | "pending" | "overdue" | "upcoming"
+    if (due < today) status = parcela === 1 ? "paid" : "overdue"
+    else if (due.getMonth() === today.getMonth() && due.getFullYear() === today.getFullYear()) status = "pending"
+    else status = "upcoming"
+    // Simulate parcela 1 as paid, parcela 2 as pending, rest upcoming (simplified mock)
+    if (parcela === 1) status = "paid"
+    if (parcela === 2) status = "pending"
+    if (parcela > 2) status = "upcoming"
+    return {
+        id: `FAT-${String(parcela).padStart(3, "0")}`,
+        description: `Mensalidade ${String(parcela).padStart(2, "0")}/12 — Pós-Graduação em Gestão em Saúde`,
+        dueDate: new Date(2026, 0 + (i), 10).toISOString().split("T")[0],
         amount: 133.25,
-        status: "paid",
-        paidAt: "2026-01-08"
-    },
-    {
-        id: "FAT-002",
-        description: "Mensalidade 02/12 - Pós-Graduação em RH",
-        dueDate: "2026-02-10",
-        amount: 133.25,
-        status: "pending",
-        paidAt: null
-    },
-    {
-        id: "FAT-003",
-        description: "Mensalidade 03/12 - Pós-Graduação em RH",
-        dueDate: "2026-03-10",
-        amount: 133.25,
-        status: "upcoming",
-        paidAt: null
+        status,
+        paidAt: parcela === 1 ? "2026-01-08" : null,
     }
-]
+})
+
+const invoices = PARCELAS // backwards compat
 
 export default function FinanceiroPage() {
     const [showQR, setShowQR] = useState(false)
+
+    const paid      = PARCELAS.filter(p => p.status === "paid")
+    const pending   = PARCELAS.filter(p => p.status === "pending")
+    const overdue   = PARCELAS.filter(p => p.status === "overdue")
+    const upcoming  = PARCELAS.filter(p => p.status === "upcoming")
+    const totalPaid = paid.reduce((acc, p) => acc + p.amount, 0)
+    const remaining = (PARCELAS.length - paid.length) * 133.25
+    const nextDue   = [...pending, ...upcoming][0]
 
     return (
         <div className="space-y-6">
@@ -48,28 +54,85 @@ export default function FinanceiroPage() {
                 </div>
             </div>
 
+            {/* Alert: overdue */}
+            {overdue.length > 0 && (
+                <div className="flex items-center gap-3 bg-rose-50 border border-rose-200 rounded-2xl px-5 py-3.5 text-rose-700 text-sm font-medium">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>Você possui <strong>{overdue.length} parcela(s) em atraso</strong>. Regularize para continuar com acesso completo ao portal.</span>
+                    <Button size="sm" className="ml-auto shrink-0 bg-rose-600 hover:bg-rose-700 text-xs h-7 px-3">Pagar agora</Button>
+                </div>
+            )}
+
             {/* Summary cards */}
             <div className="grid sm:grid-cols-3 gap-4">
                 <div className="rounded-2xl bg-gradient-to-br from-violet-600 to-violet-800 text-white p-6 shadow-md">
                     <p className="text-violet-300 text-xs font-medium uppercase tracking-wider mb-3">Próximo Vencimento</p>
-                    <div className="text-3xl font-bold mb-1">R$ 133,25</div>
+                    <div className="text-3xl font-bold mb-1">R$ {nextDue ? nextDue.amount.toFixed(2).replace(".", ",") : "—"}</div>
                     <div className="flex items-center gap-2 text-violet-200 text-sm">
-                        <Clock className="w-3.5 h-3.5" /> 10 Fev 2026
+                        <Clock className="w-3.5 h-3.5" /> {nextDue ? new Date(nextDue.dueDate + "T12:00").toLocaleDateString("pt-BR") : "—"}
                     </div>
                 </div>
                 <div className="rounded-2xl bg-white border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
-                    <p className="text-slate-500 text-xs font-medium uppercase tracking-wider mb-3">Total Pago (Ano)</p>
-                    <div className="text-2xl font-bold text-slate-900">R$ 133,25</div>
+                    <p className="text-slate-500 text-xs font-medium uppercase tracking-wider mb-3">Total Pago</p>
+                    <div className="text-2xl font-bold text-slate-900">R$ {totalPaid.toFixed(2).replace(".", ",")}</div>
                     <div className="flex items-center gap-1.5 text-emerald-600 text-xs font-medium mt-2">
-                        <TrendingDown className="w-3.5 h-3.5" /> 1 parcela quitada
+                        <TrendingDown className="w-3.5 h-3.5" /> {paid.length} parcela{paid.length !== 1 ? "s" : ""} quitada{paid.length !== 1 ? "s" : ""}
                     </div>
                 </div>
                 <div className="rounded-2xl bg-white border border-slate-200 p-6 shadow-sm">
                     <p className="text-slate-500 text-xs font-medium uppercase tracking-wider mb-3">Saldo Restante</p>
-                    <div className="text-2xl font-bold text-slate-900">R$ 266,50</div>
+                    <div className="text-2xl font-bold text-slate-900">R$ {remaining.toFixed(2).replace(".", ",")}</div>
                     <div className="flex items-center gap-1.5 text-slate-400 text-xs font-medium mt-2">
-                        <Wallet className="w-3.5 h-3.5" /> 2 parcelas restantes
+                        <Wallet className="w-3.5 h-3.5" /> {PARCELAS.length - paid.length} parcelas restantes
                     </div>
+                </div>
+            </div>
+
+            {/* Installment plan progress */}
+            <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                    <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
+                        <CalendarDays className="w-5 h-5 text-violet-500" /> Plano de Parcelas
+                    </h3>
+                    <span className="text-xs text-slate-400">{paid.length}/{PARCELAS.length} pagas</span>
+                </div>
+                {/* Progress bar */}
+                <div>
+                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-violet-500 rounded-full transition-all" style={{ width: `${(paid.length / PARCELAS.length) * 100}%` }} />
+                    </div>
+                    <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                        <span>Jan 2026</span><span>Dez 2026</span>
+                    </div>
+                </div>
+                {/* Pill grid */}
+                <div className="grid grid-cols-6 sm:grid-cols-12 gap-1.5">
+                    {PARCELAS.map((p, i) => (
+                        <div
+                            key={p.id}
+                            title={`Parcela ${i + 1} — ${new Date(p.dueDate + "T12:00").toLocaleDateString("pt-BR")} — ${p.status}`}
+                            className={`aspect-square rounded-lg flex items-center justify-center text-[10px] font-bold cursor-default transition-all ${
+                                p.status === "paid"     ? "bg-emerald-500 text-white" :
+                                p.status === "pending"  ? "bg-amber-400 text-white ring-2 ring-amber-300" :
+                                p.status === "overdue"  ? "bg-rose-500 text-white ring-2 ring-rose-300" :
+                                "bg-slate-100 text-slate-400"
+                            }`}
+                        >
+                            {i + 1}
+                        </div>
+                    ))}
+                </div>
+                <div className="flex flex-wrap gap-3 text-xs">
+                    {[
+                        { color: "bg-emerald-500", label: "Paga" },
+                        { color: "bg-amber-400", label: "Em aberto" },
+                        { color: "bg-rose-500", label: "Atrasada" },
+                        { color: "bg-slate-200", label: "A vencer" },
+                    ].map(l => (
+                        <div key={l.label} className="flex items-center gap-1.5 text-slate-500">
+                            <div className={`w-3 h-3 rounded ${l.color}`} /> {l.label}
+                        </div>
+                    ))}
                 </div>
             </div>
 

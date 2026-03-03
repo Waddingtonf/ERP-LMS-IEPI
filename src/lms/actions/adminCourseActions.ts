@@ -13,11 +13,26 @@ export async function getCourseById(id: string): Promise<Course | null> {
 }
 
 export async function createCourseAction(formData: FormData) {
-    const title       = formData.get('title')       as string;
-    const description = formData.get('description') as string;
-    const price       = Number(formData.get('price'));
+    const title            = formData.get('title')            as string;
+    const description      = formData.get('description')      as string ?? '';
+    const price            = Number(formData.get('price'));
+    const type             = formData.get('type')             as string ?? '';
+    const instructor       = formData.get('instructor')       as string ?? '';
+    const hours            = formData.get('hours')            as string ?? '';
+    const startDate        = formData.get('startDate')        as string ?? '';
+    const endDate          = formData.get('endDate')          as string ?? '';
+    const schedule         = formData.get('schedule')         as string ?? '';
+    const corenRequired    = formData.get('corenRequired')    === 'true';
+    const maxInstallments  = Number(formData.get('maxInstallments') ?? 12);
+    const imageUrl         = formData.get('imageUrl')         as string ?? undefined;
 
-    const course = await getCourseRepository().create({ title, description, price });
+    const course = await getCourseRepository().create({
+        title, description, price,
+        type, instructor, hours,
+        startDate, endDate, schedule,
+        corenRequired, maxInstallments,
+        ...(imageUrl ? { imageUrl } : {}),
+    });
     revalidatePath('/admin/cursos');
     return course;
 }
