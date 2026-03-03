@@ -28,10 +28,15 @@ export interface Course {
     modules: Module[];
 }
 
+/** Subset accepted by create(): only the 3 base fields are required; extras default to empty/false. */
+export type CourseInput =
+    Pick<Course, 'title' | 'description' | 'price'> &
+    Partial<Omit<Course, 'id' | 'modules' | 'title' | 'description' | 'price'>>;
+
 export interface ICourseRepository {
     findAll(): Promise<Course[]>;
     findById(id: string): Promise<Course | null>;
-    create(course: Omit<Course, 'id' | 'modules'>): Promise<Course>;
+    create(course: CourseInput): Promise<Course>;
     addModule(courseId: string, module: Omit<Module, 'id' | 'materials'>): Promise<Module>;
     addMaterial(courseId: string, moduleId: string, material: Omit<Material, 'id'>): Promise<Material>;
 }

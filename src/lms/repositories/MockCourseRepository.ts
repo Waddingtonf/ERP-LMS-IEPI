@@ -1,4 +1,4 @@
-import { ICourseRepository, Course, Module, Material } from './CourseRepository';
+import { ICourseRepository, Course, CourseInput, Module, Material } from './CourseRepository';
 import { CATALOG } from '../data/catalog';
 
 export class MockCourseRepository implements ICourseRepository {
@@ -24,10 +24,18 @@ export class MockCourseRepository implements ICourseRepository {
         return this.courses.find(c => c.id === id) || null;
     }
 
-    async create(course: Omit<Course, 'id' | 'modules'>): Promise<Course> {
+    async create(course: CourseInput): Promise<Course> {
         const newCourse: Course = {
+            type:            '',
+            instructor:      '',
+            hours:           '',
+            startDate:       '',
+            endDate:         '',
+            schedule:        '',
+            corenRequired:   false,
+            maxInstallments: 1,
             ...course,
-            id: `course-${Math.random().toString(36).substring(7)}`,
+            id:      `course-${Math.random().toString(36).substring(7)}`,
             modules: [],
         };
         this.courses.push(newCourse);

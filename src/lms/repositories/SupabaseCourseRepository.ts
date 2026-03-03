@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import { ICourseRepository, Course, Module, Material } from './CourseRepository';
+import { ICourseRepository, Course, CourseInput, Module, Material } from './CourseRepository';
 
 /**
  * Implementação real em Supabase para CourseRepository.
@@ -12,6 +12,8 @@ export class SupabaseCourseRepository implements ICourseRepository {
             .from('courses')
             .select(`
                 id, title, description, price,
+                type, instructor, hours, start_date, end_date,
+                schedule, coren_required, max_installments, image_url,
                 modules (
                     id, title, course_id,
                     materials ( id, title, type, url, module_id )
@@ -29,6 +31,8 @@ export class SupabaseCourseRepository implements ICourseRepository {
             .from('courses')
             .select(`
                 id, title, description, price,
+                type, instructor, hours, start_date, end_date,
+                schedule, coren_required, max_installments, image_url,
                 modules (
                     id, title, course_id,
                     materials ( id, title, type, url, module_id )
@@ -41,20 +45,29 @@ export class SupabaseCourseRepository implements ICourseRepository {
         return this.mapRow(data);
     }
 
-    async create(course: Omit<Course, 'id' | 'modules'>): Promise<Course> {
+    async create(course: CourseInput): Promise<Course> {
         const supabase = await createClient();
         const { data, error } = await supabase
             .from('courses')
             .insert({
-                title: course.title,
-                description: course.description,
-                price: course.price,
+                title:            course.title,
+                description:      course.description,
+                price:            course.price,
+                type:             course.type            ?? '',
+                instructor:       course.instructor      ?? '',
+                hours:            course.hours           ?? '',
+                start_date:       course.startDate       ?? '',
+                end_date:         course.endDate         ?? '',
+                schedule:         course.schedule        ?? '',
+                coren_required:   course.corenRequired   ?? false,
+                max_installments: course.maxInstallments ?? 1,
+                image_url:        course.imageUrl        ?? null,
             })
             .select()
             .single();
 
         if (error || !data) throw new Error(error?.message ?? 'Failed to create course');
-        return { ...data, modules: [] };
+        return this.mapRow({ ...data, modules: [] });
     }
 
     async addModule(courseId: string, module: Omit<Module, 'id' | 'materials'>): Promise<Module> {
@@ -89,13 +102,22 @@ export class SupabaseCourseRepository implements ICourseRepository {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private mapRow(row: any): Course {
         return {
-            id: row.id,
-            title: row.title,
-            description: row.description,
-            price: row.price,
+            id:              row.id,
+            title:           row.title,
+            description:     row.description,
+            price:           row.price,
+            type:            row.type            ?? '',
+            instructor:      row.instructor      ?? '',
+            hours:           row.hours           ?? '',
+            startDate:       row.start_date      ?? '',
+            endDate:         row.end_date        ?? '',
+            schedule:        row.schedule        ?? '',
+            corenRequired:   row.coren_required  ?? false,
+            maxInstallments: row.max_installments ?? 1,
+            imageUrl:        row.image_url       ?? undefined,
             modules: (row.modules ?? []).map((m: any) => ({
-                id: m.id,
-                title: m.title,
+                id:        m.id,
+                title:     m.title,
                 materials: (m.materials ?? []) as Material[],
             })),
         };
