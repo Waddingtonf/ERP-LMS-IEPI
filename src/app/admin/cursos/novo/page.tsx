@@ -8,14 +8,15 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, ArrowRight, GraduationCap, Save, BookOpen, DollarSign, Settings, CheckCircle } from "lucide-react"
+import { ArrowLeft, ArrowRight, GraduationCap, Save, BookOpen, DollarSign, Settings, CheckCircle, LayoutList, Plus, Trash2 } from "lucide-react"
 import Link from "next/link"
 
 const STEPS = [
-    { id: 1, label: "Identificação",  icon: Settings  },
-    { id: 2, label: "Conteúdo",       icon: BookOpen  },
-    { id: 3, label: "Comercial",      icon: DollarSign },
-    { id: 4, label: "Revisão",        icon: CheckCircle },
+    { id: 1, label: "Identificação",  icon: Settings   },
+    { id: 2, label: "Conteúdo",       icon: BookOpen   },
+    { id: 3, label: "Grade Curricular", icon: LayoutList },
+    { id: 4, label: "Comercial",      icon: DollarSign },
+    { id: 5, label: "Revisão",        icon: CheckCircle },
 ]
 
 const COURSE_TYPES = [
@@ -38,6 +39,13 @@ const SCHEDULES = [
     "Híbrido",
 ]
 
+interface Modulo {
+    id: string
+    nome: string
+    cargaHoraria: number
+    disciplinas: string[]
+}
+
 type FormState = {
     title: string
     type: string
@@ -51,6 +59,9 @@ type FormState = {
     price: string
     maxInstallments: string
     imageUrl: string
+    vagas: string
+    bolsas: string
+    percentualBolsa: string
 }
 
 const EMPTY: FormState = {
@@ -59,14 +70,34 @@ const EMPTY: FormState = {
     startDate: "", endDate: "",
     corenRequired: false,
     price: "", maxInstallments: "12", imageUrl: "",
+    vagas: "", bolsas: "0", percentualBolsa: "50",
 }
 
 export default function NovoCursoPage() {
     const router = useRouter()
     const [step, setStep]     = useState(1)
     const [form, setForm]     = useState<FormState>(EMPTY)
+    const [modulos, setModulos] = useState<Modulo[]>([])
     const [loading, setLoading] = useState(false)
     const [error, setError]   = useState<string | null>(null)
+
+    const addModulo = () => setModulos(m => [...m, { id: `m${Date.now()}`, nome: "", cargaHoraria: 0, disciplinas: [""] }])
+    const removeModulo = (id: string) => setModulos(m => m.filter(x => x.id !== id))
+    const updateModulo = (id: string, field: keyof Modulo, value: string | number | string[]) =>
+        setModulos(m => m.map(x => x.id === id ? { ...x, [field]: value } : x))
+    const addDisciplina = (mid: string) => {
+        const mo = modulos.find(x => x.id === mid)!;
+        updateModulo(mid, "disciplinas", [...mo.disciplinas, ""])
+    }
+    const removeDisciplina = (mid: string, idx: number) => {
+        const mo = modulos.find(x => x.id === mid)!;
+        updateModulo(mid, "disciplinas", mo.disciplinas.filter((_, i) => i !== idx))
+    }
+    const updateDisciplina = (mid: string, idx: number, val: string) => {
+        const mo = modulos.find(x => x.id === mid)!;
+        const discs = [...mo.disciplinas]; discs[idx] = val;
+        updateModulo(mid, "disciplinas", discs)
+    }
 
     const set = (k: keyof FormState) => (v: string | boolean) =>
         setForm(f => ({ ...f, [k]: v }))
@@ -91,7 +122,7 @@ export default function NovoCursoPage() {
     const canProceed = () => {
         if (step === 1) return !!form.title && !!form.type
         if (step === 2) return !!form.instructor && !!form.hours && !!form.schedule && !!form.startDate
-        if (step === 3) return !!form.price
+        if (step === 4) return !!form.price && !!form.vagas
         return true
     }
 
@@ -279,8 +310,79 @@ export default function NovoCursoPage() {
                     </div>
                 )}
 
-                {/* ─── STEP 3: Comercial / Precificação ─────────────────── */}
+                {/* ─── STEP 3: Grade Curricular ──────────────────────────── */}
                 {step === 3 && (
+                    <div className="p-8 space-y-5">
+                        <div className="pb-4 border-b border-slate-100">
+                            <h3 className="font-bold text-slate-800 text-lg">Grade Curricular</h3>
+                            <p className="text-sm text-slate-500 mt-0.5">Organize o curso em módulos e liste as disciplinas de cada um.</p>
+                        </div>
+
+                        {modulos.length === 0 && (
+                            <div className="rounded-xl border-2 border-dashed border-slate-200 p-8 text-center">
+                                <LayoutList className="w-8 h-8 text-slate-300 mx-auto mb-3" />
+                                <p className="text-slate-500 text-sm">Nenhum módulo adicionado ainda.</p>
+                                <p className="text-slate-400 text-xs mt-1">Clique em "Adicionar Módulo" para começar.</p>
+                            </div>
+                        )}
+
+                        {modulos.map((modulo, mIdx) => (
+                            <div key={modulo.id} className="rounded-xl border border-slate-200 p-4 space-y-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-7 h-7 rounded-lg bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold shrink-0">
+                                        {mIdx + 1}
+                                    </div>
+                                    <input
+                                        placeholder="Nome do módulo"
+                                        value={modulo.nome}
+                                        onChange={e => updateModulo(modulo.id, "nome", e.target.value)}
+                                        className="flex-1 h-9 rounded-md border border-slate-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                                    />
+                                    <input
+                                        type="number" min={0} placeholder="CH"
+                                        value={modulo.cargaHoraria || ""}
+                                        onChange={e => updateModulo(modulo.id, "cargaHoraria", Number(e.target.value))}
+                                        className="w-20 h-9 rounded-md border border-slate-200 px-3 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400"
+                                    />
+                                    <span className="text-xs text-slate-400">h</span>
+                                    <button onClick={() => removeModulo(modulo.id)} className="p-1.5 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-50">
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
+                                <div className="pl-10 space-y-1.5">
+                                    <p className="text-xs font-semibold text-slate-400 uppercase">Disciplinas</p>
+                                    {modulo.disciplinas.map((d, dIdx) => (
+                                        <div key={dIdx} className="flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-violet-300 ml-1 shrink-0" />
+                                            <input
+                                                placeholder={`Disciplina ${dIdx + 1}`}
+                                                value={d}
+                                                onChange={e => updateDisciplina(modulo.id, dIdx, e.target.value)}
+                                                className="flex-1 h-8 rounded-md border border-slate-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                                            />
+                                            <button onClick={() => removeDisciplina(modulo.id, dIdx)} className="p-1 text-slate-300 hover:text-red-400 rounded">
+                                                <Trash2 className="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                    <button onClick={() => addDisciplina(modulo.id)} className="flex items-center gap-1.5 text-xs text-violet-600 hover:text-violet-800 mt-1">
+                                        <Plus className="w-3 h-3" /> Adicionar disciplina
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+
+                        <button
+                            onClick={addModulo}
+                            className="w-full py-2.5 rounded-xl border-2 border-dashed border-violet-300 text-violet-600 text-sm font-medium hover:bg-violet-50 hover:border-violet-400 flex items-center justify-center gap-2 transition-colors"
+                        >
+                            <Plus className="w-4 h-4" /> Adicionar Módulo
+                        </button>
+                    </div>
+                )}
+
+                {/* ─── STEP 4: Comercial / Precificação ─────────────────── */}
+                {step === 4 && (
                     <div className="p-8 space-y-6">
                         <div className="pb-4 border-b border-slate-100">
                             <h3 className="font-bold text-slate-800 text-lg">Configuração Comercial</h3>
@@ -347,6 +449,34 @@ export default function NovoCursoPage() {
                             </div>
                         )}
 
+                        {/* Vagas e Bolsas */}
+                        <div className="grid grid-cols-3 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="vagas" className="font-semibold text-slate-700">Vagas <span className="text-red-500">*</span></Label>
+                                <input
+                                    id="vagas" type="number" min={1} placeholder="Ex: 35"
+                                    value={form.vagas} onChange={e => setForm(f => ({ ...f, vagas: e.target.value }))}
+                                    className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="bolsas" className="font-semibold text-slate-700">Bolsas Disponíveis</Label>
+                                <input
+                                    id="bolsas" type="number" min={0} placeholder="Ex: 5"
+                                    value={form.bolsas} onChange={e => setForm(f => ({ ...f, bolsas: e.target.value }))}
+                                    className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="pctBolsa" className="font-semibold text-slate-700">% Desconto Bolsa</Label>
+                                <input
+                                    id="pctBolsa" type="number" min={0} max={100} placeholder="Ex: 50"
+                                    value={form.percentualBolsa} onChange={e => setForm(f => ({ ...f, percentualBolsa: e.target.value }))}
+                                    className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                                />
+                            </div>
+                        </div>
+
                         <div className="space-y-2">
                             <Label htmlFor="imageUrl" className="font-semibold text-slate-700">
                                 URL da Imagem de Capa
@@ -369,8 +499,8 @@ export default function NovoCursoPage() {
                     </div>
                 )}
 
-                {/* ─── STEP 4: Revisão ──────────────────────────────────── */}
-                {step === 4 && (
+                {/* ─── STEP 5: Revisão ──────────────────────────────────── */}
+                {step === 5 && (
                     <div className="p-8 space-y-6">
                         <div className="pb-4 border-b border-slate-100">
                             <h3 className="font-bold text-slate-800 text-lg">Revisão Final</h3>
@@ -423,7 +553,7 @@ export default function NovoCursoPage() {
                         <Link href="/admin/cursos">
                             <Button variant="ghost" className="text-slate-400 text-xs">Cancelar</Button>
                         </Link>
-                        {step < 4 ? (
+                        {step < 5 ? (
                             <Button
                                 onClick={() => setStep(s => s + 1)}
                                 disabled={!canProceed()}

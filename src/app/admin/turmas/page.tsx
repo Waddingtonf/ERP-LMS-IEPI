@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -115,9 +116,11 @@ export default function TurmasPage() {
                         Gerencie turmas, alocações, calendário e alunos matriculados em cada oferta.
                     </p>
                 </div>
-                <Button onClick={() => setOpen(true)} className="bg-violet-600 hover:bg-violet-700 gap-2 shrink-0">
-                    <PlusCircle className="w-4 h-4" /> Nova Turma
-                </Button>
+                <Link href="/admin/turmas/nova">
+                    <Button className="bg-violet-600 hover:bg-violet-700 gap-2 shrink-0">
+                        <PlusCircle className="w-4 h-4" /> Nova Turma
+                    </Button>
+                </Link>
             </div>
 
             {/* Summary KPIs */}
