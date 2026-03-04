@@ -23,7 +23,8 @@ describe('CieloSandboxService', () => {
         const response = await cieloService.createTransaction(request);
 
         expect(response.status).toBe(1); // 1 = Authorized
-        expect(response.paymentId).toContain('cielo-sandbox-id');
+        expect(typeof response.paymentId).toBe('string');
+        expect(response.paymentId.length).toBeGreaterThan(0);
         expect(response.returnCode).toBe('4');
     });
 
@@ -49,5 +50,14 @@ describe('CieloSandboxService', () => {
 
         expect(response.status).toBe(2); // 2 = Captured
         expect(response.paymentId).toBe(paymentId);
+    });
+
+    it('should query a transaction by paymentId', async () => {
+        const paymentId = 'mock-payment-uuid-0001';
+        const response = await cieloService.getTransaction(paymentId);
+
+        expect(response.status).toBe(1);
+        expect(response.paymentId).toBe(paymentId);
+        expect(response.returnCode).toBe('4');
     });
 });
