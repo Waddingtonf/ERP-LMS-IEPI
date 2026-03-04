@@ -385,6 +385,32 @@ html { scroll-behavior: smooth; }
   border: 1px solid rgba(255,255,255,.12);
 }
 
+/* ── Responsive utilities ───────────────────────────────────────────────── */
+
+/* Smooth horizontal scroll for data tables on mobile */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+.overflow-x-auto::-webkit-scrollbar { height: 4px; }
+.overflow-x-auto::-webkit-scrollbar-track { background: transparent; }
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 9999px;
+}
+
+/* Urgency bar wraps gracefully on very small screens */
+.iepi-urgency-bar {
+  line-height: 1.5;
+}
+
+/* Lead card tighter padding on mobile */
+@media (max-width: 480px) {
+  .iepi-lead-card {
+    padding: 1.5rem 1.25rem;
+  }
+}
 /* ─────────────────────────────────────────────────────────────────────────
    Marketing / Conversion utilities
 ───────────────────────────────────────────────────────────────────────── */

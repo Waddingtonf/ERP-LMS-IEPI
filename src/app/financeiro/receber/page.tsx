@@ -68,15 +68,16 @@ export default async function ContasReceberPage() {
             <Card className="border-slate-200 shadow-sm">
                 <CardContent className="pt-6">
                     <div className="rounded-lg border border-slate-100 overflow-hidden">
+                        <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow className="bg-slate-50">
-                                    <TableHead className="font-semibold text-slate-700">Aluno</TableHead>
-                                    <TableHead className="font-semibold text-slate-700">Curso</TableHead>
-                                    <TableHead className="font-semibold text-slate-700 text-right">Valor</TableHead>
-                                    <TableHead className="font-semibold text-slate-700">Vencimento</TableHead>
-                                    <TableHead className="font-semibold text-slate-700">Método</TableHead>
-                                    <TableHead className="font-semibold text-slate-700 text-center">Status</TableHead>
+                                    <TableHead className="font-semibold text-slate-700 min-w-[160px]">Aluno</TableHead>
+                                    <TableHead className="font-semibold text-slate-700 min-w-[180px]">Curso</TableHead>
+                                    <TableHead className="font-semibold text-slate-700 text-right min-w-[100px]">Valor</TableHead>
+                                    <TableHead className="font-semibold text-slate-700 min-w-[110px]">Vencimento</TableHead>
+                                    <TableHead className="font-semibold text-slate-700 min-w-[120px]">Método</TableHead>
+                                    <TableHead className="font-semibold text-slate-700 text-center min-w-[100px]">Status</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -103,6 +104,7 @@ export default async function ContasReceberPage() {
                                 })}
                             </TableBody>
                         </Table>
+                        </div>
                     </div>
                 </CardContent>
             </Card>

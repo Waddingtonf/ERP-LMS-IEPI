@@ -50,12 +50,12 @@ export default function ConciliacaoPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-end">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
                 <div>
                     <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Conciliação Financeira</h2>
                     <p className="text-slate-500 mt-1">Acompanhe recebimentos, reconciliação com a Cielo e exporte relatórios.</p>
                 </div>
-                <Button className="bg-emerald-600 hover:bg-emerald-700 gap-2">
+                <Button className="bg-emerald-600 hover:bg-emerald-700 gap-2 self-start sm:self-auto">
                     <Download className="w-4 h-4" /> Exportar CSV
                 </Button>
             </div>
@@ -110,7 +110,7 @@ export default function ConciliacaoPage() {
 
             <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200 flex flex-wrap gap-4 items-center justify-between">
                 <div className="flex flex-wrap gap-4 flex-1">
-                    <div className="relative w-full max-w-xs">
+                    <div className="relative w-full sm:max-w-xs">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
                         <Input placeholder="Buscar TID, Aluno ou ID..." className="pl-9 bg-slate-50 h-9" value={search} onChange={e => setSearch(e.target.value)} />
                     </div>
@@ -142,18 +142,19 @@ export default function ConciliacaoPage() {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                <Table>
-                    <TableHeader className="bg-slate-50">
-                        <TableRow>
-                            <TableHead>Transação (ID do Pedido)</TableHead>
-                            <TableHead>Data</TableHead>
-                            <TableHead>Aluno / Curso</TableHead>
-                            <TableHead>Método</TableHead>
-                            <TableHead>Valor</TableHead>
-                            <TableHead>TID Cielo</TableHead>
-                            <TableHead className="text-right">Status da Reconciliação</TableHead>
-                        </TableRow>
-                    </TableHeader>
+                <div className="overflow-x-auto">
+                    <Table>
+                        <TableHeader className="bg-slate-50">
+                            <TableRow>
+                                <TableHead className="min-w-[130px]">Transação</TableHead>
+                                <TableHead className="min-w-[100px]">Data</TableHead>
+                                <TableHead className="min-w-[180px]">Aluno / Curso</TableHead>
+                                <TableHead className="min-w-[120px]">Método</TableHead>
+                                <TableHead className="min-w-[100px]">Valor</TableHead>
+                                <TableHead className="min-w-[120px]">TID Cielo</TableHead>
+                                <TableHead className="text-right min-w-[150px]">Status</TableHead>
+                            </TableRow>
+                        </TableHeader>
                     <TableBody>
                         {filtered.map((trx) => (
                             <TableRow key={trx.id}>
@@ -176,7 +177,9 @@ export default function ConciliacaoPage() {
                             </TableRow>
                         ))}
                     </TableBody>
-                </Table>
+                    </TableBody>
+                    </Table>
+                </div>
             </div>
 
             {/* Totals by payment method */}
@@ -186,6 +189,7 @@ export default function ConciliacaoPage() {
                     <CardDescription>Totais do período filtrado</CardDescription>
                 </CardHeader>
                 <CardContent>
+                    <div className="overflow-x-auto">
                     <Table>
                         <TableHeader className="bg-slate-50">
                             <TableRow>
@@ -228,6 +232,7 @@ export default function ConciliacaoPage() {
                             </TableRow>
                         </TableBody>
                     </Table>
+                    </div>
                 </CardContent>
             </Card>
 

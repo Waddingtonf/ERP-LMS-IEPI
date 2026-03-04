@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import WhatsAppFloat from "./_components/WhatsAppFloat";
+import MobileNav from "./_components/MobileNav";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -62,7 +63,7 @@ export default function RootLayout({
               </div>
             </Link>
 
-            {/* Nav */}
+            {/* Nav — desktop only */}
             <nav className="hidden lg:flex items-center gap-6" aria-label="Navegação principal">
               {NAV_LINKS.map(({ label, href }) => (
                 <Link key={label} href={href} className="iepi-nav-link text-sm font-medium">
@@ -72,7 +73,7 @@ export default function RootLayout({
             </nav>
 
             {/* Ações */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <Link
                 href="/login"
                 className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium iepi-nav-link"
@@ -82,9 +83,11 @@ export default function RootLayout({
                 </svg>
                 Área do aluno
               </Link>
-              <Link href="/cursos" className="iepi-header-cta">
+              <Link href="/cursos" className="iepi-header-cta hidden sm:inline-flex">
                 Matricular-se
               </Link>
+              {/* Mobile nav hamburger */}
+              <MobileNav />
             </div>
           </div>
         </header>

@@ -48,16 +48,17 @@ export default async function NotasPage() {
                             </p>
                         ) : (
                             <div className="rounded-lg border border-slate-100 overflow-hidden">
+                                <div className="overflow-x-auto">
                                 <Table>
                                     <TableHeader>
                                         <TableRow className="bg-slate-50">
-                                            <TableHead className="font-semibold text-slate-700">Aluno</TableHead>
-                                            <TableHead className="text-center font-semibold text-slate-700">AV1</TableHead>
-                                            <TableHead className="text-center font-semibold text-slate-700">AV2</TableHead>
-                                            <TableHead className="text-center font-semibold text-slate-700">Trabalho</TableHead>
-                                            <TableHead className="text-center font-semibold text-slate-700">Freq.</TableHead>
-                                            <TableHead className="text-center font-semibold text-slate-700">Média</TableHead>
-                                            <TableHead className="text-center font-semibold text-slate-700">Status</TableHead>
+                                            <TableHead className="font-semibold text-slate-700 min-w-[160px]">Aluno</TableHead>
+                                            <TableHead className="text-center font-semibold text-slate-700 min-w-[60px]">AV1</TableHead>
+                                            <TableHead className="text-center font-semibold text-slate-700 min-w-[60px]">AV2</TableHead>
+                                            <TableHead className="text-center font-semibold text-slate-700 min-w-[90px]">Trabalho</TableHead>
+                                            <TableHead className="text-center font-semibold text-slate-700 min-w-[70px]">Freq.</TableHead>
+                                            <TableHead className="text-center font-semibold text-slate-700 min-w-[70px]">Média</TableHead>
+                                            <TableHead className="text-center font-semibold text-slate-700 min-w-[110px]">Status</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -99,6 +100,7 @@ export default async function NotasPage() {
                                         })}
                                     </TableBody>
                                 </Table>
+                                </div>
                             </div>
                         )}
                     </CardContent>

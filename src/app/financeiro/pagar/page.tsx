@@ -84,15 +84,16 @@ export default async function ContasPagarPage() {
                 </CardHeader>
                 <CardContent>
                     <div className="rounded-lg border border-slate-100 overflow-hidden">
+                        <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow className="bg-slate-50">
-                                    <TableHead className="font-semibold text-slate-700">Fornecedor</TableHead>
-                                    <TableHead className="font-semibold text-slate-700">Descrição</TableHead>
-                                    <TableHead className="font-semibold text-slate-700">Categoria</TableHead>
-                                    <TableHead className="font-semibold text-slate-700 text-right">Valor</TableHead>
-                                    <TableHead className="font-semibold text-slate-700">Vencimento</TableHead>
-                                    <TableHead className="font-semibold text-slate-700 text-center">Status</TableHead>
+                                    <TableHead className="font-semibold text-slate-700 min-w-[160px]">Fornecedor</TableHead>
+                                    <TableHead className="font-semibold text-slate-700 min-w-[200px]">Descrição</TableHead>
+                                    <TableHead className="font-semibold text-slate-700 min-w-[130px]">Categoria</TableHead>
+                                    <TableHead className="font-semibold text-slate-700 text-right min-w-[100px]">Valor</TableHead>
+                                    <TableHead className="font-semibold text-slate-700 min-w-[110px]">Vencimento</TableHead>
+                                    <TableHead className="font-semibold text-slate-700 text-center min-w-[100px]">Status</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -122,6 +123,7 @@ export default async function ContasPagarPage() {
                                 })}
                             </TableBody>
                         </Table>
+                        </div>
                     </div>
                 </CardContent>
             </Card>
