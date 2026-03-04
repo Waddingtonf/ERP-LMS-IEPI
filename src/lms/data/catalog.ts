@@ -11,11 +11,14 @@ export type CourseType =
     | "Especialização"
     | "Residência"
 
+export type CourseMode = 'CursoLivre' | 'GraduacaoModular' | 'PosGraduacao' | 'MBA'
+
 export interface CatalogCourse {
     id: string
     title: string
     description: string
     type: CourseType
+    courseMode: CourseMode
     instructor: string       // público-alvo / pré-requisito profissional
     hours: string
     startDate: string        // "DD/MM/YYYY"
@@ -23,6 +26,8 @@ export interface CatalogCourse {
     schedule: string         // "Matutino ou Vespertino"
     corenRequired: boolean
     price: number            // em centavos
+    /** Preco bundle (todos modulos) em centavos. Apenas para GraduacaoModular. */
+    bundlePrice?: number
     maxInstallments: number
     imageUrl?: string
 }
@@ -33,6 +38,7 @@ export const CATALOG: CatalogCourse[] = [
         title: "Oncologia para Técnicos",
         description: "Especialização voltada para técnicos de enfermagem que atuam em ambientes oncológicos, abordando protocolos de quimioterapia, cuidados paliativos e manejo de cateteres.",
         type: "Curso Livre",
+        courseMode: "CursoLivre",
         instructor: "Técnicos de Enfermagem",
         hours: "360h",
         startDate: "02/10/2025",
@@ -47,6 +53,7 @@ export const CATALOG: CatalogCourse[] = [
         title: "Instrumentação Cirúrgica",
         description: "Formação completa em instrumentação cirúrgica com aulas práticas em centro cirúrgico equipado, preparando o profissional para atuar em salas de cirurgia.",
         type: "Curso Livre",
+        courseMode: "CursoLivre",
         instructor: "Técnicos de Enfermagem",
         hours: "360h",
         startDate: "02/10/2025",
@@ -58,30 +65,34 @@ export const CATALOG: CatalogCourse[] = [
     },
     {
         id: "course-3",
-        title: "Feridas, Estomias e Incontinências",
-        description: "Capacitação avançada no tratamento e prevenção de feridas complexas, estomas intestinais e urológicos, com vista à certificação SOBEST.",
+        title: "Feridas, Estomias e Incontinencias",
+        description: "Capacitação avançada no tratamento e prevenção de feridas complexas, estomas intestinais e urológicos, com vista à certificação SOBEST. Modular: compre módulos separadamente ou o curso completo.",
         type: "Especialização",
+        courseMode: "GraduacaoModular",
         instructor: "Enfermeiros e Enfermandos",
         hours: "360h",
         startDate: "02/10/2025",
         endDate: "10/12/2025",
         schedule: "Matutino ou Vespertino",
         corenRequired: true,
-        price: 89900,
+        price: 24900,
+        bundlePrice: 79900,
         maxInstallments: 12,
     },
     {
         id: "course-4",
         title: "Enfermagem Oncológica",
-        description: "Pós-graduação em Enfermagem Oncológica com enfoque em quimioterapia, radioterapia, cuidados paliativos e biossegurança.",
+        description: "Pós-graduação em Enfermagem Oncológica com enfoque em quimioterapia, radioterapia, cuidados paliativos e biossegurança. Compre módulos separados ou o bundle completo.",
         type: "Pós-Graduação",
+        courseMode: "GraduacaoModular",
         instructor: "Enfermeiros",
         hours: "360h",
         startDate: "02/10/2025",
         endDate: "10/12/2025",
         schedule: "Matutino ou Vespertino",
         corenRequired: true,
-        price: 129900,
+        price: 32400,
+        bundlePrice: 109900,
         maxInstallments: 12,
     },
     {
@@ -89,6 +100,7 @@ export const CATALOG: CatalogCourse[] = [
         title: "Pós-Graduação em Enfermagem Oncológica",
         description: "Aprofundamento em oncologia clínica, semiologia do paciente oncológico e gestão de unidades de quimioterapia ambulatorial.",
         type: "Pós-Graduação",
+        courseMode: "PosGraduacao",
         instructor: "Enfermeiros",
         hours: "360h",
         startDate: "02/10/2025",
@@ -103,6 +115,7 @@ export const CATALOG: CatalogCourse[] = [
         title: "Oncologia para Técnicos — Turma B",
         description: "Segunda turma do curso de Oncologia para Técnicos, com as mesmas competências e carga horária da Turma A.",
         type: "Curso Livre",
+        courseMode: "CursoLivre",
         instructor: "Técnicos de Enfermagem",
         hours: "360h",
         startDate: "02/10/2025",
@@ -117,6 +130,7 @@ export const CATALOG: CatalogCourse[] = [
         title: "Instrumentação Cirúrgica — Turma B",
         description: "Segunda turma de Instrumentação Cirúrgica, com ênfase em cirurgias videolaparoscópicas e robóticas.",
         type: "Curso Livre",
+        courseMode: "CursoLivre",
         instructor: "Técnicos de Enfermagem",
         hours: "360h",
         startDate: "02/10/2025",
@@ -129,15 +143,17 @@ export const CATALOG: CatalogCourse[] = [
     {
         id: "course-8",
         title: "Feridas e Estomias — Turma B",
-        description: "Turma B da especialização em Feridas, Estomias e Incontinências com foco em casos clínicos avançados.",
+        description: "Turma B da especialização em Feridas, Estomias e Incontinencias com foco em casos clínicos avançados. Modular: adquira módulos avulsos.",
         type: "Especialização",
+        courseMode: "GraduacaoModular",
         instructor: "Enfermeiros e Enfermandos",
         hours: "360h",
         startDate: "02/10/2025",
         endDate: "10/12/2025",
         schedule: "Matutino ou Vespertino",
         corenRequired: true,
-        price: 89900,
+        price: 24900,
+        bundlePrice: 79900,
         maxInstallments: 12,
     },
     {
@@ -145,6 +161,7 @@ export const CATALOG: CatalogCourse[] = [
         title: "Enfermagem Oncológica — Turma B",
         description: "Segunda turma do curso de Enfermagem Oncológica, com módulo extra de pesquisa clínica e ensaios clínicos.",
         type: "Pós-Graduação",
+        courseMode: "PosGraduacao",
         instructor: "Enfermeiros",
         hours: "360h",
         startDate: "02/10/2025",
@@ -159,6 +176,7 @@ export const CATALOG: CatalogCourse[] = [
         title: "Gestão em Saúde e Liderança",
         description: "Formação em gestão hospitalar, liderança de equipes de saúde, indicadores clínicos e acreditação hospitalar.",
         type: "Pós-Graduação",
+        courseMode: "PosGraduacao",
         instructor: "Enfermeiros",
         hours: "360h",
         startDate: "05/11/2025",

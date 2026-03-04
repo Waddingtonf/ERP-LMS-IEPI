@@ -67,7 +67,7 @@ describe('MockCourseRepository — CRUD', () => {
 
     // ── addModule ─────────────────────────────────────────────────────────────
     it('adds a module to an existing course', async () => {
-        const module = await repo.addModule('course-1', { title: 'Módulo Extra' });
+        const module = await repo.addModule('course-1', { title: 'Módulo Extra', price: 0, isSellableStandalone: false, sortOrder: 99 });
         expect(module.id).toMatch(/^module-/);
         expect(module.materials).toEqual([]);
 
@@ -77,7 +77,7 @@ describe('MockCourseRepository — CRUD', () => {
     });
 
     it('throws when adding a module to nonexistent course', async () => {
-        await expect(repo.addModule('ghost', { title: 'X' })).rejects.toThrow('Course not found');
+        await expect(repo.addModule('ghost', { title: 'X', price: 0, isSellableStandalone: false, sortOrder: 0 })).rejects.toThrow('Course not found');
     });
 
     // ── addMaterial ───────────────────────────────────────────────────────────
@@ -100,7 +100,7 @@ describe('MockCourseRepository — CRUD', () => {
     });
 
     it('adds a VIDEO material', async () => {
-        const module = await repo.addModule('course-1', { title: 'Vídeo Module' });
+        const module = await repo.addModule('course-1', { title: 'Vídeo Module', price: 0, isSellableStandalone: false, sortOrder: 1 });
         const mat = await repo.addMaterial('course-1', module.id, {
             title: 'Intro Vídeo',
             type: 'VIDEO',

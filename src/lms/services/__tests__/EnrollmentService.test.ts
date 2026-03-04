@@ -20,25 +20,31 @@ jest.mock('../../repositories', () => {
     const { MockUserRepository } = require('../../repositories/MockUserRepository');
     const { MockCourseRepository } = require('../../repositories/MockCourseRepository');
     const { MockPaymentRepository } = require('../../repositories/MockPaymentRepository');
+    const { MockEnrollmentRepository } = require('../../repositories/MockEnrollmentRepository');
     const u = new MockUserRepository();
     const c = new MockCourseRepository();
     const p = new MockPaymentRepository();
+    const e = new MockEnrollmentRepository();
     return {
         getUserRepository: () => u,
         getCourseRepository: () => c,
         getPaymentRepository: () => p,
+        getEnrollmentRepository: () => e,
     };
 });
 
 // Access the shared mock instances through the mocked factory
-import { getUserRepository, getPaymentRepository } from '../../repositories'; // eslint-disable-line
-const userRepo = getUserRepository() as unknown as MockUserRepository;
-const paymentRepo = getPaymentRepository() as unknown as MockPaymentRepository;
+import { getUserRepository, getPaymentRepository, getEnrollmentRepository } from '../../repositories'; // eslint-disable-line
+import type { MockEnrollmentRepository } from '../../repositories/MockEnrollmentRepository'; // eslint-disable-line
+const userRepo       = getUserRepository()       as unknown as MockUserRepository;
+const paymentRepo    = getPaymentRepository()    as unknown as MockPaymentRepository;
+const enrollmentRepo = getEnrollmentRepository() as unknown as MockEnrollmentRepository;
 
 // Reset state before each test to prevent cross-test contamination
 beforeEach(() => {
     userRepo.reset();
     paymentRepo.reset();
+    enrollmentRepo.reset();
 });
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────

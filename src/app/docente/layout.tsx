@@ -1,4 +1,4 @@
-import { BookOpen, Users, ClipboardCheck, LayoutDashboard, LogOut, FileText } from "lucide-react"
+import { BookOpen, Users, ClipboardCheck, LayoutDashboard, LogOut, FileText, CalendarCheck } from "lucide-react"
 import Link from "next/link"
 import { logoutAction } from "@/lms/actions/authActions"
 
@@ -26,9 +26,13 @@ export default function DocenteLayout({
                         <Users className="w-5 h-5 text-slate-400" />
                         Minhas Turmas
                     </Link>
+                    <Link href="/docente/frequencia" className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 text-slate-300">
+                        <CalendarCheck className="w-5 h-5 text-slate-400" />
+                        Lista de Frequência
+                    </Link>
                     <Link href="/docente/notas" className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 text-slate-300">
                         <ClipboardCheck className="w-5 h-5 text-slate-400" />
-                        Notas e Frequência
+                        Notas
                     </Link>
                     <Link href="/docente/materiais" className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 text-slate-300">
                         <FileText className="w-5 h-5 text-slate-400" />

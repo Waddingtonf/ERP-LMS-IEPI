@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import { ICourseRepository, Course, CourseInput, Module, Material } from './CourseRepository';
+import { ICourseRepository, Course, CourseInput, CourseUpdateInput, Module, Material } from './CourseRepository';
 
 /**
  * Implementação real em Supabase para CourseRepository.
@@ -86,17 +86,58 @@ export class SupabaseCourseRepository implements ICourseRepository {
         const supabase = await createClient();
         const { data, error } = await supabase
             .from('materials')
-            .insert({
-                title: material.title,
-                type: material.type,
-                url: material.url,
-                module_id: moduleId,
-            })
+            .insert({ title: material.title, type: material.type, url: material.url, module_id: moduleId })
             .select()
             .single();
-
         if (error || !data) throw new Error(error?.message ?? 'Failed to create material');
         return data as Material;
+    }
+
+    async update(id: string, data: CourseUpdateInput): Promise<Course> {
+        const supabase = await createClient();
+        const mapped: Record<string, unknown> = {};
+        if (data.title           !== undefined) mapped.title            = data.title;
+        if (data.description     !== undefined) mapped.description      = data.description;
+        if (data.price           !== undefined) mapped.price            = data.price;
+        if (data.bundlePrice     !== undefined) mapped.bundle_price     = data.bundlePrice;
+        if (data.type            !== undefined) mapped.type             = data.type;
+        if (data.courseMode      !== undefined) mapped.course_mode      = data.courseMode;
+        if (data.instructor      !== undefined) mapped.instructor       = data.instructor;
+        if (data.hours           !== undefined) mapped.hours            = data.hours;
+        if (data.startDate       !== undefined) mapped.start_date       = data.startDate;
+        if (data.endDate         !== undefined) mapped.end_date         = data.endDate;
+        if (data.schedule        !== undefined) mapped.schedule         = data.schedule;
+        if (data.corenRequired   !== undefined) mapped.coren_required   = data.corenRequired;
+        if (data.maxInstallments !== undefined) mapped.max_installments = data.maxInstallments;
+        if (data.isPublished     !== undefined) mapped.is_published     = data.isPublished;
+        if (data.imageUrl        !== undefined) mapped.image_url        = data.imageUrl;
+        const { data: row, error } = await supabase.from('courses').update(mapped).eq('id', id).select().single();
+        if (error || !row) throw new Error(error?.message ?? 'Course not found');
+        return this.mapRow({ ...row, modules: [] });
+    }
+
+    async updateModule(courseId: string, moduleId: string, data: Partial<Omit<Module, 'id' | 'materials'>>): Promise<Module> {
+        const supabase = await createClient();
+        const mapped: Record<string, unknown> = {};
+        if (data.title                !== undefined) mapped.title                  = data.title;
+        if (data.price                !== undefined) mapped.price                  = data.price;
+        if (data.isSellableStandalone !== undefined) mapped.is_sellable_standalone = data.isSellableStandalone;
+        if (data.sortOrder            !== undefined) mapped.sort_order             = data.sortOrder;
+        const { data: row, error } = await supabase.from('modules').update(mapped).eq('id', moduleId).select().single();
+        if (error || !row) throw new Error(error?.message ?? 'Module not found');
+        return { id: row.id, title: row.title, price: row.price ?? 0, isSellableStandalone: row.is_sellable_standalone ?? false, sortOrder: row.sort_order ?? 0, materials: [] };
+    }
+
+    async deleteModule(courseId: string, moduleId: string): Promise<void> {
+        const supabase = await createClient();
+        const { error } = await supabase.from('modules').delete().eq('id', moduleId);
+        if (error) throw new Error(error.message);
+    }
+
+    async deleteMaterial(courseId: string, moduleId: string, materialId: string): Promise<void> {
+        const supabase = await createClient();
+        const { error } = await supabase.from('materials').delete().eq('id', materialId);
+        if (error) throw new Error(error.message);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,6 +147,8 @@ export class SupabaseCourseRepository implements ICourseRepository {
             title:           row.title,
             description:     row.description,
             price:           row.price,
+            bundlePrice:     row.bundle_price    ?? undefined,
+            courseMode:      row.course_mode     ?? 'CursoLivre',
             type:            row.type            ?? '',
             instructor:      row.instructor      ?? '',
             hours:           row.hours           ?? '',
@@ -114,11 +157,15 @@ export class SupabaseCourseRepository implements ICourseRepository {
             schedule:        row.schedule        ?? '',
             corenRequired:   row.coren_required  ?? false,
             maxInstallments: row.max_installments ?? 1,
+            isPublished:     row.is_published    ?? false,
             imageUrl:        row.image_url       ?? undefined,
             modules: (row.modules ?? []).map((m: any) => ({
-                id:        m.id,
-                title:     m.title,
-                materials: (m.materials ?? []) as Material[],
+                id:                   m.id,
+                title:                m.title,
+                price:                m.price                  ?? 0,
+                isSellableStandalone: m.is_sellable_standalone ?? false,
+                sortOrder:            m.sort_order             ?? 0,
+                materials:            (m.materials ?? []) as Material[],
             })),
         };
     }
