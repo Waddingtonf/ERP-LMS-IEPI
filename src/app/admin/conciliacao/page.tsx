@@ -9,11 +9,29 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Download, DollarSign, TrendingUp, AlertCircle, CheckCircle2, ArrowRightLeft } from "lucide-react"
 
 const transactions = [
-    { id: "TRX-8392", date: "2026-02-21", student: "João Silva", course: "Pós RH", amount: 1599.00, method: "Cartão em 12x", status: "cleared", tid: "5839029384" },
-    { id: "TRX-8391", date: "2026-02-20", student: "Maria Almeida", course: "Extensão", amount: 299.00, method: "PIX", status: "cleared", tid: "PIX-90022" },
-    { id: "TRX-8390", date: "2026-02-20", student: "Pedro Alves", course: "Direito", amount: 2500.00, method: "Boleto", status: "pending", tid: "BOL-99283" },
-    { id: "TRX-8389", date: "2026-02-19", student: "Ana Santos", course: "Pós RH", amount: 1599.00, method: "Cartão em 6x", status: "failed", tid: "5839029381" },
+    { id: "TRX-8395", date: "2026-03-04", student: "Juliana Melo",    course: "Enfermagem Oncológica", amount: 1599.00, method: "Cartão em 12x", status: "cleared", tid: "5839029390" },
+    { id: "TRX-8394", date: "2026-03-03", student: "Carlos Eduardo",  course: "Gestão em Saúde",       amount: 399.00,  method: "PIX",           status: "cleared", tid: "PIX-90031" },
+    { id: "TRX-8393", date: "2026-03-03", student: "Fernanda Rocha",  course: "Feridas e Estomias",    amount: 799.00,  method: "Boleto",         status: "pending", tid: "BOL-99301" },
+    { id: "TRX-8392", date: "2026-02-21", student: "João Silva",      course: "Gestão em Saúde",       amount: 1599.00, method: "Cartão em 12x", status: "cleared", tid: "5839029384" },
+    { id: "TRX-8391", date: "2026-02-20", student: "Maria Almeida",   course: "Extensão Oncológica",   amount: 299.00,  method: "PIX",           status: "cleared", tid: "PIX-90022" },
+    { id: "TRX-8390", date: "2026-02-20", student: "Pedro Alves",     course: "Oncologia T\u00e9cnicos",    amount: 2500.00, method: "Boleto",         status: "pending", tid: "BOL-99283" },
+    { id: "TRX-8389", date: "2026-02-19", student: "Ana Santos",      course: "Gestão em Saúde",       amount: 1599.00, method: "Cartão em 6x",  status: "failed",  tid: "5839029381" },
+    { id: "TRX-8388", date: "2026-02-18", student: "Marcos Torres",   course: "Feridas e Estomias",    amount: 799.00,  method: "PIX",           status: "cleared", tid: "PIX-90018" },
+    { id: "TRX-8387", date: "2026-02-17", student: "Beatriz Ferreira",course: "Gestão em Saúde",       amount: 1599.00, method: "Cartão em 12x", status: "cleared", tid: "5839029379" },
+    { id: "TRX-8386", date: "2026-02-15", student: "Ricardo M.",      course: "Oncologia T\u00e9cnicos",    amount: 2500.00, method: "Boleto",         status: "cleared", tid: "BOL-99268" },
+    { id: "TRX-8385", date: "2026-02-14", student: "Luana Cavalcante",course: "Gestão em Saúde",       amount: 1599.00, method: "Cartão em 3x",  status: "cleared", tid: "5839029371" },
+    { id: "TRX-8384", date: "2026-02-10", student: "Paulo Henrique",  course: "Feridas e Estomias",    amount: 799.00,  method: "Boleto",         status: "failed",  tid: "BOL-99250" },
 ]
+
+// Totals by method
+const byMethod = transactions.reduce<Record<string, { count: number; total: number; cleared: number }>>((acc, t) => {
+    const method = t.method.startsWith("Cartão") ? "Cartão de Crédito" : t.method
+    if (!acc[method]) acc[method] = { count: 0, total: 0, cleared: 0 }
+    acc[method].count++
+    acc[method].total += t.amount
+    if (t.status === "cleared") acc[method].cleared += t.amount
+    return acc
+}, {})
 
 export default function ConciliacaoPage() {
     return (
@@ -146,6 +164,58 @@ export default function ConciliacaoPage() {
                     </TableBody>
                 </Table>
             </div>
+
+            {/* Totals by payment method */}
+            <Card className="border-slate-200">
+                <CardHeader className="pb-3">
+                    <CardTitle className="text-base font-semibold text-slate-800">Resumo por Método de Pagamento</CardTitle>
+                    <CardDescription>Totais do período filtrado</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader className="bg-slate-50">
+                            <TableRow>
+                                <TableHead>Método</TableHead>
+                                <TableHead className="text-right">Transações</TableHead>
+                                <TableHead className="text-right">Volume Total</TableHead>
+                                <TableHead className="text-right">Valor Creditado</TableHead>
+                                <TableHead className="text-right">Pendente / Falhou</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {Object.entries(byMethod).map(([method, data]) => (
+                                <TableRow key={method}>
+                                    <TableCell className="font-medium text-slate-900">{method}</TableCell>
+                                    <TableCell className="text-right text-slate-700">{data.count}</TableCell>
+                                    <TableCell className="text-right font-semibold text-slate-900">
+                                        R$ {data.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                    </TableCell>
+                                    <TableCell className="text-right text-emerald-700 font-medium">
+                                        R$ {data.cleared.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                    </TableCell>
+                                    <TableCell className="text-right text-amber-700 font-medium">
+                                        R$ {(data.total - data.cleared).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                            {/* Summary row */}
+                            <TableRow className="border-t-2 border-slate-300 bg-slate-50 font-bold">
+                                <TableCell className="text-slate-900">Total Geral</TableCell>
+                                <TableCell className="text-right text-slate-900">{transactions.length}</TableCell>
+                                <TableCell className="text-right text-slate-900">
+                                    R$ {transactions.reduce((s, t) => s + t.amount, 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                </TableCell>
+                                <TableCell className="text-right text-emerald-700">
+                                    R$ {transactions.filter(t => t.status === 'cleared').reduce((s, t) => s + t.amount, 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                </TableCell>
+                                <TableCell className="text-right text-amber-700">
+                                    R$ {transactions.filter(t => t.status !== 'cleared').reduce((s, t) => s + t.amount, 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
 
         </div>
     )

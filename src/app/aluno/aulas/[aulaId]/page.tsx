@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { PlayCircle, CheckCircle, Lock, BookOpen, ChevronDown, ChevronUp, Clock, SkipForward, FileDown, MessageSquare, ArrowLeft } from "lucide-react"
+import { useState, useRef } from "react"
+import { PlayCircle, CheckCircle, Lock, BookOpen, ChevronDown, ChevronUp, Clock, SkipForward, FileDown, MessageSquare, ArrowLeft, PenLine, ExternalLink, FileText, Video, Save, Trash2 } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Progress } from "@/components/ui/progress"
 import Link from "next/link"
@@ -37,6 +37,42 @@ export default function ClassroomPage({ params }: { params: Promise<{ aulaId: st
     const [expandedModules, setExpandedModules] = useState<string[]>(["m1", "m2"])
     const [completedLocally, setCompletedLocally] = useState<Set<string>>(new Set(["l1", "l2"]))
     const [justCompleted, setJustCompleted] = useState(false)
+    const [activeInfoTab, setActiveInfoTab] = useState<"sobre" | "anotacoes" | "materiais">("sobre")
+    const [notes, setNotes]   = useState<Record<string, string[]>>({}) // lessonId -> saved notes
+    const [noteInput, setNoteInput] = useState("")
+    const notesEndRef = useRef<HTMLDivElement>(null)
+
+    const MATERIALS: Record<string, { label: string; type: "PDF" | "PPT" | "VIDEO" | "LINK"; size?: string; url: string }[]> = {
+        default: [
+            { label: "Apostila da Aula",          type: "PDF",   size: "2.4 MB", url: "#" },
+            { label: "Slides da Apresentação",   type: "PPT",   size: "4.1 MB", url: "#" },
+            { label: "Video Complementar",         type: "VIDEO", size: "45 min", url: "#" },
+            { label: "Leitura Recomendada (OMS)",  type: "LINK",             url: "https://www.who.int" },
+            { label: "Ficha de Atividade Prática", type: "PDF",   size: "320 KB", url: "#" },
+        ]
+    }
+    const lessonMaterials = MATERIALS[activeLesson.id] ?? MATERIALS.default
+
+    const savedNotes     = notes[activeLesson.id] ?? []
+
+    const saveNote = () => {
+        const text = noteInput.trim()
+        if (!text) return
+        setNotes(prev => ({ ...prev, [activeLesson.id]: [...(prev[activeLesson.id] ?? []), text] }))
+        setNoteInput("")
+        setTimeout(() => notesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50)
+    }
+
+    const deleteNote = (idx: number) => {
+        setNotes(prev => ({ ...prev, [activeLesson.id]: (prev[activeLesson.id] ?? []).filter((_, i) => i !== idx) }))
+    }
+
+    const MAT_STYLE: Record<string, { bg: string; text: string; icon: React.ElementType }> = {
+        PDF:   { bg: "bg-red-50 border-red-100",    text: "text-red-600",    icon: FileText },
+        PPT:   { bg: "bg-orange-50 border-orange-100", text: "text-orange-600", icon: FileText },
+        VIDEO: { bg: "bg-blue-50 border-blue-100",  text: "text-blue-600",   icon: Video    },
+        LINK:  { bg: "bg-emerald-50 border-emerald-100", text: "text-emerald-700", icon: ExternalLink },
+    }
 
     const toggleModule = (id: string) => {
         setExpandedModules(prev =>
@@ -140,43 +176,141 @@ export default function ClassroomPage({ params }: { params: Promise<{ aulaId: st
                         </div>
                     </div>
 
-                    {/* Materials */}
-                    <div className="grid sm:grid-cols-2 gap-4">
-                        <div>
-                            <h3 className="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
-                                <FileDown className="w-4 h-4 text-violet-500" /> Materiais da Aula
-                            </h3>
-                            <div className="space-y-2">
-                                {[
-                                    { label: "Apostila da Aula", type: "PDF" },
-                                    { label: "Slides da Apresentação", type: "PDF" },
-                                ].map(m => (
-                                    <a
-                                        key={m.label}
-                                        href="#"
-                                        className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-violet-200 hover:bg-violet-50/50 transition-all group"
-                                    >
-                                        <div className="w-8 h-8 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
-                                            <span className="text-[10px] font-bold text-red-600 uppercase">{m.type}</span>
-                                        </div>
-                                        <span className="text-sm text-slate-700 group-hover:text-violet-700 font-medium flex-1 truncate">{m.label}</span>
-                                        <FileDown className="w-3.5 h-3.5 text-slate-300 group-hover:text-violet-500 shrink-0" />
-                                    </a>
-                                ))}
+                    {/* Tabs navigation */}
+                    <div className="flex gap-1 bg-slate-100 p-1 rounded-xl w-fit">
+                        {([
+                            { id: "sobre",     label: "Sobre a Aula",    icon: MessageSquare },
+                            { id: "anotacoes", label: "Minhas Anotações", icon: PenLine, count: savedNotes.length },
+                            { id: "materiais", label: "Materiais",         icon: FileDown, count: lessonMaterials.length },
+                        ] as const).map(tab => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveInfoTab(tab.id)}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                                    activeInfoTab === tab.id
+                                        ? "bg-white text-slate-900 shadow-sm"
+                                        : "text-slate-500 hover:text-slate-700"
+                                }`}
+                            >
+                                <tab.icon className="w-3.5 h-3.5" />
+                                {tab.label}
+                                {"count" in tab && tab.count > 0 && (
+                                    <span className="w-4 h-4 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold flex items-center justify-center">
+                                        {tab.count}
+                                    </span>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Tab: Sobre */}
+                    {activeInfoTab === "sobre" && (
+                        <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                            <p className="text-sm text-slate-700 leading-relaxed">
+                                Nesta aula abordaremos os conceitos fundamentais do tópico, explorando casos práticos e
+                                aplicação no cotidiano profissional de saúde. Assista até o final para registrar o progresso
+                                e liberar o próximo bloco de conteúdo.
+                            </p>
+                            <div className="mt-4 flex flex-wrap gap-3">
+                                <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-1.5">
+                                    <Clock className="w-3.5 h-3.5" /> Duração: {activeLesson.duration}
+                                </div>
+                                <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-1.5">
+                                    <BookOpen className="w-3.5 h-3.5" /> {courseData.title}
+                                </div>
+                                <div className="flex items-center gap-1.5 text-xs font-medium text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5">
+                                    <Lock className="w-3 h-3" /> Exige 90% de visualização
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <h3 className="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
-                                <MessageSquare className="w-4 h-4 text-violet-500" /> Sobre esta Aula
-                            </h3>
-                            <p className="text-sm text-slate-600 leading-relaxed">
-                                Nesta aula abordaremos os conceitos fundamentais do tópico, explorando casos práticos e aplicação no cotidiano corporativo. Assista até o final para registrar o progresso e liberar o próximo bloco.
-                            </p>
-                            <p className="text-xs text-slate-400 mt-3 flex items-center gap-1.5">
-                                <Lock className="w-3 h-3" /> O progresso exige 90% de visualização do vídeo.
-                            </p>
+                    )}
+
+                    {/* Tab: Anotações */}
+                    {activeInfoTab === "anotacoes" && (
+                        <div className="space-y-4">
+                            {/* Input */}
+                            <div className="space-y-2">
+                                <textarea
+                                    value={noteInput}
+                                    onChange={e => setNoteInput(e.target.value)}
+                                    onKeyDown={e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) saveNote() }}
+                                    rows={3}
+                                    placeholder="Digite sua anotação sobre esta aula… (Ctrl+Enter para salvar)"
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:bg-white resize-none"
+                                />
+                                <div className="flex justify-end">
+                                    <button
+                                        onClick={saveNote}
+                                        disabled={!noteInput.trim()}
+                                        className="flex items-center gap-2 text-xs font-semibold bg-violet-600 hover:bg-violet-700 disabled:opacity-40 text-white px-4 py-2 rounded-xl transition-all"
+                                    >
+                                        <Save className="w-3.5 h-3.5" /> Salvar Nota
+                                    </button>
+                                </div>
+                            </div>
+                            {/* Saved notes */}
+                            {savedNotes.length > 0 ? (
+                                <div className="space-y-2">
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                        {savedNotes.length} anotação{savedNotes.length !== 1 ? "ões" : ""} nesta aula
+                                    </p>
+                                    {savedNotes.map((note, i) => (
+                                        <div key={i} className="flex gap-3 bg-violet-50 border border-violet-100 rounded-xl px-4 py-3 group">
+                                            <PenLine className="w-4 h-4 text-violet-400 shrink-0 mt-0.5" />
+                                            <p className="text-sm text-slate-700 flex-1 leading-relaxed whitespace-pre-wrap">{note}</p>
+                                            <button
+                                                onClick={() => deleteNote(i)}
+                                                className="text-slate-300 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100 shrink-0"
+                                            >
+                                                <Trash2 className="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                    <div ref={notesEndRef} />
+                                </div>
+                            ) : (
+                                <div className="text-center py-8 text-slate-400">
+                                    <PenLine className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                                    <p className="text-sm">Nenhuma anotação ainda. Comece a digitar acima!</p>
+                                </div>
+                            )}
                         </div>
-                    </div>
+                    )}
+
+                    {/* Tab: Materiais */}
+                    {activeInfoTab === "materiais" && (
+                        <div className="grid sm:grid-cols-2 gap-2">
+                            {lessonMaterials.map(m => {
+                                const style = MAT_STYLE[m.type]
+                                const Icon  = style.icon
+                                const isExternal = m.type === "LINK"
+                                return (
+                                    <a
+                                        key={m.label}
+                                        href={m.url}
+                                        target={isExternal ? "_blank" : undefined}
+                                        rel={isExternal ? "noopener noreferrer" : undefined}
+                                        className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-violet-200 hover:bg-violet-50/50 transition-all group"
+                                    >
+                                        <div className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 ${style.bg}`}>
+                                            <Icon className={`w-4 h-4 ${style.text}`} />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm text-slate-700 group-hover:text-violet-700 font-medium truncate">{m.label}</p>
+                                            <p className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
+                                                <span className={`font-bold uppercase ${style.text}`}>{m.type}</span>
+                                                {m.size && <span>· {m.size}</span>}
+                                            </p>
+                                        </div>
+                                        {isExternal
+                                            ? <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-violet-500 shrink-0" />
+                                            : <FileDown    className="w-3.5 h-3.5 text-slate-300 group-hover:text-violet-500 shrink-0" />
+                                        }
+                                    </a>
+                                )
+                            })}
+                        </div>
+                    )}
                 </div>
             </div>
 
