@@ -1,12 +1,17 @@
 "use client"
 
+import { useActionState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Settings, LogIn } from "lucide-react"
-import { mockLoginAction } from "@/lms/actions/authActions"
+import { Settings, LogIn, AlertCircle } from "lucide-react"
+import { adminLoginAction } from "@/lms/actions/authActions"
+
+const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes('dummy')
 
 export default function AdminLoginPage() {
+    const [state, formAction, pending] = useActionState(adminLoginAction, undefined)
+
     return (
         <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -23,30 +28,43 @@ export default function AdminLoginPage() {
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-slate-800 py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-slate-700">
-                    <form className="space-y-6" action={mockLoginAction}>
-                        <input type="hidden" name="role" value="ADMIN" />
+                    <form className="space-y-6" action={formAction}>
+                        {/* In mock mode, pre-select ADMIN role */}
+                        {isMock && <input type="hidden" name="role" value="ADMIN" />}
+
+                        {state?.error && (
+                            <div className="flex items-center gap-2 rounded-lg border border-red-700 bg-red-950 px-4 py-3 text-sm text-red-300">
+                                <AlertCircle className="w-4 h-4 shrink-0" />
+                                {state.error}
+                            </div>
+                        )}
+
                         <div>
                             <Label htmlFor="email" className="text-slate-300">E-mail Corporativo</Label>
                             <div className="mt-1">
-                                <Input id="email" name="email" type="email" autoComplete="email" required placeholder="admin@iepi.edu.br" className="bg-slate-900 border-slate-700 text-white placeholder-slate-500" />
+                                <Input id="email" name="email" type="email" autoComplete="email" required
+                                    placeholder="admin@iepi.edu.br"
+                                    className="bg-slate-900 border-slate-700 text-white placeholder-slate-500" />
                             </div>
                         </div>
 
                         <div>
                             <Label htmlFor="password" className="text-slate-300">Senha Segura</Label>
                             <div className="mt-1">
-                                <Input id="password" name="password" type="password" autoComplete="current-password" required placeholder="••••••••" className="bg-slate-900 border-slate-700 text-white placeholder-slate-500" />
+                                <Input id="password" name="password" type="password" autoComplete="current-password" required
+                                    placeholder="••••••••"
+                                    className="bg-slate-900 border-slate-700 text-white placeholder-slate-500" />
                             </div>
                         </div>
 
                         <div className="flex items-center justify-between">
                             <div className="flex items-center">
-                                <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-violet-600 focus:ring-violet-500 border-slate-700 bg-slate-900 rounded" />
+                                <input id="remember-me" name="remember-me" type="checkbox"
+                                    className="h-4 w-4 text-violet-600 focus:ring-violet-500 border-slate-700 bg-slate-900 rounded" />
                                 <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-300">
                                     Lembrar acesso neste IP
                                 </label>
                             </div>
-
                             <div className="text-sm">
                                 <a href="#" className="font-medium text-violet-400 hover:text-violet-300">
                                     Perdeu acesso?
@@ -55,8 +73,10 @@ export default function AdminLoginPage() {
                         </div>
 
                         <div>
-                            <Button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-slate-900 bg-violet-400 hover:bg-violet-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 gap-2">
-                                <LogIn className="w-4 h-4" /> Entrar no Sistema
+                            <Button type="submit" disabled={pending}
+                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-slate-900 bg-violet-400 hover:bg-violet-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 gap-2">
+                                <LogIn className="w-4 h-4" />
+                                {pending ? 'Verificando…' : 'Entrar no Sistema'}
                             </Button>
                         </div>
                     </form>
@@ -65,3 +85,4 @@ export default function AdminLoginPage() {
         </div>
     )
 }
+

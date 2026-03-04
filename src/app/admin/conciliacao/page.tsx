@@ -1,5 +1,6 @@
 "use client"
 
+import React, { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -34,6 +35,19 @@ const byMethod = transactions.reduce<Record<string, { count: number; total: numb
 }, {})
 
 export default function ConciliacaoPage() {
+    const [search, setSearch]   = useState('')
+    const [status, setStatus]   = useState('all')
+
+    const filtered = transactions.filter(t => {
+        const matchSearch = !search ||
+            t.id.toLowerCase().includes(search.toLowerCase()) ||
+            t.student.toLowerCase().includes(search.toLowerCase()) ||
+            t.tid.toLowerCase().includes(search.toLowerCase()) ||
+            t.course.toLowerCase().includes(search.toLowerCase())
+        const matchStatus = status === 'all' || t.status === status
+        return matchSearch && matchStatus
+    })
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-end">
@@ -98,10 +112,10 @@ export default function ConciliacaoPage() {
                 <div className="flex flex-wrap gap-4 flex-1">
                     <div className="relative w-full max-w-xs">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-                        <Input placeholder="Buscar TID, Aluno ou ID..." className="pl-9 bg-slate-50 h-9" />
+                        <Input placeholder="Buscar TID, Aluno ou ID..." className="pl-9 bg-slate-50 h-9" value={search} onChange={e => setSearch(e.target.value)} />
                     </div>
 
-                    <Select defaultValue="all">
+                    <Select value={status} onValueChange={setStatus}>
                         <SelectTrigger className="w-[160px] h-9">
                             <SelectValue placeholder="Status" />
                         </SelectTrigger>
@@ -141,7 +155,7 @@ export default function ConciliacaoPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {transactions.map((trx) => (
+                        {filtered.map((trx) => (
                             <TableRow key={trx.id}>
                                 <TableCell className="font-mono text-xs font-semibold text-slate-700">{trx.id}</TableCell>
                                 <TableCell className="text-sm text-slate-600">{new Date(trx.date).toLocaleDateString('pt-BR')}</TableCell>

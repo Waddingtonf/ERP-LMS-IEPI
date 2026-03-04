@@ -1,12 +1,17 @@
 "use client"
 
+import { useActionState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ShieldCheck, GraduationCap } from "lucide-react"
-import { mockLoginAction } from "@/lms/actions/authActions"
+import { ShieldCheck, GraduationCap, AlertCircle } from "lucide-react"
+import { loginAction } from "@/lms/actions/authActions"
+
+const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes('dummy')
 
 export default function LoginPage() {
+    const [state, formAction, pending] = useActionState(loginAction, undefined)
+
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -23,7 +28,14 @@ export default function LoginPage() {
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-slate-200">
-                    <form className="space-y-6" action={mockLoginAction}>
+                    <form className="space-y-6" action={formAction}>
+                        {state?.error && (
+                            <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                                <AlertCircle className="w-4 h-4 shrink-0" />
+                                {state.error}
+                            </div>
+                        )}
+
                         <div>
                             <Label htmlFor="email">Endereço de E-mail</Label>
                             <div className="mt-1">
@@ -45,7 +57,6 @@ export default function LoginPage() {
                                     Lembrar de mim
                                 </label>
                             </div>
-
                             <div className="text-sm">
                                 <a href="#" className="font-medium text-violet-600 hover:text-violet-500">
                                     Esqueceu a senha?
@@ -53,20 +64,25 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-4">
-                            <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">Modo Sandbox — Selecione o Perfil</p>
-                            <div className="grid grid-cols-2 gap-2 mt-2 sm:grid-cols-3">
-                                <button type="submit" name="role" value="ADMIN"     className="text-xs px-3 py-2 rounded-md border border-amber-300 bg-white text-amber-800 font-medium hover:bg-amber-100 transition-colors">Admin</button>
-                                <button type="submit" name="role" value="STUDENT"   className="text-xs px-3 py-2 rounded-md border border-amber-300 bg-white text-amber-800 font-medium hover:bg-amber-100 transition-colors">Aluno</button>
-                                <button type="submit" name="role" value="DOCENTE"   className="text-xs px-3 py-2 rounded-md border border-amber-300 bg-white text-amber-800 font-medium hover:bg-amber-100 transition-colors">Docente</button>
-                                <button type="submit" name="role" value="FINANCEIRO" className="text-xs px-3 py-2 rounded-md border border-amber-300 bg-white text-amber-800 font-medium hover:bg-amber-100 transition-colors">Financeiro</button>
-                                <button type="submit" name="role" value="PEDAGOGICO" className="text-xs px-3 py-2 rounded-md border border-amber-300 bg-white text-amber-800 font-medium hover:bg-amber-100 transition-colors">Pedagógico</button>
+                        {/* Sandbox quick-select (only shown in mock/dev mode) */}
+                        {isMock && (
+                            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                                <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">Modo Sandbox — Selecione o Perfil</p>
+                                <div className="grid grid-cols-2 gap-2 mt-2 sm:grid-cols-3">
+                                    <button formAction={formAction} type="submit" name="role" value="ADMIN"      className="text-xs px-3 py-2 rounded-md border border-amber-300 bg-white text-amber-800 font-medium hover:bg-amber-100 transition-colors">Admin</button>
+                                    <button formAction={formAction} type="submit" name="role" value="STUDENT"    className="text-xs px-3 py-2 rounded-md border border-amber-300 bg-white text-amber-800 font-medium hover:bg-amber-100 transition-colors">Aluno</button>
+                                    <button formAction={formAction} type="submit" name="role" value="DOCENTE"    className="text-xs px-3 py-2 rounded-md border border-amber-300 bg-white text-amber-800 font-medium hover:bg-amber-100 transition-colors">Docente</button>
+                                    <button formAction={formAction} type="submit" name="role" value="FINANCEIRO" className="text-xs px-3 py-2 rounded-md border border-amber-300 bg-white text-amber-800 font-medium hover:bg-amber-100 transition-colors">Financeiro</button>
+                                    <button formAction={formAction} type="submit" name="role" value="PEDAGOGICO" className="text-xs px-3 py-2 rounded-md border border-amber-300 bg-white text-amber-800 font-medium hover:bg-amber-100 transition-colors">Pedagógico</button>
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         <div>
-                            <Button name="role" value="STUDENT" type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 gap-2">
-                                <ShieldCheck className="w-4 h-4" /> Acesso Padrão (Aluno)
+                            <Button name="role" value="STUDENT" type="submit" disabled={pending}
+                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 gap-2">
+                                <ShieldCheck className="w-4 h-4" />
+                                {pending ? 'Entrando…' : 'Entrar'}
                             </Button>
                         </div>
 
@@ -79,3 +95,4 @@ export default function LoginPage() {
         </div>
     )
 }
+
