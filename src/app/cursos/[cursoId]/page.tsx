@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { CATALOG, formatPrice } from "@/lms/data/catalog"
+import { getCourseById } from "@/lms/actions/adminCourseActions"
 
 interface Props { params: Promise<{ cursoId: string }> }
 
@@ -29,11 +30,20 @@ function MetaItem({ icon, label, value }: { icon: React.ReactNode; label: string
 
 export default async function CourseDetailPage({ params }: Props) {
     const { cursoId } = await params
-    const course = CATALOG.find(c => c.id === cursoId)
-    if (!course) notFound()
+    const catalogCourse = CATALOG.find(c => c.id === cursoId)
+    if (!catalogCourse) notFound()
 
-    const installmentPrice = formatPrice(Math.round(course.price / course.maxInstallments))
-    const totalPrice       = formatPrice(course.price)
+    // Enrich with live repository data (modules, bundlePrice, courseMode)
+    const liveCourse    = await getCourseById(cursoId)
+    const isModular     = (liveCourse?.courseMode ?? catalogCourse.courseMode) === 'GraduacaoModular'
+    const modules       = liveCourse?.modules ?? []
+    const bundlePrice   = liveCourse?.bundlePrice ?? catalogCourse.bundlePrice
+    const displayPrice  = isModular && bundlePrice ? bundlePrice : catalogCourse.price
+
+    const course = catalogCourse
+
+    const installmentPrice = formatPrice(Math.round(displayPrice / course.maxInstallments))
+    const totalPrice       = formatPrice(displayPrice)
 
     const INCLUDED = [
         "Material didático exclusivo em PDF",
@@ -118,6 +128,42 @@ export default async function CourseDetailPage({ params }: Props) {
                                 <p className="text-sm leading-relaxed" style={{ color: "var(--text-body)" }}>{course.description}</p>
                             </div>
 
+                            {/* Módulos (modular courses only) */}
+                            {isModular && modules.length > 0 && (
+                                <div className="rounded-xl p-6" style={{ backgroundColor: "var(--iepi-white)", border: "1px solid var(--border-light)" }}>
+                                    <h2 className="text-lg font-extrabold mb-4" style={{ color: "var(--text-heading)" }}>
+                                        Módulos do Curso
+                                        <span className="ml-2 text-xs font-normal px-2 py-0.5 rounded-full" style={{ backgroundColor: "var(--iepi-purple)", color: "#fff" }}>
+                                            Compra avulsa disponível
+                                        </span>
+                                    </h2>
+                                    <div className="space-y-2">
+                                        {modules.map((mod, idx) => (
+                                            <div key={mod.id} className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: "var(--iepi-light-alt)", border: "1px solid var(--border-light)" }}>
+                                                <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0" style={{ backgroundColor: "var(--iepi-purple)" }}>
+                                                    {idx + 1}
+                                                </div>
+                                                <p className="flex-1 text-sm font-medium" style={{ color: "var(--text-heading)" }}>{mod.title}</p>
+                                                {mod.isSellableStandalone && mod.price > 0 ? (
+                                                    <div className="flex items-center gap-2 shrink-0">
+                                                        <span className="text-sm font-bold" style={{ color: "var(--text-heading)" }}>{formatPrice(mod.price)}</span>
+                                                        <Link
+                                                            href={`/checkout/${cursoId}?moduleId=${mod.id}`}
+                                                            className="text-xs px-3 py-1.5 rounded-lg font-semibold transition-opacity hover:opacity-80"
+                                                            style={{ backgroundColor: "var(--iepi-purple)", color: "#fff" }}
+                                                        >
+                                                            Comprar
+                                                        </Link>
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-xs shrink-0" style={{ color: "var(--text-muted)" }}>Incluso no bundle</span>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Detalhes */}
                             <div className="rounded-xl p-6" style={{ backgroundColor: "var(--iepi-white)", border: "1px solid var(--border-light)" }}>
                                 <h2 className="text-lg font-extrabold mb-1" style={{ color: "var(--text-heading)" }}>Informações do curso</h2>
@@ -149,8 +195,15 @@ export default async function CourseDetailPage({ params }: Props) {
                                 className="rounded-xl p-6 sticky top-24"
                                 style={{ backgroundColor: "var(--iepi-white)", border: "1px solid var(--border-light)", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}
                             >
-                                <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "var(--text-muted)" }}>Investimento</p>
+                                <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "var(--text-muted)" }}>
+                                    {isModular ? 'Bundle Completo' : 'Investimento'}
+                                </p>
                                 <p className="text-3xl font-extrabold mb-0.5" style={{ color: "var(--text-heading)", letterSpacing: "-0.02em" }}>{totalPrice}</p>
+                                {isModular && catalogCourse.price && (
+                                    <p className="text-xs mb-1" style={{ color: "var(--text-muted)" }}>
+                                        ou {formatPrice(catalogCourse.price)} por módulo
+                                    </p>
+                                )}
                                 <p className="text-xs mb-5" style={{ color: "var(--text-muted)" }}>
                                     ou {course.maxInstallments}x de {installmentPrice} sem juros
                                 </p>
@@ -182,7 +235,7 @@ export default async function CourseDetailPage({ params }: Props) {
                                     className="block w-full text-center py-3.5 font-extrabold text-white rounded-xl text-sm tracking-wide transition-opacity hover:opacity-90"
                                     style={{ backgroundColor: "var(--iepi-orange-light)" }}
                                 >
-                                    Quero me matricular
+                                    {isModular ? 'Comprar Curso Completo' : 'Quero me matricular'}
                                 </Link>
 
                                 <Link

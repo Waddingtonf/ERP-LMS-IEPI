@@ -1,6 +1,6 @@
 "use client"
 
-import { use, useState } from "react"
+import { use, useState, Suspense } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -11,9 +11,10 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { processCheckoutAction } from "@/lms/actions/checkoutActions"
 import { CATALOG, formatPrice } from "@/lms/data/catalog"
+import { Badge } from "@/components/ui/badge"
 
 // Validation schemas
 const profileSchema = z.object({
@@ -31,8 +32,9 @@ const paymentSchema = z.object({
     installments: z.string().min(1, "Selecione o número de parcelas"),
 })
 
-export default function CheckoutPage({ params }: { params: Promise<{ cursoId: string }> }) {
-    const { cursoId } = use(params)
+function CheckoutInner({ cursoId }: { cursoId: string }) {
+    const searchParams = useSearchParams()
+    const moduleId     = searchParams.get('moduleId') ?? undefined
     const [step, setStep] = useState<1 | 2 | 3>(1)
     const [isProcessing, setIsProcessing] = useState(false)
     const [files, setFiles] = useState<{ rg: File | null; historico: File | null }>({ rg: null, historico: null })
@@ -40,9 +42,16 @@ export default function CheckoutPage({ params }: { params: Promise<{ cursoId: st
 
     // Busca curso no catálogo pelo cursoId da URL (fallback para course-1 se não encontrado)
     const catalogEntry = CATALOG.find(c => c.id === cursoId) ?? CATALOG[0]
+    const moduleEntry  = moduleId ? (catalogEntry as unknown as { modules?: { id: string; title: string; price: number }[] })?.modules?.find((m) => m.id === moduleId) : undefined
+
+    const itemPrice = moduleEntry ? moduleEntry.price : catalogEntry.price
+    const itemTitle = moduleEntry
+        ? `${catalogEntry.title} — ${moduleEntry.title}`
+        : catalogEntry.title
+
     const course = {
-        title:           catalogEntry.title,
-        price:           catalogEntry.price / 100,   // centavos → reais
+        title:           itemTitle,
+        price:           itemPrice / 100,   // centavos → reais
         maxInstallments: catalogEntry.maxInstallments,
     }
 
@@ -87,7 +96,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ cursoId: st
             formData.append("installments", paymentData.installments)
 
             // Chama o Gateway CIELO Sandbox
-            const result = await processCheckoutAction(cursoId, formData)
+            const result = await processCheckoutAction(cursoId, formData, moduleId)
 
             if (result?.success) {
                 toast.success(`Pagamento Aprovado na Cielo (Transação: ${result.transactionId})`)
@@ -268,8 +277,11 @@ export default function CheckoutPage({ params }: { params: Promise<{ cursoId: st
                         <CardContent className="space-y-4">
                             <div>
                                 <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=600&auto=format&fit=crop" alt="Curso" className="w-full h-32 object-cover rounded-md mb-2" />
+                                {moduleId && (
+                                    <Badge className="mb-1 text-xs bg-violet-100 text-violet-800 border-violet-200 border">Compra de Módulo</Badge>
+                                )}
                                 <h4 className="font-semibold text-slate-900">{course.title}</h4>
-                                <p className="text-sm text-slate-500">Curso Online Sandbox</p>
+                                <p className="text-sm text-slate-500">{moduleId ? 'Módulo avulso' : 'Curso Online Sandbox'}</p>
                             </div>
                             <div className="pt-4 border-t border-slate-200 flex justify-between items-center">
                                 <span className="text-slate-600">Total:</span>
@@ -287,5 +299,19 @@ export default function CheckoutPage({ params }: { params: Promise<{ cursoId: st
 
             </div>
         </div>
+    )
+}
+// ── Page export — wraps in Suspense (required for useSearchParams in Next.js 15) ──
+
+export default function CheckoutPage({ params }: { params: Promise<{ cursoId: string }> }) {
+    const { cursoId } = use(params)
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center min-h-screen text-slate-400">
+                Carregando checkout...
+            </div>
+        }>
+            <CheckoutInner cursoId={cursoId} />
+        </Suspense>
     )
 }
