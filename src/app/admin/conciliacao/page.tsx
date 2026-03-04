@@ -177,7 +177,6 @@ export default function ConciliacaoPage() {
                             </TableRow>
                         ))}
                     </TableBody>
-                    </TableBody>
                     </Table>
                 </div>
             </div>
