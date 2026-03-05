@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DollarSign, ArrowUpRight, ArrowDownRight, Activity } from "lucide-react"
+import { FINANCEIRO_RESUMO_MOCK } from "@/erp/mocks/financeiroDashboardMock"
 
 export default function FinanceiroDashboard() {
     return (
@@ -12,9 +13,9 @@ export default function FinanceiroDashboard() {
                         <DollarSign className="h-4 w-4 text-emerald-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">R$ 45.231,89</div>
+                        <div className="text-2xl font-bold">{FINANCEIRO_RESUMO_MOCK.mrrLabel}</div>
                         <p className="text-xs text-emerald-500 flex items-center mt-1">
-                            <ArrowUpRight className="h-3 w-3 mr-1" /> +20.1% em relação ao mês anterior
+                            <ArrowUpRight className="h-3 w-3 mr-1" /> {FINANCEIRO_RESUMO_MOCK.mrrDeltaLabel}
                         </p>
                     </CardContent>
                 </Card>
@@ -24,8 +25,8 @@ export default function FinanceiroDashboard() {
                         <Activity className="h-4 w-4 text-blue-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">R$ 3.450,00</div>
-                        <p className="text-xs text-slate-500 mt-1">12 boletos pendentes</p>
+                        <div className="text-2xl font-bold">{FINANCEIRO_RESUMO_MOCK.contasReceberHojeLabel}</div>
+                        <p className="text-xs text-slate-500 mt-1">{FINANCEIRO_RESUMO_MOCK.boletosPendentesLabel}</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -34,8 +35,8 @@ export default function FinanceiroDashboard() {
                         <ArrowDownRight className="h-4 w-4 text-red-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">R$ 12.145,00</div>
-                        <p className="text-xs text-slate-500 mt-1">Próximos 7 dias</p>
+                        <div className="text-2xl font-bold">{FINANCEIRO_RESUMO_MOCK.contasPagarLabel}</div>
+                        <p className="text-xs text-slate-500 mt-1">{FINANCEIRO_RESUMO_MOCK.contasPagarHorizonLabel}</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -44,9 +45,9 @@ export default function FinanceiroDashboard() {
                         <Activity className="h-4 w-4 text-amber-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-amber-600">8.4%</div>
+                        <div className="text-2xl font-bold text-amber-600">{FINANCEIRO_RESUMO_MOCK.inadimplenciaLabel}</div>
                         <p className="text-xs text-red-500 flex items-center mt-1">
-                            <ArrowUpRight className="h-3 w-3 mr-1" /> +1.2% este mês
+                            <ArrowUpRight className="h-3 w-3 mr-1" /> {FINANCEIRO_RESUMO_MOCK.inadimplenciaDeltaLabel}
                         </p>
                     </CardContent>
                 </Card>

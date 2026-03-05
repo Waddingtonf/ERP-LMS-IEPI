@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
+import { TURMA_CURSOS, TURMA_DOCENTES } from "@/lms/mocks/turmaFormOptions"
 
 // ── Tipos ────────────────────────────────────────────────────────────────────
 type DiaSemana = "Seg" | "Ter" | "Qua" | "Qui" | "Sex" | "Sáb" | "Dom"
@@ -55,24 +56,6 @@ interface FormData {
 }
 
 // ── Dados mock ────────────────────────────────────────────────────────────────
-const CURSOS = [
-    { id: "course-1",  nome: "Oncologia para Técnicos de Enfermagem" },
-    { id: "course-2",  nome: "UTI Adulto — Cuidados Intensivos"       },
-    { id: "course-3",  nome: "Feridas, Estomias e Incontinências"      },
-    { id: "course-4",  nome: "Enfermagem Oncológica"                   },
-    { id: "course-5",  nome: "Pediatria e Neonatologia"                },
-    { id: "course-10", nome: "Gestão em Saúde e Liderança"             },
-]
-
-const DOCENTES = [
-    "Prof.ª Dra. Carla Bezerra",
-    "Enf.ª Esp. Renata Lima",
-    "Enf.ª Dra. Fátima Saraiva",
-    "Enf.ª Esp. Jorge Moutinho",
-    "Prof. Dr. Marcos Albuquerque",
-    "Enf.ª Ms. Beatriz Novais",
-]
-
 const DIAS: DiaSemana[] = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"]
 const PERIODOS: Periodo[] = ["Manhã", "Tarde", "Noite"]
 
@@ -133,13 +116,13 @@ function Step1({ data, onChange }: { data: FormData; onChange: (k: keyof FormDat
                     className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-400"
                     value={data.cursoId}
                     onChange={e => {
-                        const c = CURSOS.find(x => x.id === e.target.value)
+                        const c = TURMA_CURSOS.find(x => x.id === e.target.value)
                         onChange("cursoId", e.target.value)
                         onChange("cursoNome", c?.nome ?? "")
                     }}
                 >
                     <option value="">Selecionar curso...</option>
-                    {CURSOS.map(c => (
+                    {TURMA_CURSOS.map(c => (
                         <option key={c.id} value={c.id}>{c.nome}</option>
                     ))}
                 </select>
@@ -353,7 +336,7 @@ function Step3({ data, onChange }: { data: FormData; onChange: (k: keyof FormDat
                     onChange={e => onChange("coordenador", e.target.value)}
                 >
                     <option value="">Selecionar...</option>
-                    {DOCENTES.map(d => <option key={d} value={d}>{d}</option>)}
+                    {TURMA_DOCENTES.map(d => <option key={d} value={d}>{d}</option>)}
                 </select>
             </div>
 
@@ -366,7 +349,7 @@ function Step3({ data, onChange }: { data: FormData; onChange: (k: keyof FormDat
                     onChange={e => onChange("docentePrincipal", e.target.value)}
                 >
                     <option value="">Selecionar...</option>
-                    {DOCENTES.map(d => <option key={d} value={d}>{d}</option>)}
+                    {TURMA_DOCENTES.map(d => <option key={d} value={d}>{d}</option>)}
                 </select>
             </div>
 
@@ -379,7 +362,7 @@ function Step3({ data, onChange }: { data: FormData; onChange: (k: keyof FormDat
                     onChange={e => onChange("docenteApoio", e.target.value)}
                 >
                     <option value="">Nenhum</option>
-                    {DOCENTES.map(d => <option key={d} value={d}>{d}</option>)}
+                    {TURMA_DOCENTES.map(d => <option key={d} value={d}>{d}</option>)}
                 </select>
             </div>
 

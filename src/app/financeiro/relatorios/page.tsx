@@ -1,4 +1,4 @@
-import { getResumoFinanceiro, getContasReceber } from "@/lms/actions/financeiroActions";
+import { getResumoFinanceiro, getContasReceber } from "@/erp/actions/financeiroActions";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BarChart3, PieChart, TrendingUp, Download } from "lucide-react";
 

@@ -1,4 +1,4 @@
-import { getAlunosInadimplentes } from "@/lms/actions/financeiroActions";
+import { getAlunosInadimplentes } from "@/erp/actions/financeiroActions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, Phone, Mail, TrendingDown } from "lucide-react";
