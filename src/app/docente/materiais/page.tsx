@@ -1,84 +1,103 @@
-import { getAllMateriais } from "@/lms/actions/docenteActions";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { FileText, Video, Link as LinkIcon, FileSliders, Upload } from "lucide-react";
+import { getMaterialByTurma, deleteMaterialAction, toggleDisponibilidade } from "@/lms/actions/materialActions";
+import { getTurmaRepository } from "@/lms/repositories";
+import { FileText, Video, Link2, BookOpen, File, ClipboardList, Eye, EyeOff, Trash2, Upload } from "lucide-react";
+import type { MaterialTipo } from "@/lms/repositories/MaterialRepository";
 
-const TIPO_CONFIG = {
-    PDF: { icon: FileText, label: "PDF", className: "bg-red-50 text-red-700 border-red-200" },
-    VIDEO: { icon: Video, label: "Vídeo", className: "bg-purple-50 text-purple-700 border-purple-200" },
-    LINK: { icon: LinkIcon, label: "Link", className: "bg-blue-50 text-blue-700 border-blue-200" },
-    SLIDE: { icon: FileSliders, label: "Slide", className: "bg-orange-50 text-orange-700 border-orange-200" },
+const TIPO_CONFIG: Record<MaterialTipo, { label: string; icon: React.ElementType; color: string }> = {
+    'APOSTILA':  { label: 'Apostila',   icon: BookOpen,      color: 'text-violet-600' },
+    'PDF':       { label: 'PDF',        icon: FileText,      color: 'text-red-600' },
+    'VIDEO':     { label: 'Vídeo',      icon: Video,         color: 'text-blue-600' },
+    'SLIDE':     { label: 'Slide',      icon: File,          color: 'text-orange-600' },
+    'LINK':      { label: 'Link',       icon: Link2,         color: 'text-emerald-600' },
+    'EXERCICIO': { label: 'Exercícios', icon: ClipboardList, color: 'text-amber-600' },
 };
 
-export default async function MateriaisPage() {
-    const materiais = await getAllMateriais();
+export default async function DocenteMateriaisPage({ searchParams }: { searchParams: Promise<{turmaId?: string}> }) {
+    const { turmaId } = await searchParams;
+    const turmaRepo = getTurmaRepository();
+    const turmas = await turmaRepo.findAll?.() ?? [];
+    const selectedId = turmaId ?? turmas[0]?.id;
+    const materiais = selectedId ? await getMaterialByTurma(selectedId) : [];
+    const visiveis = materiais.filter(m => m.disponivel).length;
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
+        <div className="space-y-8">
+            <div className="flex items-start justify-between">
                 <div>
-                    <h2 className="text-2xl font-bold tracking-tight text-slate-800">Materiais Opcionais</h2>
-                    <p className="text-slate-500 mt-1">Arquivos e conteúdos complementares disponibilizados aos alunos.</p>
+                    <h1 className="text-2xl font-bold text-slate-900">Material Didático</h1>
+                    <p className="text-slate-500 mt-1 text-sm">{materiais.length} arquivos · {visiveis} visíveis para alunos</p>
                 </div>
-                <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm">
-                    <Upload className="w-4 h-4" />
-                    Enviar Material
+                <button className="flex items-center gap-2 bg-teal-600 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-teal-700 transition-colors">
+                    <Upload className="w-4 h-4" /> Enviar Material
                 </button>
             </div>
 
-            {materiais.length === 0 ? (
-                <Card className="border-dashed border-slate-200">
-                    <CardContent className="flex flex-col items-center justify-center py-16 text-center gap-4">
-                        <FileText className="w-12 h-12 text-slate-300" />
-                        <div>
-                            <p className="font-medium text-slate-700">Nenhum material cadastrado</p>
-                            <p className="text-sm text-slate-400 mt-1">Envie arquivos PDF, slides ou links externos para seus alunos.</p>
-                        </div>
-                    </CardContent>
-                </Card>
-            ) : (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {materiais.map((material) => {
-                        const tipoConfig = TIPO_CONFIG[material.tipo] ?? TIPO_CONFIG.LINK;
-                        const TipoIcon = tipoConfig.icon;
+            <div className="flex items-center gap-3 flex-wrap">
+                {turmas.map(t => (
+                    <a key={t.id} href={`/docente/materiais?turmaId=${t.id}`}
+                        className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${t.id === selectedId ? 'bg-teal-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-teal-50 hover:text-teal-700'}`}>
+                        {t.courseName}
+                    </a>
+                ))}
+            </div>
 
-                        return (
-                            <Card key={material.id} className="border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                                <CardHeader className="pb-3">
-                                    <div className="flex items-start gap-3">
-                                        <div className="p-2.5 bg-slate-100 rounded-lg shrink-0">
-                                            <TipoIcon className="w-5 h-5 text-slate-600" />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <CardTitle className="text-sm font-semibold text-slate-800 leading-snug">
-                                                {material.titulo}
-                                            </CardTitle>
-                                            <CardDescription className="text-xs mt-1">
-                                                Enviado em {new Date(material.uploadedAt).toLocaleDateString("pt-BR")}
-                                            </CardDescription>
-                                        </div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="pt-0">
-                                    <div className="flex items-center justify-between">
-                                        <Badge variant="outline" className={`text-xs ${tipoConfig.className}`}>
-                                            {tipoConfig.label}
-                                        </Badge>
-                                        <a
-                                            href={material.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline"
-                                        >
-                                            Visualizar →
-                                        </a>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        );
-                    })}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                        <thead className="bg-slate-50/70 border-b border-slate-100">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Material</th>
+                                <th className="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Tipo</th>
+                                <th className="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Ordem</th>
+                                <th className="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Visível</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                            {materiais.map(mat => {
+                                const cfg = TIPO_CONFIG[mat.tipo];
+                                return (
+                                    <tr key={mat.id} className={`hover:bg-slate-50/60 transition-colors ${!mat.disponivel ? 'opacity-50' : ''}`}>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <cfg.icon className={`w-5 h-5 ${cfg.color} shrink-0`} />
+                                                <div>
+                                                    <div className="font-medium text-slate-900">{mat.titulo}</div>
+                                                    {mat.descricao && <div className="text-xs text-slate-400">{mat.descricao}</div>}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-4 text-center">
+                                            <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">{cfg.label}</span>
+                                        </td>
+                                        <td className="px-4 py-4 text-center text-slate-500 font-mono">{mat.ordem}</td>
+                                        <td className="px-4 py-4 text-center">
+                                            {mat.disponivel
+                                                ? <Eye className="w-4 h-4 text-emerald-500 mx-auto" />
+                                                : <EyeOff className="w-4 h-4 text-slate-300 mx-auto" />}
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <form action={toggleDisponibilidade.bind(null, mat.id)}>
+                                                    <button className="text-xs text-slate-500 hover:text-teal-600 px-2 py-1 rounded transition-colors">
+                                                        {mat.disponivel ? 'Ocultar' : 'Mostrar'}
+                                                    </button>
+                                                </form>
+                                                <form action={deleteMaterialAction.bind(null, mat.id)}>
+                                                    <button className="text-rose-400 hover:text-rose-600 transition-colors p-1 rounded">
+                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                    {materiais.length === 0 && <div className="py-12 text-center text-slate-400">Nenhum material enviado para esta turma.</div>}
                 </div>
-            )}
+            </div>
         </div>
     );
 }
