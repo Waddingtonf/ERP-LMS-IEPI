@@ -1,4 +1,4 @@
-import { getMaterialByTurma, deleteMaterialAction, toggleDisponibilidade } from "@/lms/actions/materialActions";
+import { getMaterialByTurma, deleteMaterialAction, toggleDisponibilidadeAction } from "@/lms/actions/materialActions";
 import { getTurmaRepository } from "@/lms/repositories";
 import { FileText, Video, Link2, BookOpen, File, ClipboardList, Eye, EyeOff, Trash2, Upload } from "lucide-react";
 import type { MaterialTipo } from "@/lms/repositories/MaterialRepository";
@@ -78,7 +78,7 @@ export default async function DocenteMateriaisPage({ searchParams }: { searchPar
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
-                                                <form action={toggleDisponibilidade.bind(null, mat.id)}>
+                                                <form action={toggleDisponibilidadeAction.bind(null, mat.id, !mat.disponivel)}>
                                                     <button className="text-xs text-slate-500 hover:text-teal-600 px-2 py-1 rounded transition-colors">
                                                         {mat.disponivel ? 'Ocultar' : 'Mostrar'}
                                                     </button>

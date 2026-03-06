@@ -33,8 +33,8 @@ export default async function DocenteTurmaDetailPage({ params }: Props) {
                     <div className="text-white/70 text-xs font-semibold uppercase tracking-wider mb-1">{turma.code}</div>
                     <h1 className="text-2xl font-bold">{turma.courseName}</h1>
                     <div className="flex gap-6 mt-3 text-sm text-white/80">
-                        <div className="flex items-center gap-1.5"><Users className="w-4 h-4" />{turma.enrolledStudents}/{turma.maxStudents} alunos</div>
-                        <div className="flex items-center gap-1.5"><BookOpen className="w-4 h-4" />{turma.modality}</div>
+                        <div className="flex items-center gap-1.5"><Users className="w-4 h-4" />{turma.enrolledCount}/{turma.maxStudents} alunos</div>
+                        <div className="flex items-center gap-1.5"><BookOpen className="w-4 h-4" />{turma.schedule}</div>
                     </div>
                 </div>
             </div>

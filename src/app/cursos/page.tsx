@@ -11,9 +11,9 @@ const TYPE_FILTERS: Array<CourseType | "Todos"> = [
 const INSTRUCTOR_FILTERS = ["Todos", "Técnicos de Enfermagem", "Enfermeiros", "Enfermeiros e Enfermandos"]
 
 /* ── ícone SVG inline ──────────────────────────────────────────────── */
-function Ico({ d, cls = "w-4 h-4 shrink-0" }: { d: string; cls?: string }) {
+function Ico({ d, cls = "w-4 h-4 shrink-0", style }: { d: string; cls?: string; style?: React.CSSProperties }) {
     return (
-        <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <svg className={cls} style={style} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d={d} />
         </svg>
     )

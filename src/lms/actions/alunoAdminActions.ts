@@ -45,7 +45,7 @@ export async function getAlunoCompleto(alunoId: string): Promise<AlunoCompleto> 
 
     // Frequência média geral
     const freqRepo = getFrequenciaRepository();
-    const turmaIds = [...new Set(matriculas.map(m => m.turmaId))];
+    const turmaIds = [...new Set(matriculas.map(m => m.turmaId).filter((id): id is string => id !== null))];
     let totalAulas = 0; let totalPresentes = 0;
     for (const turmaId of turmaIds) {
         const freq = await freqRepo.findByAlunoTurma(alunoId, turmaId);
@@ -58,7 +58,7 @@ export async function getAlunoCompleto(alunoId: string): Promise<AlunoCompleto> 
         usuario,
         matriculas: matriculas.map(m => ({
             id: m.id,
-            turmaId: m.turmaId,
+            turmaId: m.turmaId ?? '',
             turmaNome: m.courseName,
             status: m.status,
             dataMatricula: m.dataMatricula,
@@ -80,4 +80,4 @@ export async function trancarMatricula(matriculaId: string, motivo: string): Pro
     revalidatePath('/admin/alunos');
 }
 
-export type { AlunoCompleto };
+

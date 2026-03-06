@@ -23,8 +23,8 @@ function fmtMoeda(n: number) { return n.toLocaleString('pt-BR', { style: 'curren
 export default async function AdminCampanhasPage() {
     const campanhas = await getCampanhasComMetricas();
 
-    const totalInvestido = campanhas.reduce((a, c) => a + (c.metricas?.gasto ?? 0), 0);
-    const totalConversoes = campanhas.reduce((a, c) => a + (c.metricas?.conversoes ?? 0), 0);
+    const totalInvestido = campanhas.reduce((a, c) => a + (c.gastoAtual ?? 0), 0);
+    const totalConversoes = campanhas.reduce((a, c) => a + (c.metricas?.matriculas ?? 0), 0);
     const totalLeads = campanhas.reduce((a, c) => a + (c.metricas?.leads ?? 0), 0);
     const mediaCPL = totalLeads > 0 ? totalInvestido / totalLeads : 0;
 

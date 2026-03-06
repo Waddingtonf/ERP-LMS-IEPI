@@ -51,6 +51,12 @@ export async function toggleDisponibilidade(id: string, disponivel: boolean): Pr
     return mat;
 }
 
+export async function toggleDisponibilidadeAction(id: string, disponivel: boolean): Promise<void> {
+    await getMaterialRepository().update(id, { disponivel });
+    revalidatePath('/docente/materiais');
+    revalidatePath('/aluno/materiais');
+}
+
 export async function deleteMaterialAction(id: string): Promise<void> {
     await getMaterialRepository().delete(id);
     revalidatePath('/docente/materiais');

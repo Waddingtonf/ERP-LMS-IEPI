@@ -17,7 +17,7 @@ function buildModules(courseId: string, count: number, price: number, sellable: 
 
 export class MockCourseRepository implements ICourseRepository {
     private courses: Course[] = CATALOG.map(c => {
-        const isModular = c.type === 'Pos-Graduacao' || c.type === 'Especializacao' || c.type === 'Graduacao';
+        const isModular = c.type === 'Pós-Graduação' || c.type === 'Especialização' || c.type === 'Graduação';
         const numModules = isModular ? 4 : 2;
         return {
             ...c,

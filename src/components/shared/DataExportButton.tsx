@@ -36,15 +36,16 @@ export function DataExportButton({
         startTransition(async () => {
             try {
                 const { exportarRelatorio } = await import('@/erp/actions/relatorioActions');
-                const blob = await exportarRelatorio(relatorioId, format);
-                if (blob) {
-                    // Create download link
-                    const url = URL.createObjectURL(blob);
+                const result = await exportarRelatorio(
+                    relatorioId as 'DRE' | 'FluxoCaixa' | 'Balancete',
+                    periodoLabel,
+                    format.toUpperCase() as 'PDF' | 'XLSX' | 'CSV'
+                );
+                if (result?.url) {
                     const a = document.createElement('a');
-                    a.href = url;
+                    a.href = result.url;
                     a.download = `${relatorioNome.replace(/\s+/g, '-')}-${periodoLabel}.${format}`;
                     a.click();
-                    URL.revokeObjectURL(url);
                 }
             } finally {
                 setExporting(null);

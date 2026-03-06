@@ -3,22 +3,21 @@ import type { Lead, LeadStatus } from "@/crm/repositories/LeadRepository";
 import { User, Phone, Mail, ArrowRight } from "lucide-react";
 
 const FUNIL: { status: LeadStatus; label: string; color: string; bg: string; border: string }[] = [
-    { status: 'Novo',         label: 'Novos',          color: 'text-sky-700',    bg: 'bg-sky-50',    border: 'border-sky-200' },
-    { status: 'Contato',      label: 'Em Contato',     color: 'text-blue-700',   bg: 'bg-blue-50',   border: 'border-blue-200' },
-    { status: 'Interessado',  label: 'Interessados',   color: 'text-violet-700', bg: 'bg-violet-50', border: 'border-violet-200' },
-    { status: 'Proposta',     label: 'Proposta',       color: 'text-amber-700',  bg: 'bg-amber-50',  border: 'border-amber-200' },
-    { status: 'Convertido',   label: 'Convertidos',    color: 'text-emerald-700',bg: 'bg-emerald-50',border: 'border-emerald-200' },
-    { status: 'Perdido',      label: 'Perdidos',       color: 'text-rose-700',   bg: 'bg-rose-50',   border: 'border-rose-200' },
+    { status: 'Novo',                  label: 'Novos',             color: 'text-sky-700',    bg: 'bg-sky-50',    border: 'border-sky-200' },
+    { status: 'Contato Feito',         label: 'Em Contato',        color: 'text-blue-700',   bg: 'bg-blue-50',   border: 'border-blue-200' },
+    { status: 'Interesse Confirmado',  label: 'Interessados',      color: 'text-violet-700', bg: 'bg-violet-50', border: 'border-violet-200' },
+    { status: 'Em Triagem',            label: 'Em Triagem',        color: 'text-amber-700',  bg: 'bg-amber-50',  border: 'border-amber-200' },
+    { status: 'Matriculado',           label: 'Matriculados',      color: 'text-emerald-700',bg: 'bg-emerald-50',border: 'border-emerald-200' },
+    { status: 'Perdido',               label: 'Perdidos',          color: 'text-rose-700',   bg: 'bg-rose-50',   border: 'border-rose-200' },
 ];
 
-async function KanbanColumn({ status, label, color, bg, border }: typeof FUNIL[number]) {
-    const leads = await getLeadsByFunil(status);
+function KanbanColumn({ leads, label, color, bg, border }: Omit<typeof FUNIL[number], 'status'> & { leads: Lead[] }) {
     return (
         <div className={`rounded-2xl border ${border} ${bg} p-4 min-w-[200px] flex-1`}>
             <div className={`flex items-center justify-between mb-3`}>
                 <span className={`text-xs font-bold uppercase tracking-wide ${color}`}>{label}</span>
-                <span className={`text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center text-white ${bg.replace('bg-', 'bg-').replace('50', '500')}`} style={{backgroundColor: 'currentColor'}}>
-                    <span className={color}>{leads.length}</span>
+                <span className={`text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center ${color}`}>
+                    {leads.length}
                 </span>
             </div>
             <div className="space-y-2">
@@ -53,9 +52,9 @@ function LeadCard({ lead }: { lead: Lead }) {
 }
 
 export default async function AdminCRMPage() {
-    const funilData = await Promise.all(FUNIL.map(f => getLeadsByFunil(f.status)));
-    const totalLeads = funilData.reduce((a, b) => a + b.length, 0);
-    const convertidos = funilData[4].length;
+    const funil = await getLeadsByFunil();
+    const totalLeads = Object.values(funil).reduce((a, arr) => a + arr.length, 0);
+    const convertidos = (funil['Matriculado'] ?? []).length;
     const taxaConversao = totalLeads > 0 ? ((convertidos / totalLeads) * 100).toFixed(0) : '0';
 
     return (
@@ -73,7 +72,7 @@ export default async function AdminCRMPage() {
             {/* Kanban Board */}
             <div className="flex gap-4 overflow-x-auto pb-4">
                 {FUNIL.map(col => (
-                    <KanbanColumn key={col.status} {...col} />
+                    <KanbanColumn key={col.status} leads={funil[col.status] ?? []} label={col.label} color={col.color} bg={col.bg} border={col.border} />
                 ))}
             </div>
         </div>

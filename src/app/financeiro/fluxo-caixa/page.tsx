@@ -4,22 +4,22 @@ import { TrendingUp, TrendingDown, ArrowUp, ArrowDown } from "lucide-react";
 function fmtMoeda(n: number) { return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }); }
 
 const TIPO_COLOR: Record<string, { dot: string; row: string; icon: React.ElementType; iconColor: string }> = {
-    'ENTRADA': { dot: 'bg-emerald-500', row: 'hover:bg-emerald-50/40', icon: ArrowUp,   iconColor: 'text-emerald-600' },
-    'SAIDA':   { dot: 'bg-rose-500',    row: 'hover:bg-rose-50/20',    icon: ArrowDown, iconColor: 'text-rose-600' },
+    'Entrada': { dot: 'bg-emerald-500', row: 'hover:bg-emerald-50/40', icon: ArrowUp,   iconColor: 'text-emerald-600' },
+    'Saida':   { dot: 'bg-rose-500',    row: 'hover:bg-rose-50/20',    icon: ArrowDown, iconColor: 'text-rose-600' },
 };
 
 export default async function FinanceiroFluxoCaixaPage() {
     const fluxo = await getFluxoCaixa();
 
-    const totalEntradas = fluxo.itens.filter(i => i.tipo === 'ENTRADA').reduce((a, i) => a + i.valor, 0);
-    const totalSaidas   = fluxo.itens.filter(i => i.tipo === 'SAIDA').reduce((a, i) => a + i.valor, 0);
+    const totalEntradas = fluxo.itens.filter(i => i.tipo === 'Entrada').reduce((a, i) => a + i.valor, 0);
+    const totalSaidas   = fluxo.itens.filter(i => i.tipo === 'Saida').reduce((a, i) => a + i.valor, 0);
     const saldoFinal    = fluxo.saldoInicial + totalEntradas - totalSaidas;
 
     return (
         <div className="space-y-8">
             <div>
                 <h1 className="text-2xl font-bold text-slate-900">Fluxo de Caixa</h1>
-                <p className="text-slate-500 mt-1 text-sm">Período: {fluxo.periodoLabel} · Saldo inicial: {fmtMoeda(fluxo.saldoInicial)}</p>
+                <p className="text-slate-500 mt-1 text-sm">Período: {fluxo.periodo} · Saldo inicial: {fmtMoeda(fluxo.saldoInicial)}</p>
             </div>
 
             {/* KPIs */}
@@ -63,7 +63,7 @@ export default async function FinanceiroFluxoCaixaPage() {
                             {fluxo.itens.map(item => {
                                 const cfg = TIPO_COLOR[item.tipo];
                                 return (
-                                    <tr key={item.id} className={`transition-colors ${cfg.row}`}>
+                                    <tr key={`${item.data}-${item.descricao}`} className={`transition-colors ${cfg.row}`}>
                                         <td className="px-6 py-3 text-slate-500 text-xs">{item.data}</td>
                                         <td className="px-6 py-3">
                                             <div className="flex items-center gap-2">
@@ -74,7 +74,7 @@ export default async function FinanceiroFluxoCaixaPage() {
                                         <td className="px-4 py-3 text-center">
                                             <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">{item.categoria}</span>
                                         </td>
-                                        <td className={`px-4 py-3 text-right font-semibold ${item.tipo === 'ENTRADA' ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                        <td className={`px-4 py-3 text-right font-semibold ${item.tipo === 'Entrada' ? 'text-emerald-600' : 'text-rose-600'}`}>
                                             <span className="flex items-center justify-end gap-1">
                                                 <cfg.icon className={`w-3.5 h-3.5 ${cfg.iconColor}`} />
                                                 {fmtMoeda(item.valor)}

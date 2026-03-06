@@ -6,12 +6,10 @@ import { Bell, CheckCheck, BookOpen, DollarSign, AlertCircle, Info, Award, Megap
 import type { Notificacao, NotificacaoTipo } from "@/shared/repositories/NotificacaoRepository";
 
 const TIPO_CONFIG: Record<NotificacaoTipo, { icon: React.ElementType; color: string; bg: string }> = {
-    'NOTA':          { icon: BookOpen,    color: 'text-blue-600',    bg: 'bg-blue-50' },
-    'FINANCEIRO':    { icon: DollarSign,  color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    'AVISO':         { icon: AlertCircle, color: 'text-amber-600',   bg: 'bg-amber-50' },
-    'SISTEMA':       { icon: Info,        color: 'text-slate-600',   bg: 'bg-slate-100' },
-    'CERTIFICADO':   { icon: Award,       color: 'text-violet-600',  bg: 'bg-violet-50' },
-    'MARKETING':     { icon: Megaphone,   color: 'text-pink-600',    bg: 'bg-pink-50' },
+    'info':      { icon: Info,        color: 'text-blue-600',    bg: 'bg-blue-50' },
+    'sucesso':   { icon: Award,       color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    'aviso':     { icon: AlertCircle, color: 'text-amber-600',   bg: 'bg-amber-50' },
+    'erro':      { icon: AlertCircle, color: 'text-rose-600',    bg: 'bg-rose-50' },
 };
 
 function timeAgo(dateStr: string): string {
@@ -29,14 +27,16 @@ export function NotificacaoDropdown() {
     const [unread, setUnread] = useState(0);
     const [isPending, startTransition] = useTransition();
 
+    const USUARIO_ID = 'current-user'; // replaced by session userId in production
+
     useEffect(() => {
-        countUnreadNotificacoes().then(setUnread);
-        if (open) getNotificacoes().then(setNotifs);
+        countUnreadNotificacoes(USUARIO_ID).then(setUnread);
+        if (open) getNotificacoes(USUARIO_ID).then(setNotifs);
     }, [open]);
 
     function handleMarcar(id: string) {
         startTransition(async () => {
-            await marcarNotificacaoLida(id);
+            await marcarNotificacaoLida(id, USUARIO_ID);
             setNotifs(prev => prev.map(n => n.id === id ? { ...n, lida: true } : n));
             setUnread(prev => Math.max(0, prev - 1));
         });
@@ -44,7 +44,7 @@ export function NotificacaoDropdown() {
 
     function handleTodasLidas() {
         startTransition(async () => {
-            await marcarTodasLidas();
+            await marcarTodasLidas(USUARIO_ID);
             setNotifs(prev => prev.map(n => ({ ...n, lida: true })));
             setUnread(0);
         });
@@ -97,7 +97,7 @@ export function NotificacaoDropdown() {
                                         <div className="flex-1 min-w-0">
                                             <div className={`text-sm font-medium ${n.lida ? 'text-slate-500' : 'text-slate-900'} truncate`}>{n.titulo}</div>
                                             <div className="text-xs text-slate-400 mt-0.5 line-clamp-2">{n.mensagem}</div>
-                                            <div className="text-xs text-slate-300 mt-1">{timeAgo(n.criadoEm)}</div>
+                                            <div className="text-xs text-slate-300 mt-1">{timeAgo(n.criadaEm)}</div>
                                         </div>
                                         {!n.lida && <div className="w-2 h-2 rounded-full bg-violet-500 shrink-0 mt-1.5" />}
                                     </div>

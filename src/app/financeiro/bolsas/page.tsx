@@ -21,11 +21,10 @@ const STATUS_COLOR: Record<string, string> = {
 export default async function FinanceiroBolsasPage() {
     const bolsas = await getBolsas();
     const totalAtivas = bolsas.filter(b => b.status === 'Ativa').length;
-    const economiaTotal = bolsas.filter(b => b.status === 'Ativa').reduce((acc, b) => {
-        if (b.tipo === 'percentual' && b.valorAtual) return acc + b.valorAtual;
-        if (b.tipo === 'fixo' && b.valorFixo) return acc + b.valorFixo;
-        return acc;
-    }, 0);
+    const ativaBolsas = bolsas.filter(b => b.status === 'Ativa');
+    const mediaDesconto = ativaBolsas.length > 0
+        ? ativaBolsas.reduce((acc, b) => acc + b.percentualDesconto, 0) / ativaBolsas.length
+        : 0;
 
     return (
         <div className="space-y-8">
@@ -47,7 +46,7 @@ export default async function FinanceiroBolsasPage() {
                 </div>
                 <div className="bg-emerald-50 rounded-2xl p-5 flex items-center gap-4">
                     <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm"><DollarSign className="w-5 h-5 text-emerald-500" /></div>
-                    <div><div className="text-2xl font-bold text-emerald-600">{fmtMoeda(economiaTotal)}</div><div className="text-xs text-slate-500">Desconto Médio ativo</div></div>
+                    <div><div className="text-2xl font-bold text-emerald-600">{mediaDesconto.toFixed(0)}%</div><div className="text-xs text-slate-500">Desconto Médio ativo</div></div>
                 </div>
                 <div className="bg-slate-100 rounded-2xl p-5 flex items-center gap-4">
                     <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm"><Users className="w-5 h-5 text-slate-500" /></div>
@@ -77,13 +76,13 @@ export default async function FinanceiroBolsasPage() {
                                         {bolsa.descricao && <div className="text-xs text-slate-400 mt-0.5">{bolsa.descricao}</div>}
                                     </td>
                                     <td className="px-4 py-4 text-center">
-                                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${TIPO_COLOR[bolsa.categoria] ?? 'bg-slate-100 text-slate-600'}`}>{bolsa.categoria}</span>
+                                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${TIPO_COLOR[bolsa.tipo] ?? 'bg-slate-100 text-slate-600'}`}>{bolsa.tipo}</span>
                                     </td>
                                     <td className="px-4 py-4 text-center font-bold text-violet-700">
-                                        {bolsa.tipo === 'percentual' ? `${bolsa.percentual}%` : bolsa.valorFixo ? fmtMoeda(bolsa.valorFixo) : '—'}
+                                        {bolsa.percentualDesconto > 0 ? `${bolsa.percentualDesconto}%` : bolsa.valorMaximo ? fmtMoeda(bolsa.valorMaximo) : '—'}
                                     </td>
                                     <td className="px-4 py-4 text-center text-slate-600">
-                                        {bolsa.vagasDisponiveis !== undefined ? `${bolsa.vagasDisponiveis}/${bolsa.vagasTotais}` : '—'}
+                                        {`${bolsa.vagasTotal - bolsa.vagasOcupadas}/${bolsa.vagasTotal}`}
                                     </td>
                                     <td className="px-4 py-4 text-center">
                                         <span className={`text-xs font-semibold px-2 py-1 rounded-full ${STATUS_COLOR[bolsa.status] ?? 'bg-slate-100 text-slate-500'}`}>{bolsa.status}</span>
