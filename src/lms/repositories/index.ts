@@ -5,31 +5,39 @@
  * - Supabase mode: when a real Supabase URL is configured
  */
 
-import { IUserRepository }          from './UserRepository';
-import { ICourseRepository }        from './CourseRepository';
-import { IPaymentRepository }       from './PaymentRepository';
-import { ITurmaRepository }         from './TurmaRepository';
-import { IFrequenciaRepository }    from './FrequenciaRepository';
-import { IEnrollmentRepository }    from './EnrollmentRepository';
-import { INotaRepository }          from './NotaRepository';
-import { IAvaliacaoRepository }     from './AvaliacaoRepository';
-import { IMaterialRepository }      from './MaterialRepository';
-import { ICertificadoRepository }   from './CertificadoRepository';
-import { ICalendarioRepository }    from './CalendarioRepository';
-import { ICatalogoRepository }      from './CatalogoRepository';
+import { IUserRepository }                       from './UserRepository';
+import { ICourseRepository }                    from './CourseRepository';
+import { IPaymentRepository }                   from './PaymentRepository';
+import { ITurmaRepository }                     from './TurmaRepository';
+import { IFrequenciaRepository }               from './FrequenciaRepository';
+import { IEnrollmentRepository }               from './EnrollmentRepository';
+import { INotaRepository }                      from './NotaRepository';
+import { IAvaliacaoRepository }                from './AvaliacaoRepository';
+import { IMaterialRepository }                  from './MaterialRepository';
+import { ICertificadoRepository }              from './CertificadoRepository';
+import { ICalendarioRepository }               from './CalendarioRepository';
+import { ICatalogoRepository }                  from './CatalogoRepository';
+import { IRequerimentoRepository }             from './RequerimentoRepository';
+import { IPlanoEnsinoRepository }              from './PlanoEnsinoRepository';
+import { IDiarioClasseRepository }             from './DiarioClasseRepository';
+import { IAvaliacaoInstitucionalRepository }   from './AvaliacaoInstitucionalRepository';
 
-import { MockUserRepository }         from './MockUserRepository';
-import { MockCourseRepository }       from './MockCourseRepository';
-import { MockPaymentRepository }      from './MockPaymentRepository';
-import { MockTurmaRepository }        from './MockTurmaRepository';
-import { MockFrequenciaRepository }   from './MockFrequenciaRepository';
-import { MockEnrollmentRepository }   from './MockEnrollmentRepository';
-import { MockNotaRepository }         from './MockNotaRepository';
-import { MockAvaliacaoRepository }    from './MockAvaliacaoRepository';
-import { MockMaterialRepository }     from './MockMaterialRepository';
-import { MockCertificadoRepository }  from './MockCertificadoRepository';
-import { MockCalendarioRepository }   from './MockCalendarioRepository';
-import { MockCatalogoRepository }     from './MockCatalogoRepository';
+import { MockUserRepository }                       from './MockUserRepository';
+import { MockCourseRepository }                    from './MockCourseRepository';
+import { MockPaymentRepository }                   from './MockPaymentRepository';
+import { MockTurmaRepository }                     from './MockTurmaRepository';
+import { MockFrequenciaRepository }               from './MockFrequenciaRepository';
+import { MockEnrollmentRepository }               from './MockEnrollmentRepository';
+import { MockNotaRepository }                      from './MockNotaRepository';
+import { MockAvaliacaoRepository }                from './MockAvaliacaoRepository';
+import { MockMaterialRepository }                  from './MockMaterialRepository';
+import { MockCertificadoRepository }              from './MockCertificadoRepository';
+import { MockCalendarioRepository }               from './MockCalendarioRepository';
+import { MockCatalogoRepository }                  from './MockCatalogoRepository';
+import { MockRequerimentoRepository }             from './MockRequerimentoRepository';
+import { MockPlanoEnsinoRepository }              from './MockPlanoEnsinoRepository';
+import { MockDiarioClasseRepository }             from './MockDiarioClasseRepository';
+import { MockAvaliacaoInstitucionalRepository }   from './MockAvaliacaoInstitucionalRepository';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 export const isMockMode = !supabaseUrl || supabaseUrl.includes('dummy') || supabaseUrl.includes('placeholder');
@@ -45,7 +53,11 @@ let _avaliacao:    IAvaliacaoRepository    | null = null;
 let _material:     IMaterialRepository     | null = null;
 let _certificado:  ICertificadoRepository  | null = null;
 let _calendario:   ICalendarioRepository   | null = null;
-let _catalogo:     ICatalogoRepository     | null = null;
+let _catalogo:               ICatalogoRepository                | null = null;
+let _requerimento:           IRequerimentoRepository            | null = null;
+let _planoEnsino:            IPlanoEnsinoRepository             | null = null;
+let _diarioClasse:           IDiarioClasseRepository            | null = null;
+let _avaliacaoInstitucional: IAvaliacaoInstitucionalRepository  | null = null;
 
 // Async factories (Supabase-capable)
 export async function getUserRepository(): Promise<IUserRepository> {
@@ -78,7 +90,11 @@ export function getAvaliacaoRepository():   IAvaliacaoRepository   { return (_av
 export function getMaterialRepository():    IMaterialRepository    { return (_material    ??= new MockMaterialRepository()); }
 export function getCertificadoRepository(): ICertificadoRepository { return (_certificado ??= new MockCertificadoRepository()); }
 export function getCalendarioRepository():  ICalendarioRepository  { return (_calendario  ??= new MockCalendarioRepository()); }
-export function getCatalogoRepository():    ICatalogoRepository    { return (_catalogo    ??= new MockCatalogoRepository()); }
+export function getCatalogoRepository():              ICatalogoRepository               { return (_catalogo              ??= new MockCatalogoRepository()); }
+export function getRequerimentoRepository():          IRequerimentoRepository           { return (_requerimento          ??= new MockRequerimentoRepository()); }
+export function getPlanoEnsinoRepository():           IPlanoEnsinoRepository            { return (_planoEnsino           ??= new MockPlanoEnsinoRepository()); }
+export function getDiarioClasseRepository():          IDiarioClasseRepository           { return (_diarioClasse          ??= new MockDiarioClasseRepository()); }
+export function getAvaliacaoInstitucionalRepository(): IAvaliacaoInstitucionalRepository  { return (_avaliacaoInstitucional ??= new MockAvaliacaoInstitucionalRepository()); }
 
 // Sync convenience aliases for server components (always mock in dev)
 export function getUserRepositorySync():    IUserRepository    { return (_user    ??= new MockUserRepository()); }
