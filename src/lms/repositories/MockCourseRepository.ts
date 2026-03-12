@@ -21,9 +21,12 @@ export class MockCourseRepository implements ICourseRepository {
         const numModules = isModular ? 4 : 2;
         return {
             ...c,
+            tipo: c.tipo ?? 'Pago',
             courseMode: (isModular ? 'PosGraduacao' : 'CursoLivre') as Course['courseMode'],
             bundlePrice: isModular ? Math.round(c.price * 0.85) : undefined,
             isPublished: true,
+            videoProvider: c.videoProvider,
+            videoUrl: c.videoUrl,
             modules: buildModules(c.id, numModules, c.price, isModular),
         };
     });
@@ -37,6 +40,7 @@ export class MockCourseRepository implements ICourseRepository {
     async create(course: CourseInput): Promise<Course> {
         const newCourse: Course = {
             courseMode:      'CursoLivre',
+            tipo:            'Pago',
             type:            '',
             instructor:      '',
             hours:           '',

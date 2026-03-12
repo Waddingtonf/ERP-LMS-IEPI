@@ -21,6 +21,7 @@ export default function FinanceiroLayout({ children }: { children: React.ReactNo
             userRole="Financeiro"
             userInitial="F"
             userColor="#059669"
+            portal="financeiro"
         >
             {children}
         </PortalShell>

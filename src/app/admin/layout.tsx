@@ -24,6 +24,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             userRole="Admin"
             userInitial="A"
             userColor="#7c3aed"
+            portal="admin"
         >
             {children}
         </PortalShell>

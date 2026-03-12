@@ -19,13 +19,20 @@ export interface Module {
 
 export type CourseMode = 'CursoLivre' | 'GraduacaoModular' | 'PosGraduacao' | 'MBA';
 
+/** Whether a course requires payment or is free. */
+export type CourseTipo = 'Gratuito' | 'Pago';
+
+/** Video hosting provider for course content. */
+export type VideoProvider = 'youtube' | 'vimeo' | 'supabase';
+
 export interface Course {
     id: string;
     title: string;
     description: string;
-    price: number;               // em centavos — preco do curso completo / bundle
+    price: number;               // em centavos — preco do curso completo / bundle (0 for free courses)
     bundlePrice?: number;        // preco bundle com desconto (centavos); se undefined = price
     courseMode: CourseMode;      // determina logica de vendas
+    tipo: CourseTipo;            // 'Gratuito' | 'Pago'
     type: string;                // "Curso Livre" | "Pos-Graduacao" | etc
     instructor: string;          // publico-alvo profissional
     hours: string;               // "360h"
@@ -37,6 +44,9 @@ export interface Course {
     imageUrl?: string;
     isPublished: boolean;
     modules: Module[];
+    /** Video delivery settings for free course content */
+    videoProvider?: VideoProvider;
+    videoUrl?: string;
 }
 
 /** Subset accepted by create(): only the 3 base fields are required; extras default to empty/false. */

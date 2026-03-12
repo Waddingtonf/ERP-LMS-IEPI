@@ -21,6 +21,7 @@ export default function PedagogicoLayout({ children }: { children: React.ReactNo
             userRole="Pedagógico"
             userInitial="P"
             userColor="#ea580c"
+            portal="pedagogico"
         >
             {children}
         </PortalShell>

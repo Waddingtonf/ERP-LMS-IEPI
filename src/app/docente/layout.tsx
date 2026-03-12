@@ -21,6 +21,7 @@ export default function DocenteLayout({ children }: { children: React.ReactNode 
             userRole="Docente"
             userInitial="D"
             userColor="#2563eb"
+            portal="docente"
         >
             {children}
         </PortalShell>

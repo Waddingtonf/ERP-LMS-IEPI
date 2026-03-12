@@ -5,20 +5,20 @@ import { getNotificacaoRepository } from "@/shared/repositories";
 import type { Notificacao, NotificacaoTipo } from "@/shared/repositories/NotificacaoRepository";
 
 export async function getNotificacoes(usuarioId: string): Promise<Notificacao[]> {
-    return getNotificacaoRepository().findByUsuario(usuarioId);
+    return (await getNotificacaoRepository()).findByUsuario(usuarioId);
 }
 
 export async function countUnreadNotificacoes(usuarioId: string): Promise<number> {
-    return getNotificacaoRepository().countUnread(usuarioId);
+    return (await getNotificacaoRepository()).countUnread(usuarioId);
 }
 
 export async function marcarNotificacaoLida(id: string, usuarioId: string): Promise<void> {
-    await getNotificacaoRepository().marcarLida(id);
+    await (await getNotificacaoRepository()).marcarLida(id);
     revalidatePath(`/api/notificacoes`);
 }
 
 export async function marcarTodasLidas(usuarioId: string): Promise<void> {
-    await getNotificacaoRepository().marcarTodasLidas(usuarioId);
+    await (await getNotificacaoRepository()).marcarTodasLidas(usuarioId);
     revalidatePath(`/api/notificacoes`);
 }
 
@@ -30,7 +30,7 @@ export async function criarNotificacao(data: {
     link?: string;
     origem: string;
 }): Promise<Notificacao> {
-    return getNotificacaoRepository().create({
+    return (await getNotificacaoRepository()).create({
         ...data,
         link: data.link ?? null,
         lida: false,

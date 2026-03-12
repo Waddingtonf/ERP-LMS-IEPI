@@ -158,6 +158,7 @@ export class SupabaseCourseRepository implements ICourseRepository {
             corenRequired:   row.coren_required  ?? false,
             maxInstallments: row.max_installments ?? 1,
             isPublished:     row.is_published    ?? false,
+            tipo:            row.tipo             ?? 'Pago',
             imageUrl:        row.image_url       ?? undefined,
             modules: (row.modules ?? []).map((m: any) => ({
                 id:                   m.id,

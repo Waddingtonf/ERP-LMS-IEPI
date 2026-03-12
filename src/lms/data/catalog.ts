@@ -13,6 +13,11 @@ export type CourseType =
 
 export type CourseMode = 'CursoLivre' | 'GraduacaoModular' | 'PosGraduacao' | 'MBA'
 
+/** Whether the course requires payment or is completely free. */
+export type CourseTipo = 'Gratuito' | 'Pago'
+
+export type VideoProvider = 'youtube' | 'vimeo' | 'supabase'
+
 export interface CatalogCourse {
     id: string
     title: string
@@ -25,11 +30,15 @@ export interface CatalogCourse {
     endDate: string
     schedule: string         // "Matutino ou Vespertino"
     corenRequired: boolean
-    price: number            // em centavos
+    price: number            // em centavos (0 for free courses)
     /** Preco bundle (todos modulos) em centavos. Apenas para GraduacaoModular. */
     bundlePrice?: number
     maxInstallments: number
     imageUrl?: string
+    /** Defaults to 'Pago' when omitted. */
+    tipo?: CourseTipo
+    videoProvider?: VideoProvider
+    videoUrl?: string
 }
 
 export const CATALOG: CatalogCourse[] = [
@@ -185,6 +194,43 @@ export const CATALOG: CatalogCourse[] = [
         corenRequired: false,
         price: 119900,
         maxInstallments: 12,
+    },
+    // ── Free / Gratuito courses (MVP Moodle replacement) ──────────────────
+    {
+        id: "course-free-1",
+        title: "Introdução à Enfermagem Oncológica (Gratuito)",
+        description: "Curso introdutório gratuito para profissionais de saúde que desejam conhecer os fundamentos da enfermagem oncológica: biossegurança, manejo de quimioterápicos e comunicação com o paciente.",
+        type: "Curso Livre",
+        courseMode: "CursoLivre",
+        instructor: "Todos os profissionais de saúde",
+        hours: "8h",
+        startDate: "01/01/2025",
+        endDate: "31/12/2030",
+        schedule: "Online — assíncrono",
+        corenRequired: false,
+        price: 0,
+        maxInstallments: 1,
+        tipo: "Gratuito" as CourseTipo,
+        videoProvider: "youtube" as VideoProvider,
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    },
+    {
+        id: "course-free-2",
+        title: "Biossegurança para Técnicos de Enfermagem (Gratuito)",
+        description: "Capacitação obrigatória em biossegurança hospitalar: EPIs, descarte de resíduos, prevenção de infecções e normas da ANVISA. Acesso permanente.",
+        type: "Curso Livre",
+        courseMode: "CursoLivre",
+        instructor: "Técnicos de Enfermagem",
+        hours: "4h",
+        startDate: "01/01/2025",
+        endDate: "31/12/2030",
+        schedule: "Online — assíncrono",
+        corenRequired: true,
+        price: 0,
+        maxInstallments: 1,
+        tipo: "Gratuito" as CourseTipo,
+        videoProvider: "vimeo" as VideoProvider,
+        videoUrl: "https://player.vimeo.com/video/123456789",
     },
 ]
 

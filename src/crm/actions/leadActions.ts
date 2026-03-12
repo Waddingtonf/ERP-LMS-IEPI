@@ -5,23 +5,23 @@ import { getLeadRepository } from "@/crm/repositories";
 import type { Lead, LeadStatus, LeadOrigem, MetricasFunil } from "@/crm/repositories/LeadRepository";
 
 export async function getLeads(filtros?: { status?: LeadStatus; origem?: LeadOrigem }): Promise<Lead[]> {
-    return getLeadRepository().findAll(filtros);
+    return (await getLeadRepository()).findAll(filtros);
 }
 
 export async function getLeadsByFunil(): Promise<Record<LeadStatus, Lead[]>> {
-    return getLeadRepository().findByFunil();
+    return (await getLeadRepository()).findByFunil();
 }
 
 export async function getLeadById(id: string): Promise<Lead | null> {
-    return getLeadRepository().findById(id);
+    return (await getLeadRepository()).findById(id);
 }
 
 export async function getMetricasFunil(): Promise<MetricasFunil> {
-    return getLeadRepository().getMetricasFunil();
+    return (await getLeadRepository()).getMetricasFunil();
 }
 
 export async function createLeadAction(formData: FormData): Promise<Lead> {
-    const lead = await getLeadRepository().create({
+    const lead = await (await getLeadRepository()).create({
         nome:           formData.get('nome')           as string,
         email:          formData.get('email')          as string,
         telefone:       formData.get('telefone')       as string,
@@ -43,21 +43,21 @@ export async function createLeadAction(formData: FormData): Promise<Lead> {
 }
 
 export async function updateLeadStatusAction(id: string, status: LeadStatus, obs?: string): Promise<Lead> {
-    const lead = await getLeadRepository().updateStatus(id, status, obs);
+    const lead = await (await getLeadRepository()).updateStatus(id, status, obs);
     revalidatePath('/admin/crm');
     revalidatePath('/admin/crm/leads');
     return lead;
 }
 
 export async function converterLeadAction(leadId: string): Promise<{ alunoId: string }> {
-    const result = await getLeadRepository().converter(leadId);
+    const result = await (await getLeadRepository()).converter(leadId);
     revalidatePath('/admin/crm');
     revalidatePath('/admin/alunos');
     return result;
 }
 
 export async function updateLeadAction(id: string, data: Partial<Omit<Lead, 'id' | 'criadoEm'>>): Promise<Lead> {
-    const lead = await getLeadRepository().update(id, data);
+    const lead = await (await getLeadRepository()).update(id, data);
     revalidatePath('/admin/crm/leads');
     return lead;
 }

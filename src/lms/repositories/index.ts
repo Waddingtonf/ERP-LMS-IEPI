@@ -21,6 +21,7 @@ import { IRequerimentoRepository }             from './RequerimentoRepository';
 import { IPlanoEnsinoRepository }              from './PlanoEnsinoRepository';
 import { IDiarioClasseRepository }             from './DiarioClasseRepository';
 import { IAvaliacaoInstitucionalRepository }   from './AvaliacaoInstitucionalRepository';
+import { IProgressoRepository }                from './ProgressoRepository';
 
 import { MockUserRepository }                       from './MockUserRepository';
 import { MockCourseRepository }                    from './MockCourseRepository';
@@ -38,6 +39,7 @@ import { MockRequerimentoRepository }             from './MockRequerimentoReposi
 import { MockPlanoEnsinoRepository }              from './MockPlanoEnsinoRepository';
 import { MockDiarioClasseRepository }             from './MockDiarioClasseRepository';
 import { MockAvaliacaoInstitucionalRepository }   from './MockAvaliacaoInstitucionalRepository';
+import { MockProgressoRepository }                from './MockProgressoRepository';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 export const isMockMode = !supabaseUrl || supabaseUrl.includes('dummy') || supabaseUrl.includes('placeholder');
@@ -58,6 +60,7 @@ let _requerimento:           IRequerimentoRepository            | null = null;
 let _planoEnsino:            IPlanoEnsinoRepository             | null = null;
 let _diarioClasse:           IDiarioClasseRepository            | null = null;
 let _avaliacaoInstitucional: IAvaliacaoInstitucionalRepository  | null = null;
+let _progresso:              IProgressoRepository               | null = null;
 
 // Async factories (Supabase-capable)
 export async function getUserRepository(): Promise<IUserRepository> {
@@ -95,6 +98,7 @@ export function getRequerimentoRepository():          IRequerimentoRepository   
 export function getPlanoEnsinoRepository():           IPlanoEnsinoRepository            { return (_planoEnsino           ??= new MockPlanoEnsinoRepository()); }
 export function getDiarioClasseRepository():          IDiarioClasseRepository           { return (_diarioClasse          ??= new MockDiarioClasseRepository()); }
 export function getAvaliacaoInstitucionalRepository(): IAvaliacaoInstitucionalRepository  { return (_avaliacaoInstitucional ??= new MockAvaliacaoInstitucionalRepository()); }
+export function getProgressoRepository(): IProgressoRepository { return (_progresso ??= new MockProgressoRepository()); }
 
 // Sync convenience aliases for server components (always mock in dev)
 export function getUserRepositorySync():    IUserRepository    { return (_user    ??= new MockUserRepository()); }
