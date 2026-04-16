@@ -27,5 +27,3 @@ export async function getCursosDestaque(): Promise<CatalogoCurso[]> {
 export async function getCursosRelacionados(cursoId: string): Promise<CatalogoCurso[]> {
     return getCatalogoRepository().findRelacionados(cursoId);
 }
-
-export type { CatalogoCurso, AreaCurso, ModalidadeCurso, NivelCurso };

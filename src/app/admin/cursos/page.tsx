@@ -1,110 +1,71 @@
-import { getCourses } from "@/lms/actions/adminCourseActions"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search, Edit, MoreHorizontal, Copy, Trash2, GraduationCap, Clock } from "lucide-react"
 import Link from "next/link"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { getCourses } from "@/lms/actions/adminCourseActions"
+import { PageHeader } from "@/components/layout"
+import { EduKpiGrid, LearningPathCard } from "@/components/educacional/dashboard-kit"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { BookOpen, GraduationCap, Layers, PlusCircle } from "lucide-react"
 
 export default async function CursosAdminPage() {
-    // Fetch courses from our mock repository via server action
     const courses = await getCourses()
+
+    const gratuitos = courses.filter((c) => c.tipo === "Gratuito").length
+    const pagos = courses.filter((c) => (c.tipo ?? "Pago") === "Pago").length
+    const totalModulos = courses.reduce((acc, c) => acc + c.modules.length, 0)
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-end">
-                <div>
-                    <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Gestão de Cursos</h2>
-                    <p className="text-slate-500 mt-1">Crie, edite e gerencie a grade curricular e valores dos cursos do LMS.</p>
-                </div>
-                <Link href="/admin/cursos/novo">
-                    <Button className="bg-violet-600 hover:bg-violet-700 gap-2">
-                        <GraduationCap className="w-5 h-5" /> Novo Curso
-                    </Button>
-                </Link>
-            </div>
+            <PageHeader
+                title="Gestão de cursos"
+                description="Estrutura curricular, trilhas e modelo de oferta educacional."
+                actions={
+                    <Link href="/admin/cursos/novo">
+                        <Button className="bg-violet-600 hover:bg-violet-700 gap-2">
+                            <PlusCircle className="w-4 h-4" /> Novo curso
+                        </Button>
+                    </Link>
+                }
+            />
 
-            <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                <Table>
-                    <TableHeader className="bg-slate-50">
-                        <TableRow>
-                            <TableHead>Curso</TableHead>
-                            <TableHead>Modalidade / Duração</TableHead>
-                            <TableHead>Estrutura</TableHead>
-                            <TableHead>Valor</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Ações</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
+            <EduKpiGrid
+                items={[
+                    { label: "Cursos", value: courses.length, hint: "Portfólio ativo", icon: <GraduationCap className="w-4 h-4 text-violet-600" />, tone: "brand" },
+                    { label: "Cursos pagos", value: pagos, hint: "Com checkout", icon: <BookOpen className="w-4 h-4 text-blue-600" />, tone: "neutral" },
+                    { label: "Cursos gratuitos", value: gratuitos, hint: "Captação e entrada", icon: <BookOpen className="w-4 h-4 text-emerald-600" />, tone: "success" },
+                    { label: "Módulos", value: totalModulos, hint: "Carga curricular total", icon: <Layers className="w-4 h-4 text-amber-600" />, tone: "warning" },
+                ]}
+            />
+
+            <div className="grid gap-6 lg:grid-cols-3">
+                <Card className="border-slate-200 lg:col-span-2">
+                    <CardHeader>
+                        <CardTitle className="text-base">Catálogo acadêmico</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
                         {courses.map((course) => (
-                            <TableRow key={course.id}>
-                                <TableCell>
-                                    <div className="font-semibold text-slate-900">{course.title}</div>
-                                    <div className="text-xs text-slate-500 font-mono mt-0.5">{course.id}</div>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="text-sm text-slate-700 flex items-center gap-1.5 font-medium">
-                                        Online
-                                    </div>
-                                    <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                                        <Clock className="w-3 h-3" /> N/A
-                                    </div>
-                                </TableCell>
-                                <TableCell className="text-sm text-slate-600">
-                                    <div className="flex items-center gap-4">
-                                        <span title="Matriculados">👥 0</span>
-                                        <span title="Módulos">📚 {course.modules.length}</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="text-sm font-semibold text-slate-800">
-                                    R$ {course.price.toFixed(2).replace('.', ',')}
-                                </TableCell>
-                                <TableCell>
-                                    <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 border-none font-medium">
-                                        Ativo
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                                <span className="sr-only">Abrir menu</span>
-                                                <MoreHorizontal className="h-4 w-4" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuLabel>Ações do Curso</DropdownMenuLabel>
-                                            <DropdownMenuItem asChild>
-                                                <Link href={`/admin/cursos/${course.id}`} className="cursor-pointer">
-                                                    <Edit className="mr-2 h-4 w-4" /> Editar Estrutura
-                                                </Link>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem className="cursor-pointer">
-                                                <Copy className="mr-2 h-4 w-4" /> Duplicar Curso
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="text-rose-600 cursor-pointer focus:text-rose-600 focus:bg-rose-50">
-                                                <Trash2 className="mr-2 h-4 w-4" /> Arquivar Curso
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </TableCell>
-                            </TableRow>
+                            <div key={course.id} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 flex items-center justify-between gap-3">
+                                <div className="min-w-0">
+                                    <p className="text-sm font-medium text-slate-800 truncate">{course.title}</p>
+                                    <p className="text-xs text-slate-500">{course.modules.length} módulo(s) · R$ {course.price.toFixed(2).replace(".", ",")}</p>
+                                </div>
+                                <div className="flex items-center gap-2 shrink-0">
+                                    <Badge variant="outline">{course.tipo ?? "Pago"}</Badge>
+                                    <Link href={`/admin/cursos/${course.id}`} className="text-xs font-medium text-violet-600 hover:text-violet-700">Editar</Link>
+                                </div>
+                            </div>
                         ))}
-                    </TableBody>
-                </Table>
-                {courses.length === 0 && (
-                    <div className="p-8 text-center text-slate-500">Nenhum curso encontrado com estes filtros.</div>
-                )}
+                    </CardContent>
+                </Card>
+
+                <LearningPathCard
+                    title="Estratégia de trilhas"
+                    modules={[
+                        { id: "ca1", title: "Fundamentos (entrada)", progress: 100, status: "Concluído" },
+                        { id: "ca2", title: "Trilhas técnicas", progress: 70, status: "Em andamento" },
+                        { id: "ca3", title: "Projetos finais", progress: 30, status: "Pendente" },
+                    ]}
+                />
             </div>
         </div>
     )

@@ -67,5 +67,3 @@ export async function reordenarMateriais(turmaId: string, ids: string[]): Promis
     await getMaterialRepository().reordenar(turmaId, ids);
     revalidatePath('/docente/materiais');
 }
-
-export type { Material, MaterialTipo };

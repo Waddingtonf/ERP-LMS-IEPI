@@ -63,5 +63,3 @@ export async function arquivarMensagem(id: string): Promise<void> {
     revalidatePath('/aluno/mensagens');
     revalidatePath('/docente/mensagens');
 }
-
-export type { Mensagem, MensagemCategoria };

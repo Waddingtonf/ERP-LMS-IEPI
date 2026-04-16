@@ -1,5 +1,5 @@
 /**
- * src/middleware.ts — 5-layer request pipeline
+ * src/proxy.ts — 5-layer request pipeline
  *
  * Layer 1 – Security headers    (every response)
  * Layer 2 – Rate limiting       (strict on auth/api routes)
@@ -21,7 +21,7 @@ function isStrictRoute(pathname: string): boolean {
     return STRICT_RATE_LIMIT_PREFIXES.some((p) => pathname.startsWith(p))
 }
 
-export async function middleware(request: NextRequest): Promise<NextResponse> {
+export async function proxy(request: NextRequest): Promise<NextResponse> {
     const { pathname } = request.nextUrl
 
     // ── Layer 2: Rate limiting ──────────────────────────────────────────────

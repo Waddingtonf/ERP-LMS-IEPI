@@ -36,5 +36,3 @@ export async function getStatusCertificado(turmaId: string): Promise<Certificado
 export async function emitirCertificado(id: string): Promise<Certificado> {
     return getCertificadoRepository().emitir(id);
 }
-
-export type { Certificado, CertificadoStatus };

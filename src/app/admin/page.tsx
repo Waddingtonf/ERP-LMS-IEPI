@@ -1,128 +1,82 @@
-"use client"
-
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Users, GraduationCap, DollarSign, Activity } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { PageHeader, PageSection } from "@/components/layout"
+import { AcademicPlanCard, CommunicationCard, EduKpiGrid, LearningPathCard } from "@/components/educacional/dashboard-kit"
+import { Activity, CalendarDays, DollarSign, GraduationCap, Users } from "lucide-react"
 
 export default function AdminDashboard() {
     return (
-        <div className="space-y-8">
-            <div>
-                <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Dashboard Geral</h2>
-                <p className="text-slate-500 mt-1">Visão completa da operação acadêmica e financeira.</p>
+        <div className="space-y-6">
+            <PageHeader
+                title="Dashboard Educacional"
+                description="Visão integrada de operação acadêmica, trilhas e financeiro institucional."
+            />
+
+            <EduKpiGrid
+                items={[
+                    { label: "Alunos Ativos", value: "1.245", hint: "+12% no mês", icon: <Users className="w-4 h-4 text-violet-600" />, tone: "brand" },
+                    { label: "Turmas Ativas", value: "42", hint: "8 cursos em execução", icon: <GraduationCap className="w-4 h-4 text-blue-600" />, tone: "neutral" },
+                    { label: "Receita do Mês", value: "R$ 154.300", hint: "Meta: R$ 160.000", icon: <DollarSign className="w-4 h-4 text-emerald-600" />, tone: "success" },
+                    { label: "Conclusão Média", value: "68%", hint: "Meta pedagógica 75%", icon: <Activity className="w-4 h-4 text-amber-600" />, tone: "warning" },
+                ]}
+            />
+
+            <div className="grid gap-6 lg:grid-cols-3">
+                <LearningPathCard
+                    modules={[
+                        { id: "m1", title: "Trilha Base IEPI", progress: 100, status: "Concluído" },
+                        { id: "m2", title: "Trilha Técnica", progress: 72, status: "Em andamento" },
+                        { id: "m3", title: "Projeto Integrador", progress: 25, status: "Pendente" },
+                    ]}
+                />
+                <AcademicPlanCard
+                    events={[
+                        { id: "e1", title: "Conselho pedagógico", dateLabel: "14/03 · 09:00", type: "Governança" },
+                        { id: "e2", title: "Fechamento AV1", dateLabel: "18/03", type: "Avaliação" },
+                        { id: "e3", title: "Virada de módulo", dateLabel: "22/03", type: "Calendário" },
+                    ]}
+                />
+                <CommunicationCard
+                    items={[
+                        { id: "c1", channel: "Aviso", title: "12 alunos aguardando triagem documental", meta: "Secretaria · há 2h" },
+                        { id: "c2", channel: "Ocorrência", title: "2 divergências na conciliação Cielo", meta: "Financeiro · há 4h" },
+                        { id: "c3", channel: "Mensagem", title: "Coordenação solicitou ajuste de trilha", meta: "Pedagógico · hoje" },
+                    ]}
+                />
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <Card className="border-slate-200 shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium text-slate-600">Total de Alunos</CardTitle>
-                        <Users className="h-4 w-4 text-slate-400" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-slate-900">1,245</div>
-                        <p className="text-xs text-emerald-600 font-medium flex items-center mt-1">
-                            +12% mês anterior
-                        </p>
-                    </CardContent>
-                </Card>
-
-                <Card className="border-slate-200 shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium text-slate-600">Turmas Ativas</CardTitle>
-                        <GraduationCap className="h-4 w-4 text-slate-400" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-slate-900">42</div>
-                        <p className="text-xs text-slate-500 mt-1">Em 8 cursos diferentes</p>
-                    </CardContent>
-                </Card>
-
-                <Card className="border-slate-200 shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium text-slate-600">Receita do Mês</CardTitle>
-                        <DollarSign className="h-4 w-4 text-slate-400" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-slate-900">R$ 154.300</div>
-                        <p className="text-xs text-emerald-600 font-medium flex items-center mt-1">
-                            +8% mês anterior
-                        </p>
-                    </CardContent>
-                </Card>
-
-                <Card className="border-slate-200 shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium text-slate-600">Taxa de Conclusão</CardTitle>
-                        <Activity className="h-4 w-4 text-slate-400" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-slate-900">68%</div>
-                        <p className="text-xs text-slate-500 mt-1">Média entre todos os cursos</p>
-                    </CardContent>
-                </Card>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2">
-                <Card className="col-span-1 border-slate-200 shadow-sm">
-                    <CardHeader>
-                        <CardTitle className="text-lg">Últimas Matrículas</CardTitle>
-                        <CardDescription>Fluxo recente de entrada pela vitrine.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        {[1, 2, 3].map((i) => (
-                            <div key={i} className="flex items-center justify-between p-3 border border-slate-100 rounded-lg bg-slate-50/50">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 font-semibold text-sm">
-                                        {["JS", "MA", "PA"][i - 1]}
-                                    </div>
+            <PageSection title="Operação acadêmica" description="Acompanhamento rápido de frentes críticas">
+                <div className="grid gap-6 md:grid-cols-2">
+                    <Card className="border-slate-200">
+                        <CardHeader>
+                            <CardTitle className="text-base">Últimas matrículas</CardTitle>
+                            <CardDescription>Entrada recente de alunos por curso</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                            {["João Silva", "Maria Almeida", "Pedro Alves"].map((nome, idx) => (
+                                <div key={nome} className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
                                     <div>
-                                        <p className="text-sm font-medium text-slate-900">{["João Silva", "Maria Almeida", "Pedro Alves"][i - 1]}</p>
-                                        <p className="text-xs text-slate-500">{["Gestão em RH", "Atendimento", "Administração"][i - 1]}</p>
+                                        <p className="text-sm font-medium text-slate-800">{nome}</p>
+                                        <p className="text-xs text-slate-500">{["Gestão em RH", "Atendimento", "Administração"][idx]}</p>
                                     </div>
+                                    <span className="text-xs text-emerald-700 font-semibold">Pago</span>
                                 </div>
-                                <div className="text-right">
-                                    <p className="text-sm font-semibold text-emerald-600 border border-emerald-200 bg-emerald-50 px-2 rounded-md">Pago</p>
-                                    <p className="text-[10px] text-slate-400 mt-1">Há {i * 2} horas</p>
-                                </div>
-                            </div>
-                        ))}
-                    </CardContent>
-                </Card>
+                            ))}
+                        </CardContent>
+                    </Card>
 
-                <Card className="col-span-1 border-slate-200 shadow-sm">
-                    <CardHeader>
-                        <CardTitle className="text-lg">Avisos e Pendências</CardTitle>
-                        <CardDescription>Ações que precisam da sua atenção.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex gap-4 p-4 border border-amber-200 bg-amber-50 rounded-lg">
-                            <div className="bg-amber-100 text-amber-600 p-2 rounded-lg h-fit">
-                                <Users className="w-5 h-5" />
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-amber-900 text-sm">Triagem de Documentos</h4>
-                                <p className="text-xs text-amber-700/80 mt-1">Há 12 alunos aguardando validação de RG e histórico escolar para liberação plena do portal.</p>
-                                <button className="text-xs font-semibold text-amber-800 underline mt-2 hover:text-amber-900">
-                                    Acessar Fila de Triagem
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="flex gap-4 p-4 border border-rose-200 bg-rose-50 rounded-lg">
-                            <div className="bg-rose-100 text-rose-600 p-2 rounded-lg h-fit">
-                                <DollarSign className="w-5 h-5" />
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-rose-900 text-sm">Falhas de Conciliação Cielo</h4>
-                                <p className="text-xs text-rose-700/80 mt-1">2 transações constam como pagas na operadora mas pendentes no sistema.</p>
-                                <button className="text-xs font-semibold text-rose-800 underline mt-2 hover:text-rose-900">
-                                    Verificar Divergências
-                                </button>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
+                    <Card className="border-slate-200">
+                        <CardHeader>
+                            <CardTitle className="text-base flex items-center gap-2"><CalendarDays className="w-4 h-4" /> Pendências prioritárias</CardTitle>
+                            <CardDescription>Itens com impacto direto em retenção e receita</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-2 text-sm text-slate-600">
+                            <p>• Triagem documental com 12 cadastros aguardando validação</p>
+                            <p>• Conciliação com 2 transações divergentes</p>
+                            <p>• 1 turma com frequência média abaixo de 75%</p>
+                        </CardContent>
+                    </Card>
+                </div>
+            </PageSection>
         </div>
     )
 }

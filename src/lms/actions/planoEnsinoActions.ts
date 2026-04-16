@@ -36,5 +36,3 @@ export async function publicarPlanoEnsino(id: string): Promise<PlanoEnsino> {
     revalidatePath('/aluno/plano-ensino');
     return plano;
 }
-
-export type { PlanoEnsino };

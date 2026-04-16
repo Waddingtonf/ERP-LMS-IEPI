@@ -63,5 +63,3 @@ export async function lancarNotaAvaliacaoAction(avaliacaoId: string, alunoId: st
     revalidatePath('/aluno/notas');
     return result;
 }
-
-export type { Avaliacao, NotaAvaliacao };

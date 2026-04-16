@@ -49,5 +49,3 @@ export async function lancarNota(alunoId: string, turmaId: string, campo: 'av1' 
 export async function getNotasByTurma(turmaId: string): Promise<Nota[]> {
     return getNotaRepository().findByTurma(turmaId);
 }
-
-export type { Nota, Boletim };

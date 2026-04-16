@@ -43,5 +43,3 @@ export async function deleteEventoAction(id: string): Promise<void> {
     revalidatePath('/admin/calendario');
     revalidatePath('/aluno/calendario');
 }
-
-export type { EventoCalendario };

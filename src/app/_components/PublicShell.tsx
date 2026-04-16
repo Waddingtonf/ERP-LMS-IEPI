@@ -25,11 +25,12 @@ const NAV_LINKS = [
 export default function PublicShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const isPortal = PORTAL_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+  const isHome = pathname === "/"
 
   const headerRef = useRef<HTMLElement>(null)
 
   useGSAP(() => {
-    if (!headerRef.current) return
+    if (!headerRef.current || isHome) return
     const st = ScrollTrigger.create({
       start: "top -50",
       end: 99999,
@@ -48,20 +49,20 @@ export default function PublicShell({ children }: { children: React.ReactNode })
       className="min-h-screen flex flex-col"
       style={{ backgroundColor: "var(--iepi-light)", color: "var(--text-body)" }}
     >
-      {/* ── TOP URGENCY BAR ─────────────────────── */}
-      <div className="iepi-urgency-bar">
-        🔥 <strong>Matrículas 2026.1 abertas</strong> — últimas vagas em Pós-Graduação.{" "}
-        <a href="/cursos">Garantir minha vaga →</a>
-      </div>
-
       {/* ── HEADER ──────────────────────────────── */}
-      <div className="fixed top-4 w-full z-50 flex justify-center px-4 pointer-events-none">
+      <div className={`w-full z-50 flex justify-center px-4 ${
+        isHome ? 'fixed top-4 pointer-events-none' : 'fixed top-0 pointer-events-none'
+      }`}>
         <header
           ref={headerRef}
-          className="pointer-events-auto rounded-[3rem] transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] w-full max-w-7xl"
+          className={`pointer-events-auto transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] w-full ${
+            isHome ? 'rounded-[3rem] max-w-7xl' : 'max-w-none'
+          }`}
           style={{
-            backgroundColor: "transparent",
-            border: "1px solid transparent",
+            backgroundColor: isHome ? "transparent" : "rgba(13, 5, 37, 0.85)",
+            border: isHome ? "1px solid transparent" : "none",
+            backdropFilter: isHome ? "none" : "blur(10px)",
+            borderBottom: isHome ? "none" : "1px solid rgba(255, 255, 255, 0.06)",
           }}
         >
           <div
@@ -122,7 +123,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
       </div>
 
       {/* ── MAIN ────────────────────────────────── */}
-      <main className="flex-1">{children}</main>
+      <main className={`flex-1 ${!isHome ? 'pt-16' : ''}`}>{children}</main>
 
       {/* ── FOOTER ──────────────────────────────── */}
       <div className="bg-[var(--iepi-dark)]">

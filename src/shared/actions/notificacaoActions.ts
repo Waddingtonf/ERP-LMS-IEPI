@@ -37,5 +37,3 @@ export async function criarNotificacao(data: {
         origem: data.origem,
     });
 }
-
-export type { Notificacao, NotificacaoTipo };

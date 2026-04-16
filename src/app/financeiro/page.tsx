@@ -1,56 +1,64 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { DollarSign, ArrowUpRight, ArrowDownRight, Activity } from "lucide-react"
+import { PageHeader } from "@/components/layout"
+import { AcademicPlanCard, CommunicationCard, EduKpiGrid } from "@/components/educacional/dashboard-kit"
+import { Activity, ArrowDownRight, ArrowUpRight, DollarSign } from "lucide-react"
 import { FINANCEIRO_RESUMO_MOCK } from "@/erp/mocks/financeiroDashboardMock"
 
 export default function FinanceiroDashboard() {
     return (
         <div className="space-y-6">
-            <h2 className="text-2xl font-bold tracking-tight">Painel Executivo</h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Receita Mensal (MRR)</CardTitle>
-                        <DollarSign className="h-4 w-4 text-emerald-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{FINANCEIRO_RESUMO_MOCK.mrrLabel}</div>
-                        <p className="text-xs text-emerald-500 flex items-center mt-1">
-                            <ArrowUpRight className="h-3 w-3 mr-1" /> {FINANCEIRO_RESUMO_MOCK.mrrDeltaLabel}
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Contas a Receber (Hoje)</CardTitle>
-                        <Activity className="h-4 w-4 text-blue-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{FINANCEIRO_RESUMO_MOCK.contasReceberHojeLabel}</div>
-                        <p className="text-xs text-slate-500 mt-1">{FINANCEIRO_RESUMO_MOCK.boletosPendentesLabel}</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Contas a Pagar</CardTitle>
-                        <ArrowDownRight className="h-4 w-4 text-red-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{FINANCEIRO_RESUMO_MOCK.contasPagarLabel}</div>
-                        <p className="text-xs text-slate-500 mt-1">{FINANCEIRO_RESUMO_MOCK.contasPagarHorizonLabel}</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Taxa de Inadimplência</CardTitle>
-                        <Activity className="h-4 w-4 text-amber-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-amber-600">{FINANCEIRO_RESUMO_MOCK.inadimplenciaLabel}</div>
-                        <p className="text-xs text-red-500 flex items-center mt-1">
-                            <ArrowUpRight className="h-3 w-3 mr-1" /> {FINANCEIRO_RESUMO_MOCK.inadimplenciaDeltaLabel}
-                        </p>
-                    </CardContent>
-                </Card>
+            <PageHeader
+                title="Painel Financeiro Educacional"
+                description="Saúde financeira vinculada à operação acadêmica e retenção de alunos."
+            />
+
+            <EduKpiGrid
+                items={[
+                    {
+                        label: "MRR Educacional",
+                        value: FINANCEIRO_RESUMO_MOCK.mrrLabel,
+                        hint: FINANCEIRO_RESUMO_MOCK.mrrDeltaLabel,
+                        icon: <DollarSign className="w-4 h-4 text-emerald-600" />,
+                        tone: "success",
+                    },
+                    {
+                        label: "Contas a Receber (Hoje)",
+                        value: FINANCEIRO_RESUMO_MOCK.contasReceberHojeLabel,
+                        hint: FINANCEIRO_RESUMO_MOCK.boletosPendentesLabel,
+                        icon: <ArrowUpRight className="w-4 h-4 text-blue-600" />,
+                        tone: "brand",
+                    },
+                    {
+                        label: "Contas a Pagar",
+                        value: FINANCEIRO_RESUMO_MOCK.contasPagarLabel,
+                        hint: FINANCEIRO_RESUMO_MOCK.contasPagarHorizonLabel,
+                        icon: <ArrowDownRight className="w-4 h-4 text-rose-600" />,
+                        tone: "warning",
+                    },
+                    {
+                        label: "Inadimplência",
+                        value: FINANCEIRO_RESUMO_MOCK.inadimplenciaLabel,
+                        hint: FINANCEIRO_RESUMO_MOCK.inadimplenciaDeltaLabel,
+                        icon: <Activity className="w-4 h-4 text-amber-600" />,
+                        tone: "danger",
+                    },
+                ]}
+            />
+
+            <div className="grid gap-6 lg:grid-cols-2">
+                <AcademicPlanCard
+                    events={[
+                        { id: "f1", title: "Fechamento de conciliação semanal", dateLabel: "Sexta · 18:00", type: "Conciliação" },
+                        { id: "f2", title: "Virada de boletos de mensalidade", dateLabel: "Todo dia 05", type: "Cobrança" },
+                        { id: "f3", title: "Revisão de bolsas e descontos", dateLabel: "Última semana", type: "Política acadêmica" },
+                    ]}
+                />
+                <CommunicationCard
+                    items={[
+                        { id: "fm1", channel: "Aviso", title: "18 boletos pendentes de compensação", meta: "Financeiro · hoje" },
+                        { id: "fm2", channel: "Ocorrência", title: "3 divergências entre gateway e ERP", meta: "Conciliação · hoje" },
+                        { id: "fm3", channel: "Mensagem", title: "Coordenação pediu renegociação em lote", meta: "Pedagógico · há 1h" },
+                    ]}
+                />
             </div>
         </div>
     )

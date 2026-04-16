@@ -67,5 +67,3 @@ export async function analisarRequerimento(id: string, status: RequerimentoStatu
 export async function countRequerimentosByStatus(): Promise<Record<RequerimentoStatus, number>> {
     return getRequerimentoRepository().countByStatus();
 }
-
-export type { Requerimento, RequerimentoTipo, RequerimentoStatus };

@@ -1,111 +1,74 @@
-import { getDocenteTurmas, getAvaliacoesByTurma } from "@/lms/actions/docenteActions";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ClipboardCheck } from "lucide-react";
+import { getAvaliacoesByTurma, getDocenteTurmas } from "@/lms/actions/docenteActions"
+import { PageHeader } from "@/components/layout"
+import { EduKpiGrid, AcademicPlanCard } from "@/components/educacional/dashboard-kit"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { CheckCircle2, ClipboardCheck, FileText, TrendingUp } from "lucide-react"
 
 export default async function NotasPage() {
-    const turmas = await getDocenteTurmas();
-
+    const turmas = await getDocenteTurmas()
     const turmasComAvaliacoes = await Promise.all(
-        turmas.map(async (turma) => ({
-            ...turma,
-            avaliacoes: await getAvaliacoesByTurma(turma.id),
-        }))
-    );
+        turmas.map(async (turma) => ({ ...turma, avaliacoes: await getAvaliacoesByTurma(turma.id) })),
+    )
 
-    function getStatusNota(media: number | null): { label: string; className: string } {
-        if (media === null) return { label: "Pendente", className: "bg-amber-50 text-amber-700 border-amber-200" };
-        if (media >= 7) return { label: "Aprovado", className: "bg-green-50 text-green-700 border-green-200" };
-        if (media >= 5) return { label: "Recuperação", className: "bg-orange-50 text-orange-700 border-orange-200" };
-        return { label: "Reprovado", className: "bg-red-50 text-red-700 border-red-200" };
-    }
+    const totalAvaliacoes = turmasComAvaliacoes.reduce((acc, t) => acc + t.avaliacoes.length, 0)
+    const medias = turmasComAvaliacoes.flatMap((t) => t.avaliacoes.map((a) => a.media).filter((m): m is number => m !== null))
+    const mediaGeral = medias.length ? (medias.reduce((a, b) => a + b, 0) / medias.length).toFixed(1) : "0.0"
+    const pendentes = turmasComAvaliacoes.reduce((acc, t) => acc + t.avaliacoes.filter((a) => a.media === null).length, 0)
 
     return (
-        <div className="space-y-8">
-            <div>
-                <h2 className="text-2xl font-bold tracking-tight text-slate-800">Notas e Frequência</h2>
-                <p className="text-slate-500 mt-1">Lançamento e consulta de avaliações por turma.</p>
-            </div>
+        <div className="space-y-6">
+            <PageHeader
+                title="Notas e avaliações"
+                description="Lançamento acadêmico por turma com visão de desempenho e pendências."
+            />
 
-            {turmasComAvaliacoes.map((turma) => (
-                <Card key={turma.id} className="border-slate-200 shadow-sm">
-                    <CardHeader className="pb-4">
-                        <div className="flex items-center gap-2">
-                            <ClipboardCheck className="w-5 h-5 text-blue-600" />
-                            <div>
-                                <CardTitle className="text-lg text-slate-800">
-                                    {turma.nome} — {turma.curso}
-                                </CardTitle>
-                                <CardDescription>{turma.semestre} · {turma.totalAlunos} alunos</CardDescription>
-                            </div>
-                        </div>
+            <EduKpiGrid
+                items={[
+                    { label: "Avaliações", value: totalAvaliacoes, hint: "Registros no período", icon: <ClipboardCheck className="w-4 h-4 text-violet-600" />, tone: "brand" },
+                    { label: "Média geral", value: mediaGeral, hint: "Consolidação por turma", icon: <TrendingUp className="w-4 h-4 text-emerald-600" />, tone: "success" },
+                    { label: "Pendências", value: pendentes, hint: "Lançamento em aberto", icon: <FileText className="w-4 h-4 text-amber-600" />, tone: "warning" },
+                    { label: "Status", value: "Operacional", hint: "Fluxo acadêmico ativo", icon: <CheckCircle2 className="w-4 h-4 text-blue-600" />, tone: "neutral" },
+                ]}
+            />
+
+            <div className="grid gap-6 lg:grid-cols-3">
+                <Card className="border-slate-200 lg:col-span-2">
+                    <CardHeader>
+                        <CardTitle className="text-base">Resumo por turma</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        {turma.avaliacoes.length === 0 ? (
-                            <p className="text-sm text-slate-400 italic py-4 text-center">
-                                Nenhuma avaliação registrada para esta turma.
-                            </p>
-                        ) : (
-                            <div className="rounded-lg border border-slate-100 overflow-hidden">
-                                <div className="overflow-x-auto">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow className="bg-slate-50">
-                                            <TableHead className="font-semibold text-slate-700 min-w-[160px]">Aluno</TableHead>
-                                            <TableHead className="text-center font-semibold text-slate-700 min-w-[60px]">AV1</TableHead>
-                                            <TableHead className="text-center font-semibold text-slate-700 min-w-[60px]">AV2</TableHead>
-                                            <TableHead className="text-center font-semibold text-slate-700 min-w-[90px]">Trabalho</TableHead>
-                                            <TableHead className="text-center font-semibold text-slate-700 min-w-[70px]">Freq.</TableHead>
-                                            <TableHead className="text-center font-semibold text-slate-700 min-w-[70px]">Média</TableHead>
-                                            <TableHead className="text-center font-semibold text-slate-700 min-w-[110px]">Status</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {turma.avaliacoes.map((av) => {
-                                            const status = getStatusNota(av.media);
-                                            return (
-                                                <TableRow key={av.alunoId} className="hover:bg-slate-50/50">
-                                                    <TableCell className="font-medium text-slate-800">
-                                                        {av.nome}
-                                                    </TableCell>
-                                                    <TableCell className="text-center text-slate-600">
-                                                        {av.av1 ?? <span className="text-slate-300">—</span>}
-                                                    </TableCell>
-                                                    <TableCell className="text-center text-slate-600">
-                                                        {av.av2 ?? <span className="text-slate-300">—</span>}
-                                                    </TableCell>
-                                                    <TableCell className="text-center text-slate-600">
-                                                        {av.trabalho ?? <span className="text-slate-300">—</span>}
-                                                    </TableCell>
-                                                    <TableCell className="text-center">
-                                                        <span
-                                                            className={`text-sm font-semibold ${
-                                                                av.frequencia >= 75 ? "text-green-600" : "text-red-600"
-                                                            }`}
-                                                        >
-                                                            {av.frequencia}%
-                                                        </span>
-                                                    </TableCell>
-                                                    <TableCell className="text-center font-bold text-slate-800">
-                                                        {av.media !== null ? av.media.toFixed(1) : <span className="text-slate-300">—</span>}
-                                                    </TableCell>
-                                                    <TableCell className="text-center">
-                                                        <Badge variant="outline" className={`text-xs ${status.className}`}>
-                                                            {status.label}
-                                                        </Badge>
-                                                    </TableCell>
-                                                </TableRow>
-                                            );
-                                        })}
-                                    </TableBody>
-                                </Table>
+                    <CardContent className="space-y-3">
+                        {turmasComAvaliacoes.map((turma) => {
+                            const total = turma.avaliacoes.length
+                            const pend = turma.avaliacoes.filter((a) => a.media === null).length
+                            const mediaTurmaValores = turma.avaliacoes.map((a) => a.media).filter((m): m is number => m !== null)
+                            const mediaTurma = mediaTurmaValores.length
+                                ? (mediaTurmaValores.reduce((a, b) => a + b, 0) / mediaTurmaValores.length).toFixed(1)
+                                : "0.0"
+
+                            return (
+                                <div key={turma.id} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 flex items-center justify-between gap-3">
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-800">{turma.nome} · {turma.curso}</p>
+                                        <p className="text-xs text-slate-500">{total} avaliação(ões) · média {mediaTurma}</p>
+                                    </div>
+                                    <Badge variant="outline" className={pend > 0 ? "text-amber-700 border-amber-300" : "text-emerald-700 border-emerald-300"}>
+                                        {pend > 0 ? `${pend} pendente(s)` : "Completo"}
+                                    </Badge>
                                 </div>
-                            </div>
-                        )}
+                            )
+                        })}
                     </CardContent>
                 </Card>
-            ))}
+
+                <AcademicPlanCard
+                    events={[
+                        { id: "dn1", title: "Fechar AV1", dateLabel: "18/03", type: "Avaliação" },
+                        { id: "dn2", title: "Conselho de notas", dateLabel: "22/03", type: "Governança" },
+                        { id: "dn3", title: "Publicar feedback", dateLabel: "Após fechamento", type: "Comunicação" },
+                    ]}
+                />
+            </div>
         </div>
-    );
+    )
 }

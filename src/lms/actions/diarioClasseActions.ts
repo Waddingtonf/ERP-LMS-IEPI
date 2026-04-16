@@ -27,5 +27,3 @@ export async function encerrarDiarioAction(turmaId: string): Promise<DiarioClass
     revalidatePath('/docente/diario');
     return d;
 }
-
-export type { DiarioClasse, RegistroAula };

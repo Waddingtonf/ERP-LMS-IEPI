@@ -31,5 +31,3 @@ export async function responderAvaliacaoInstitucional(
 export async function getResultadosAvaliacao(avaliacaoId: string): Promise<ResultadoAvaliacao[]> {
     return getAvaliacaoInstitucionalRepository().getResultados(avaliacaoId);
 }
-
-export type { AvaliacaoInstitucional, RespostasAvaliacao, ResultadoAvaliacao };

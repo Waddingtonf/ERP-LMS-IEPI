@@ -1,117 +1,66 @@
-import { getDocenteTurmas, getAlunosByTurma, type Turma } from "@/lms/actions/docenteActions";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Users, Calendar, MapPin, Clock } from "lucide-react";
+import { getAlunosByTurma, getDocenteTurmas } from "@/lms/actions/docenteActions"
+import { PageHeader } from "@/components/layout"
+import { EduKpiGrid, CommunicationCard } from "@/components/educacional/dashboard-kit"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { CalendarDays, Users, UserX, ClipboardCheck } from "lucide-react"
 
 export default async function TurmasPage() {
-    const turmas = await getDocenteTurmas();
+    const turmas = await getDocenteTurmas()
+    const turmasComAlunos = await Promise.all(turmas.map(async (turma) => ({ ...turma, alunos: await getAlunosByTurma(turma.id) })))
 
-    // Carregar alunos de cada turma
-    const turmasComAlunos = await Promise.all(
-        turmas.map(async (turma) => ({
-            ...turma,
-            alunos: await getAlunosByTurma(turma.id),
-        }))
-    );
+    const totalAlunos = turmasComAlunos.reduce((acc, t) => acc + t.totalAlunos, 0)
+    const emRisco = turmasComAlunos.reduce((acc, t) => acc + t.alunos.filter((a) => a.status !== "Regular").length, 0)
 
     return (
         <div className="space-y-6">
-            <div>
-                <h2 className="text-2xl font-bold tracking-tight text-slate-800">Minhas Turmas</h2>
-                <p className="text-slate-500 mt-1">Gerencie suas turmas e acompanhe os alunos.</p>
-            </div>
+            <PageHeader
+                title="Turmas do docente"
+                description="Acompanhamento de frequência, engajamento e intervenções por turma."
+            />
 
-            <div className="grid gap-6 md:grid-cols-2">
-                {turmasComAlunos.map((turma) => {
-                    const alunosEmRisco = turma.alunos.filter(
-                        (a) => a.status === "Em risco" || a.status === "Reprovado"
-                    ).length;
+            <EduKpiGrid
+                items={[
+                    { label: "Turmas", value: turmas.length, hint: "Semestre atual", icon: <Users className="w-4 h-4 text-violet-600" />, tone: "brand" },
+                    { label: "Alunos", value: totalAlunos, hint: "Total sob acompanhamento", icon: <Users className="w-4 h-4 text-blue-600" />, tone: "neutral" },
+                    { label: "Em risco", value: emRisco, hint: "Frequência / desempenho", icon: <UserX className="w-4 h-4 text-rose-600" />, tone: "danger" },
+                    { label: "Registros", value: "100%", hint: "Plano e frequência atualizados", icon: <ClipboardCheck className="w-4 h-4 text-emerald-600" />, tone: "success" },
+                ]}
+            />
 
-                    return (
-                        <Card key={turma.id} className="border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                            <CardHeader className="pb-3">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <CardTitle className="text-lg text-slate-800">{turma.nome}</CardTitle>
-                                        <CardDescription className="mt-1 font-medium text-slate-600">
-                                            {turma.curso}
-                                        </CardDescription>
-                                    </div>
-                                    <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
-                                        {turma.semestre}
-                                    </Badge>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="grid grid-cols-2 gap-3 text-sm">
-                                    <div className="flex items-center gap-2 text-slate-600">
-                                        <Clock className="w-4 h-4 text-slate-400" />
-                                        {turma.horario}
-                                    </div>
-                                    <div className="flex items-center gap-2 text-slate-600">
-                                        <Calendar className="w-4 h-4 text-slate-400" />
-                                        {turma.diasSemana}
-                                    </div>
-                                    <div className="flex items-center gap-2 text-slate-600">
-                                        <MapPin className="w-4 h-4 text-slate-400" />
-                                        {turma.sala}
-                                    </div>
-                                    <div className="flex items-center gap-2 text-slate-600">
-                                        <Users className="w-4 h-4 text-slate-400" />
-                                        {turma.totalAlunos} alunos
-                                    </div>
-                                </div>
-
-                                {alunosEmRisco > 0 && (
-                                    <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm">
-                                        <span className="text-amber-600 font-semibold">
-                                            ⚠ {alunosEmRisco} aluno(s) em situação de risco
-                                        </span>
-                                    </div>
-                                )}
-
-                                {turma.alunos.length > 0 && (
-                                    <div className="mt-4">
-                                        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-3">
-                                            Lista de Alunos
-                                        </p>
-                                        <div className="space-y-2 max-h-48 overflow-auto">
-                                            {turma.alunos.map((aluno) => (
-                                                <div
-                                                    key={aluno.id}
-                                                    className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-100"
-                                                >
-                                                    <div>
-                                                        <p className="text-sm font-medium text-slate-800">{aluno.nome}</p>
-                                                        <p className="text-xs text-slate-400">{aluno.email}</p>
-                                                    </div>
-                                                    <div className="flex items-center gap-3 text-right">
-                                                        <div className="text-xs text-slate-500">
-                                                            <span className="font-semibold text-slate-700">{aluno.frequencia}%</span> freq.
-                                                        </div>
-                                                        <Badge
-                                                            variant="outline"
-                                                            className={`text-xs ${
-                                                                aluno.status === "Regular"
-                                                                    ? "bg-green-50 text-green-700 border-green-200"
-                                                                    : aluno.status === "Em risco"
-                                                                    ? "bg-amber-50 text-amber-700 border-amber-200"
-                                                                    : "bg-red-50 text-red-700 border-red-200"
-                                                            }`}
-                                                        >
-                                                            {aluno.status}
-                                                        </Badge>
-                                                    </div>
-                                                </div>
-                                            ))}
+            <div className="grid gap-6 lg:grid-cols-3">
+                <Card className="border-slate-200 lg:col-span-2">
+                    <CardHeader>
+                        <CardTitle className="text-base">Visão por turma</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                        {turmasComAlunos.map((turma) => {
+                            const riscoTurma = turma.alunos.filter((a) => a.status !== "Regular").length
+                            return (
+                                <div key={turma.id} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 space-y-2">
+                                    <div className="flex items-center justify-between gap-3">
+                                        <div>
+                                            <p className="text-sm font-medium text-slate-800">{turma.nome}</p>
+                                            <p className="text-xs text-slate-500">{turma.curso} · {turma.semestre}</p>
                                         </div>
+                                        <Badge variant="outline">{turma.totalAlunos} alunos</Badge>
                                     </div>
-                                )}
-                            </CardContent>
-                        </Card>
-                    );
-                })}
+                                    <p className="text-xs text-slate-500 flex items-center gap-1"><CalendarDays className="w-3 h-3" /> {turma.diasSemana} · {turma.horario}</p>
+                                    {riscoTurma > 0 && <p className="text-xs font-medium text-rose-600">{riscoTurma} aluno(s) em risco nesta turma</p>}
+                                </div>
+                            )
+                        })}
+                    </CardContent>
+                </Card>
+
+                <CommunicationCard
+                    items={[
+                        { id: "dt1", channel: "Aviso", title: "Prazo de lançamento AV1", meta: "Coordenação" },
+                        { id: "dt2", channel: "Mensagem", title: "Solicitação de plano de aula", meta: "Pedagógico" },
+                        { id: "dt3", channel: "Ocorrência", title: "Aluno com baixa frequência", meta: "Turma T002" },
+                    ]}
+                />
             </div>
         </div>
-    );
+    )
 }
