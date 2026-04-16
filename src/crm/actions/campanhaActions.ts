@@ -55,5 +55,3 @@ export async function getCampanhasComMetricas(): Promise<(Campanha & { metricas:
         }))
     );
 }
-
-export type { Campanha, MetricasCampanha, CampanhaStatus };

@@ -5,62 +5,65 @@
  * - Supabase mode: when a real Supabase URL is configured
  */
 
-import { IUserRepository }                       from './UserRepository';
-import { ICourseRepository }                    from './CourseRepository';
-import { IPaymentRepository }                   from './PaymentRepository';
-import { ITurmaRepository }                     from './TurmaRepository';
-import { IFrequenciaRepository }               from './FrequenciaRepository';
-import { IEnrollmentRepository }               from './EnrollmentRepository';
-import { INotaRepository }                      from './NotaRepository';
-import { IAvaliacaoRepository }                from './AvaliacaoRepository';
-import { IMaterialRepository }                  from './MaterialRepository';
-import { ICertificadoRepository }              from './CertificadoRepository';
-import { ICalendarioRepository }               from './CalendarioRepository';
-import { ICatalogoRepository }                  from './CatalogoRepository';
-import { IRequerimentoRepository }             from './RequerimentoRepository';
-import { IPlanoEnsinoRepository }              from './PlanoEnsinoRepository';
-import { IDiarioClasseRepository }             from './DiarioClasseRepository';
-import { IAvaliacaoInstitucionalRepository }   from './AvaliacaoInstitucionalRepository';
-import { IProgressoRepository }                from './ProgressoRepository';
+import { IUserRepository } from './UserRepository';
+import { ICourseRepository } from './CourseRepository';
+import { IPaymentRepository } from './PaymentRepository';
+import { ITurmaRepository } from './TurmaRepository';
+import { IFrequenciaRepository } from './FrequenciaRepository';
+import { IEnrollmentRepository } from './EnrollmentRepository';
+import { INotaRepository } from './NotaRepository';
+import { IAvaliacaoRepository } from './AvaliacaoRepository';
+import { IMaterialRepository } from './MaterialRepository';
+import { ICertificadoRepository } from './CertificadoRepository';
+import { ICalendarioRepository } from './CalendarioRepository';
+import { ICatalogoRepository } from './CatalogoRepository';
+import { IRequerimentoRepository } from './RequerimentoRepository';
+import { IPlanoEnsinoRepository } from './PlanoEnsinoRepository';
+import { IDiarioClasseRepository } from './DiarioClasseRepository';
+import { IAvaliacaoInstitucionalRepository } from './AvaliacaoInstitucionalRepository';
+import { IProgressoRepository } from './ProgressoRepository';
+import { IOcorrenciaRepository } from './OcorrenciaRepository';
 
-import { MockUserRepository }                       from './MockUserRepository';
-import { MockCourseRepository }                    from './MockCourseRepository';
-import { MockPaymentRepository }                   from './MockPaymentRepository';
-import { MockTurmaRepository }                     from './MockTurmaRepository';
-import { MockFrequenciaRepository }               from './MockFrequenciaRepository';
-import { MockEnrollmentRepository }               from './MockEnrollmentRepository';
-import { MockNotaRepository }                      from './MockNotaRepository';
-import { MockAvaliacaoRepository }                from './MockAvaliacaoRepository';
-import { MockMaterialRepository }                  from './MockMaterialRepository';
-import { MockCertificadoRepository }              from './MockCertificadoRepository';
-import { MockCalendarioRepository }               from './MockCalendarioRepository';
-import { MockCatalogoRepository }                  from './MockCatalogoRepository';
-import { MockRequerimentoRepository }             from './MockRequerimentoRepository';
-import { MockPlanoEnsinoRepository }              from './MockPlanoEnsinoRepository';
-import { MockDiarioClasseRepository }             from './MockDiarioClasseRepository';
-import { MockAvaliacaoInstitucionalRepository }   from './MockAvaliacaoInstitucionalRepository';
-import { MockProgressoRepository }                from './MockProgressoRepository';
+import { MockUserRepository } from './MockUserRepository';
+import { MockCourseRepository } from './MockCourseRepository';
+import { MockPaymentRepository } from './MockPaymentRepository';
+import { MockTurmaRepository } from './MockTurmaRepository';
+import { MockFrequenciaRepository } from './MockFrequenciaRepository';
+import { MockEnrollmentRepository } from './MockEnrollmentRepository';
+import { MockNotaRepository } from './MockNotaRepository';
+import { MockAvaliacaoRepository } from './MockAvaliacaoRepository';
+import { MockMaterialRepository } from './MockMaterialRepository';
+import { MockCertificadoRepository } from './MockCertificadoRepository';
+import { MockCalendarioRepository } from './MockCalendarioRepository';
+import { MockCatalogoRepository } from './MockCatalogoRepository';
+import { MockRequerimentoRepository } from './MockRequerimentoRepository';
+import { MockPlanoEnsinoRepository } from './MockPlanoEnsinoRepository';
+import { MockDiarioClasseRepository } from './MockDiarioClasseRepository';
+import { MockAvaliacaoInstitucionalRepository } from './MockAvaliacaoInstitucionalRepository';
+import { MockProgressoRepository } from './MockProgressoRepository';
+import { MockOcorrenciaRepository } from './MockOcorrenciaRepository';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 export const isMockMode = !supabaseUrl || supabaseUrl.includes('dummy') || supabaseUrl.includes('placeholder');
 
-let _user:         IUserRepository         | null = null;
-let _course:       ICourseRepository       | null = null;
-let _payment:      IPaymentRepository      | null = null;
-let _turma:        ITurmaRepository        | null = null;
-let _frequencia:   IFrequenciaRepository   | null = null;
-let _enrollment:   IEnrollmentRepository   | null = null;
-let _nota:         INotaRepository         | null = null;
-let _avaliacao:    IAvaliacaoRepository    | null = null;
-let _material:     IMaterialRepository     | null = null;
-let _certificado:  ICertificadoRepository  | null = null;
-let _calendario:   ICalendarioRepository   | null = null;
-let _catalogo:               ICatalogoRepository                | null = null;
-let _requerimento:           IRequerimentoRepository            | null = null;
-let _planoEnsino:            IPlanoEnsinoRepository             | null = null;
-let _diarioClasse:           IDiarioClasseRepository            | null = null;
-let _avaliacaoInstitucional: IAvaliacaoInstitucionalRepository  | null = null;
-let _progresso:              IProgressoRepository               | null = null;
+let _user: IUserRepository | null = null;
+let _course: ICourseRepository | null = null;
+let _payment: IPaymentRepository | null = null;
+let _turma: ITurmaRepository | null = null;
+let _frequencia: IFrequenciaRepository | null = null;
+let _enrollment: IEnrollmentRepository | null = null;
+let _nota: INotaRepository | null = null;
+let _avaliacao: IAvaliacaoRepository | null = null;
+let _material: IMaterialRepository | null = null;
+let _certificado: ICertificadoRepository | null = null;
+let _calendario: ICalendarioRepository | null = null;
+let _catalogo: ICatalogoRepository | null = null;
+let _requerimento: IRequerimentoRepository | null = null;
+let _planoEnsino: IPlanoEnsinoRepository | null = null;
+let _diarioClasse: IDiarioClasseRepository | null = null;
+let _avaliacaoInstitucional: IAvaliacaoInstitucionalRepository | null = null;
+let _progresso: IProgressoRepository | null = null;
+let _ocorrencia: IOcorrenciaRepository | null = null;
 
 // Async factories (Supabase-capable)
 export async function getUserRepository(): Promise<IUserRepository> {
@@ -84,24 +87,54 @@ export async function getPaymentRepository(): Promise<IPaymentRepository> {
     return (_payment = new SupabasePaymentRepository());
 }
 
+export async function getTurmaRepository(): Promise<ITurmaRepository> {
+    if (_turma) return _turma;
+    if (isMockMode) { return (_turma = new MockTurmaRepository()); }
+    const { SupabaseTurmaRepository } = await import('./SupabaseTurmaRepository');
+    return (_turma = new SupabaseTurmaRepository());
+}
+
+export async function getFrequenciaRepository(): Promise<IFrequenciaRepository> {
+    if (_frequencia) return _frequencia;
+    if (isMockMode) { return (_frequencia = new MockFrequenciaRepository()); }
+    const { SupabaseFrequenciaRepository } = await import('./SupabaseFrequenciaRepository');
+    return (_frequencia = new SupabaseFrequenciaRepository());
+}
+
+export async function getEnrollmentRepository(): Promise<IEnrollmentRepository> {
+    if (_enrollment) return _enrollment;
+    if (isMockMode) { return (_enrollment = new MockEnrollmentRepository()); }
+    const { SupabaseEnrollmentRepository } = await import('./SupabaseEnrollmentRepository');
+    return (_enrollment = new SupabaseEnrollmentRepository());
+}
+
+export async function getNotaRepository(): Promise<INotaRepository> {
+    if (_nota) return _nota;
+    if (isMockMode) { return (_nota = new MockNotaRepository()); }
+    const { SupabaseNotaRepository } = await import('./SupabaseNotaRepository');
+    return (_nota = new SupabaseNotaRepository());
+}
+
 // Sync factories (mock-only for now — swap to Supabase when ready)
-export function getTurmaRepository():       ITurmaRepository       { return (_turma       ??= new MockTurmaRepository()); }
-export function getFrequenciaRepository():  IFrequenciaRepository  { return (_frequencia  ??= new MockFrequenciaRepository()); }
-export function getEnrollmentRepository():  IEnrollmentRepository  { return (_enrollment  ??= new MockEnrollmentRepository()); }
-export function getNotaRepository():        INotaRepository        { return (_nota        ??= new MockNotaRepository()); }
-export function getAvaliacaoRepository():   IAvaliacaoRepository   { return (_avaliacao   ??= new MockAvaliacaoRepository()); }
-export function getMaterialRepository():    IMaterialRepository    { return (_material    ??= new MockMaterialRepository()); }
+export function getAvaliacaoRepository(): IAvaliacaoRepository { return (_avaliacao ??= new MockAvaliacaoRepository()); }
+export function getMaterialRepository(): IMaterialRepository { return (_material ??= new MockMaterialRepository()); }
 export function getCertificadoRepository(): ICertificadoRepository { return (_certificado ??= new MockCertificadoRepository()); }
-export function getCalendarioRepository():  ICalendarioRepository  { return (_calendario  ??= new MockCalendarioRepository()); }
-export function getCatalogoRepository():              ICatalogoRepository               { return (_catalogo              ??= new MockCatalogoRepository()); }
-export function getRequerimentoRepository():          IRequerimentoRepository           { return (_requerimento          ??= new MockRequerimentoRepository()); }
-export function getPlanoEnsinoRepository():           IPlanoEnsinoRepository            { return (_planoEnsino           ??= new MockPlanoEnsinoRepository()); }
-export function getDiarioClasseRepository():          IDiarioClasseRepository           { return (_diarioClasse          ??= new MockDiarioClasseRepository()); }
-export function getAvaliacaoInstitucionalRepository(): IAvaliacaoInstitucionalRepository  { return (_avaliacaoInstitucional ??= new MockAvaliacaoInstitucionalRepository()); }
+export function getCalendarioRepository(): ICalendarioRepository { return (_calendario ??= new MockCalendarioRepository()); }
+export function getCatalogoRepository(): ICatalogoRepository { return (_catalogo ??= new MockCatalogoRepository()); }
+export function getRequerimentoRepository(): IRequerimentoRepository { return (_requerimento ??= new MockRequerimentoRepository()); }
+export function getPlanoEnsinoRepository(): IPlanoEnsinoRepository { return (_planoEnsino ??= new MockPlanoEnsinoRepository()); }
+export function getDiarioClasseRepository(): IDiarioClasseRepository { return (_diarioClasse ??= new MockDiarioClasseRepository()); }
+export function getAvaliacaoInstitucionalRepository(): IAvaliacaoInstitucionalRepository { return (_avaliacaoInstitucional ??= new MockAvaliacaoInstitucionalRepository()); }
 export function getProgressoRepository(): IProgressoRepository { return (_progresso ??= new MockProgressoRepository()); }
+export async function getOcorrenciaRepository(): Promise<IOcorrenciaRepository> {
+    if (_ocorrencia) return _ocorrencia;
+    if (isMockMode) { return (_ocorrencia = new MockOcorrenciaRepository()); }
+    const { SupabaseOcorrenciaRepository } = await import('./SupabaseOcorrenciaRepository');
+    return (_ocorrencia = new SupabaseOcorrenciaRepository());
+}
 
 // Sync convenience aliases for server components (always mock in dev)
-export function getUserRepositorySync():    IUserRepository    { return (_user    ??= new MockUserRepository()); }
-export function getCourseRepositorySync():  ICourseRepository  { return (_course  ??= new MockCourseRepository()); }
+export function getUserRepositorySync(): IUserRepository { return (_user ??= new MockUserRepository()); }
+export function getCourseRepositorySync(): ICourseRepository { return (_course ??= new MockCourseRepository()); }
 export function getPaymentRepositorySync(): IPaymentRepository { return (_payment ??= new MockPaymentRepository()); }
 

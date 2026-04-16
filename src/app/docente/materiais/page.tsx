@@ -6,15 +6,15 @@ import type { MaterialTipo } from "@/lms/repositories/MaterialRepository";
 const TIPO_CONFIG: Record<MaterialTipo, { label: string; icon: React.ElementType; color: string }> = {
     'APOSTILA':  { label: 'Apostila',   icon: BookOpen,      color: 'text-violet-600' },
     'PDF':       { label: 'PDF',        icon: FileText,      color: 'text-red-600' },
-    'VIDEO':     { label: 'Vídeo',      icon: Video,         color: 'text-blue-600' },
+    'VIDEO':     { label: 'VÃ­deo',      icon: Video,         color: 'text-blue-600' },
     'SLIDE':     { label: 'Slide',      icon: File,          color: 'text-orange-600' },
     'LINK':      { label: 'Link',       icon: Link2,         color: 'text-emerald-600' },
-    'EXERCICIO': { label: 'Exercícios', icon: ClipboardList, color: 'text-amber-600' },
+    'EXERCICIO': { label: 'ExercÃ­cios', icon: ClipboardList, color: 'text-amber-600' },
 };
 
 export default async function DocenteMateriaisPage({ searchParams }: { searchParams: Promise<{turmaId?: string}> }) {
     const { turmaId } = await searchParams;
-    const turmaRepo = getTurmaRepository();
+    const turmaRepo = await getTurmaRepository();
     const turmas = await turmaRepo.findAll?.() ?? [];
     const selectedId = turmaId ?? turmas[0]?.id;
     const materiais = selectedId ? await getMaterialByTurma(selectedId) : [];
@@ -24,8 +24,8 @@ export default async function DocenteMateriaisPage({ searchParams }: { searchPar
         <div className="space-y-8">
             <div className="flex items-start justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Material Didático</h1>
-                    <p className="text-slate-500 mt-1 text-sm">{materiais.length} arquivos · {visiveis} visíveis para alunos</p>
+                    <h1 className="text-2xl font-bold text-slate-900">Material DidÃ¡tico</h1>
+                    <p className="text-slate-500 mt-1 text-sm">{materiais.length} arquivos Â· {visiveis} visÃ­veis para alunos</p>
                 </div>
                 <button className="flex items-center gap-2 bg-teal-600 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-teal-700 transition-colors">
                     <Upload className="w-4 h-4" /> Enviar Material
@@ -49,8 +49,8 @@ export default async function DocenteMateriaisPage({ searchParams }: { searchPar
                                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Material</th>
                                 <th className="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Tipo</th>
                                 <th className="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Ordem</th>
-                                <th className="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Visível</th>
-                                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Ações</th>
+                                <th className="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">VisÃ­vel</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">AÃ§Ãµes</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">

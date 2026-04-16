@@ -22,5 +22,3 @@ export async function exportarRelatorio(
 ): Promise<{ url: string }> {
     return (await getRelatorioRepository()).exportar(tipo, periodo, formato);
 }
-
-export type { DRE, FluxoCaixa, IndicadorExecutivo };

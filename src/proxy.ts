@@ -14,22 +14,12 @@ import { checkRateLimit } from '@/lib/middleware/rateLimit'
 import { logRequestAudit } from '@/lib/middleware/audit'
 import { updateSession } from '@/lib/supabase/middleware'
 
-/** Routes that get a stricter rate limit (20 req/min). */
-const STRICT_RATE_LIMIT_PREFIXES = ['/api/', '/admin/login', '/login', '/checkout']
-
-function isStrictRoute(pathname: string): boolean {
-    return STRICT_RATE_LIMIT_PREFIXES.some((p) => pathname.startsWith(p))
-}
-
 export async function proxy(request: NextRequest): Promise<NextResponse> {
     const { pathname } = request.nextUrl
 
-    // ── Layer 2: Rate limiting ──────────────────────────────────────────────
-    const rateLimitOptions = isStrictRoute(pathname)
-        ? { limit: 20, windowMs: 60_000, prefix: 'strict' }
-        : { limit: 120, windowMs: 60_000, prefix: 'default' }
-
-    const rateLimitResponse = checkRateLimit(request, rateLimitOptions)
+    // ── Layer 2: Rate limiting (Redis-backed) ───────────────────────────────
+    // Configuração automática por rota em rateLimit.ts
+    const rateLimitResponse = await checkRateLimit(request)
     if (rateLimitResponse) {
         applySecurityHeaders(rateLimitResponse)
         return rateLimitResponse

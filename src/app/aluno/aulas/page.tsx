@@ -1,11 +1,12 @@
-import { getTurmaRepository } from "@/lms/repositories"
+import { getStudentDashboardData } from "@/lms/actions/studentActions"
+import { getProgressoCurso } from "@/lms/actions/progressoActions"
+import { getAulasByTurma } from "@/lms/actions/turmaActions"
+import { getTurmaById } from "@/lms/actions/turmaActions"
 import { PageHeader } from "@/components/layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { PlayCircle, Clock, Users, CheckCircle, AlertCircle } from "lucide-react"
 import Link from "next/link"
-
-const MOCK_STUDENT_ID = "student-1"
 
 interface AulaData {
     id: string
@@ -22,65 +23,6 @@ interface AulaData {
     alunos: number
 }
 
-const MOCK_AULAS: AulaData[] = [
-    {
-        id: "aula-1",
-        titulo: "Princípios de Farmacoterapia",
-        disciplina: "Farmacologia Aplicada",
-        turma: "T2024-FA-001",
-        instrutor: "Prof. Dra. Marina Costa",
-        duracao: 45,
-        dataInicio: "2026-02-01",
-        status: "Em progresso",
-        progresso: 65,
-        totalAulaS: 12,
-        aulasAssistidas: 8,
-        alunos: 28,
-    },
-    {
-        id: "aula-2",
-        titulo: "Protocolos de Quimioterapia",
-        disciplina: "Oncologia Clínica",
-        turma: "T2024-OC-002",
-        instrutor: "Prof. Dr. Marcos Oliveira",
-        duracao: 60,
-        dataInicio: "2026-02-15",
-        status: "Não iniciado",
-        progresso: 0,
-        totalAulaS: 10,
-        aulasAssistidas: 0,
-        alunos: 35,
-    },
-    {
-        id: "aula-3",
-        titulo: "Fundamentos de Patologia",
-        disciplina: "Patologia Clínica",
-        turma: "T2024-PC-003",
-        instrutor: "Prof. Dr. Ricardo Silva",
-        duracao: 50,
-        dataInicio: "2026-01-10",
-        status: "Concluído",
-        progresso: 100,
-        totalAulaS: 15,
-        aulasAssistidas: 15,
-        alunos: 32,
-    },
-    {
-        id: "aula-4",
-        titulo: "Gestão Hospitalar e Compliance",
-        disciplina: "Administração em Saúde",
-        turma: "T2024-AS-004",
-        instrutor: "Prof. Dra. Juliana Rocha",
-        duracao: 55,
-        dataInicio: "2026-02-10",
-        status: "Em progresso",
-        progresso: 40,
-        totalAulaS: 8,
-        aulasAssistidas: 3,
-        alunos: 29,
-    },
-]
-
 function getStatusConfig(status: AulaData["status"]) {
     const configs: Record<AulaData["status"], { icon: React.ElementType; color: string; label: string }> = {
         "Não iniciado": { icon: AlertCircle, color: "bg-slate-100 text-slate-600 border-slate-200", label: "Não iniciado" },
@@ -91,7 +33,38 @@ function getStatusConfig(status: AulaData["status"]) {
 }
 
 export default async function MinhasAulasPage() {
-    const aulas = MOCK_AULAS
+    const dashboard = await getStudentDashboardData()
+    const activeEnrollments = dashboard.enrollments.filter(e => e.status === "Ativo" || e.status === "Concluido")
+
+    const aulas = await Promise.all(
+        activeEnrollments.map(async (enr) => {
+            const turmaInfo = enr.turmaId ? await getTurmaById(enr.turmaId) : null
+            const progressoData = await getProgressoCurso(enr.courseId)
+            const aulasDaTurma = enr.turmaId ? await getAulasByTurma(enr.turmaId) : []
+
+            const totalAulas = aulasDaTurma.length
+            const assistidas = progressoData.records.length
+
+            let status: AulaData["status"] = "Não iniciado"
+            if (assistidas > 0 && assistidas < totalAulas) status = "Em progresso"
+            if (totalAulas > 0 && assistidas >= totalAulas) status = "Concluído"
+
+            return {
+                id: enr.turmaId ?? enr.courseId,
+                titulo: turmaInfo?.courseName ?? enr.title,
+                disciplina: enr.moduleName ?? "Disciplina Geral",
+                turma: turmaInfo?.code ?? enr.turmaId ?? "Sem Turma",
+                instrutor: turmaInfo?.instructorName ?? "EAD",
+                duracao: aulasDaTurma.reduce((acc, a) => acc + (a.durationMinutes || 0), 0),
+                dataInicio: turmaInfo?.startDate ?? enr.dataMatricula,
+                status,
+                progresso: progressoData.percentual ?? 0,
+                totalAulaS: totalAulas,
+                aulasAssistidas: assistidas,
+                alunos: turmaInfo?.maxStudents ?? 0,
+            } as AulaData
+        })
+    )
 
     const totais = {
         total: aulas.length,
@@ -102,7 +75,7 @@ export default async function MinhasAulasPage() {
     return (
         <div className="space-y-6">
             <PageHeader
-                title="Minhas Aulas"
+                title="Minhas Turmas"
                 description="Acompanhe seu progresso nas disciplinas e acesse o conteúdo das aulas"
             />
 

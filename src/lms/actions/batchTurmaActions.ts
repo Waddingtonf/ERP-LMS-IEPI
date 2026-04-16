@@ -2,15 +2,8 @@
 
 import { isMockMode, getEnrollmentRepository, getTurmaRepository } from "@/lms/repositories";
 import { AuditService } from "@/shared/services/AuditService";
-
-async function resolveActorId(): Promise<string> {
-    if (isMockMode) return 'admin-1';
-    const { createClient } = await import('@/lib/supabase/server');
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Não autenticado');
-    return user.id;
-}
+import { requireAuth } from "@/lib/auth/session";
+import { NotFoundError } from "@/lib/errors";
 
 /**
  * Transfer multiple alunos from one turma to another.
@@ -21,15 +14,15 @@ export async function batchTransferirAlunosAction(
     deTurmaId: string,
     paraTurmaId: string,
 ): Promise<{ transferidos: number; errors: number }> {
-    const actorId = await resolveActorId();
-    const enrollmentRepo = getEnrollmentRepository();
-    const turmaRepo = getTurmaRepository();
+    const actorId = await requireAuth('ADMIN');
+    const enrollmentRepo = await getEnrollmentRepository();
+    const turmaRepo = await getTurmaRepository();
 
     // Validate turmas exist
-    const deTurma   = await turmaRepo.findById(deTurmaId);
+    const deTurma = await turmaRepo.findById(deTurmaId);
     const paraTurma = await turmaRepo.findById(paraTurmaId);
-    if (!deTurma)   throw new Error(`Turma de origem "${deTurmaId}" não encontrada.`);
-    if (!paraTurma) throw new Error(`Turma de destino "${paraTurmaId}" não encontrada.`);
+    if (!deTurma) throw new NotFoundError(`Turma de origem`, deTurmaId);
+    if (!paraTurma) throw new NotFoundError(`Turma de destino`, paraTurmaId);
 
     let transferidos = 0;
     let errors = 0;

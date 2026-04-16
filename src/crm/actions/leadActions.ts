@@ -61,5 +61,3 @@ export async function updateLeadAction(id: string, data: Partial<Omit<Lead, 'id'
     revalidatePath('/admin/crm/leads');
     return lead;
 }
-
-export type { Lead, LeadStatus, LeadOrigem, MetricasFunil };

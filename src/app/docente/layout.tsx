@@ -1,6 +1,8 @@
 import { Users, ClipboardCheck, LayoutDashboard, FileText, CalendarCheck } from "lucide-react"
 import PortalShell, { PortalNavItem } from "@/components/portal/PortalShell"
 
+export const dynamic = "force-dynamic"
+
 const navItems: PortalNavItem[] = [
     { href: "/docente",           label: "Painel",              icon: <LayoutDashboard className="w-4 h-4" />, exact: true },
     { href: "/docente/turmas",    label: "Minhas Turmas",       icon: <Users className="w-4 h-4" /> },

@@ -11,6 +11,7 @@ import {
 import type { User } from "@/lms/repositories/UserRepository";
 import type { Nota } from "@/lms/repositories/NotaRepository";
 import type { Certificado } from "@/lms/repositories/CertificadoRepository";
+import { NotFoundError } from "@/lib/errors";
 
 export interface AlunoCompleto {
     usuario: User;
@@ -29,8 +30,8 @@ export interface AlunoCompleto {
 export async function getAlunoCompleto(alunoId: string): Promise<AlunoCompleto> {
     const [userRepo, enrollmentRepo, notaRepo, certRepo] = await Promise.all([
         getUserRepository(),
-        Promise.resolve(getEnrollmentRepository()),
-        Promise.resolve(getNotaRepository()),
+        await getEnrollmentRepository(),
+        await getNotaRepository(),
         Promise.resolve(getCertificadoRepository()),
     ]);
 
@@ -41,10 +42,10 @@ export async function getAlunoCompleto(alunoId: string): Promise<AlunoCompleto> 
         certRepo.findByAluno(alunoId),
     ]);
 
-    if (!usuario) throw new Error('Aluno não encontrado');
+    if (!usuario) throw new NotFoundError('Aluno', alunoId);
 
-    // Frequência média geral
-    const freqRepo = getFrequenciaRepository();
+    // FrequÃªncia mÃ©dia geral
+    const freqRepo = await getFrequenciaRepository();
     const turmaIds = [...new Set(matriculas.map(m => m.turmaId).filter((id): id is string => id !== null))];
     let totalAulas = 0; let totalPresentes = 0;
     for (const turmaId of turmaIds) {
@@ -70,7 +71,10 @@ export async function getAlunoCompleto(alunoId: string): Promise<AlunoCompleto> 
 }
 
 export async function updateStatusMatricula(matriculaId: string, status: 'Ativa' | 'Trancada' | 'Cancelada'): Promise<void> {
-    // Em produção: atualiza via Supabase
+    const repo = await getEnrollmentRepository();
+    // Mapeamento para EnrollmentStatus
+    const statusMap: Record<string, any> = { Ativa: 'Ativo', Trancada: 'Trancado', Cancelada: 'Evadido' };
+    await repo.updateStatus(matriculaId, statusMap[status] || status);
     revalidatePath('/admin/alunos');
     revalidatePath('/aluno');
 }

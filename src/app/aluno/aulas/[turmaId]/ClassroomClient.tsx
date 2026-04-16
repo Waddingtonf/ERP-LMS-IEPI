@@ -1,59 +1,67 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { PlayCircle, CheckCircle, Lock, BookOpen, ChevronDown, ChevronUp, Clock, SkipForward, FileDown, MessageSquare, ArrowLeft, PenLine, ExternalLink, FileText, Video, Save, Trash2 } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Progress } from "@/components/ui/progress"
 import Link from "next/link"
+import { marcarAulaConcluidaAction } from "@/lms/actions/progressoActions"
 
-const courseData = {
-    id: "1",
-    title: "Gestão Estratégica em RH",
-    totalLessons: 5,
-    completedLessons: 2,
-    modules: [
-        {
-            id: "m1",
-            title: "Módulo 1: Fundamentos do RH",
-            lessons: [
-                { id: "l1", title: "Introdução à Gestão de Pessoas", duration: "15:00", blocked: false, completed: true, videoUrl: "https://www.youtube.com/embed/ScMzIvxBSi4" },
-                { id: "l2", title: "Evolução Histórica do RH", duration: "22:30", blocked: false, completed: true, videoUrl: "https://www.youtube.com/embed/ScMzIvxBSi4" },
-                { id: "l3", title: "Desafios Contemporâneos", duration: "18:45", blocked: false, completed: false, videoUrl: "https://www.youtube.com/embed/ScMzIvxBSi4" },
-            ]
-        },
-        {
-            id: "m2",
-            title: "Módulo 2: Recrutamento Inteligente",
-            lessons: [
-                { id: "l4", title: "Planejamento de Vagas", duration: "25:10", blocked: true, completed: false, videoUrl: "" },
-                { id: "l5", title: "Entrevistas por Competência", duration: "30:00", blocked: true, completed: false, videoUrl: "" },
-            ]
+type CourseDataProps = {
+    id: string;
+    title: string;
+    totalLessons: number;
+    completedLessons: number;
+    modules: {
+        id: string;
+        title: string;
+        lessons: {
+            id: string;
+            title: string;
+            duration: string;
+            blocked: boolean;
+            completed: boolean;
+            videoUrl: string;
+        }[];
+    }[];
+};
+
+export default function ClassroomClient({ courseData, turmaId, courseId }: { courseData: CourseDataProps, turmaId: string, courseId: string }) {
+    const [activeLesson, setActiveLesson] = useState(() => {
+        // Try to find the first uncompleted lesson
+        for (const m of courseData.modules) {
+            for (const l of m.lessons) {
+                if (!l.completed && !l.blocked) return l;
+            }
         }
-    ]
-}
-
-export default function ClassroomPage({ params }: { params: Promise<{ aulaId: string }> }) {
-    const [activeLesson, setActiveLesson] = useState(courseData.modules[0].lessons[2])
-    const [expandedModules, setExpandedModules] = useState<string[]>(["m1", "m2"])
-    const [completedLocally, setCompletedLocally] = useState<Set<string>>(new Set(["l1", "l2"]))
+        return courseData.modules[0].lessons[0];
+    })
+    const [expandedModules, setExpandedModules] = useState<string[]>(courseData.modules.map(m => m.id))
+    const [completedLocally, setCompletedLocally] = useState<Set<string>>(() => {
+        const set = new Set<string>()
+        courseData.modules.forEach(m => m.lessons.forEach(l => {
+            if (l.completed) set.add(l.id)
+        }))
+        return set
+    })
     const [justCompleted, setJustCompleted] = useState(false)
     const [activeInfoTab, setActiveInfoTab] = useState<"sobre" | "anotacoes" | "materiais">("sobre")
-    const [notes, setNotes]   = useState<Record<string, string[]>>({}) // lessonId -> saved notes
+    const [notes, setNotes] = useState<Record<string, string[]>>({}) // lessonId -> saved notes
     const [noteInput, setNoteInput] = useState("")
     const notesEndRef = useRef<HTMLDivElement>(null)
 
     const MATERIALS: Record<string, { label: string; type: "PDF" | "PPT" | "VIDEO" | "LINK"; size?: string; url: string }[]> = {
         default: [
-            { label: "Apostila da Aula",          type: "PDF",   size: "2.4 MB", url: "#" },
-            { label: "Slides da Apresentação",   type: "PPT",   size: "4.1 MB", url: "#" },
-            { label: "Video Complementar",         type: "VIDEO", size: "45 min", url: "#" },
-            { label: "Leitura Recomendada (OMS)",  type: "LINK",             url: "https://www.who.int" },
-            { label: "Ficha de Atividade Prática", type: "PDF",   size: "320 KB", url: "#" },
+            { label: "Apostila da Aula", type: "PDF", size: "2.4 MB", url: "#" },
+            { label: "Slides da Apresentação", type: "PPT", size: "4.1 MB", url: "#" },
+            { label: "Video Complementar", type: "VIDEO", size: "45 min", url: "#" },
+            { label: "Leitura Recomendada (OMS)", type: "LINK", url: "https://www.who.int" },
+            { label: "Ficha de Atividade Prática", type: "PDF", size: "320 KB", url: "#" },
         ]
     }
     const lessonMaterials = MATERIALS[activeLesson.id] ?? MATERIALS.default
 
-    const savedNotes     = notes[activeLesson.id] ?? []
+    const savedNotes = notes[activeLesson.id] ?? []
 
     const saveNote = () => {
         const text = noteInput.trim()
@@ -68,10 +76,10 @@ export default function ClassroomPage({ params }: { params: Promise<{ aulaId: st
     }
 
     const MAT_STYLE: Record<string, { bg: string; text: string; icon: React.ElementType }> = {
-        PDF:   { bg: "bg-red-50 border-red-100",    text: "text-red-600",    icon: FileText },
-        PPT:   { bg: "bg-orange-50 border-orange-100", text: "text-orange-600", icon: FileText },
-        VIDEO: { bg: "bg-blue-50 border-blue-100",  text: "text-blue-600",   icon: Video    },
-        LINK:  { bg: "bg-emerald-50 border-emerald-100", text: "text-emerald-700", icon: ExternalLink },
+        PDF: { bg: "bg-red-50 border-red-100", text: "text-red-600", icon: FileText },
+        PPT: { bg: "bg-orange-50 border-orange-100", text: "text-orange-600", icon: FileText },
+        VIDEO: { bg: "bg-blue-50 border-blue-100", text: "text-blue-600", icon: Video },
+        LINK: { bg: "bg-emerald-50 border-emerald-100", text: "text-emerald-700", icon: ExternalLink },
     }
 
     const toggleModule = (id: string) => {
@@ -80,10 +88,11 @@ export default function ClassroomPage({ params }: { params: Promise<{ aulaId: st
         )
     }
 
-    const markComplete = () => {
-        setCompletedLocally(prev => new Set([...prev, activeLesson.id]))
+    const markComplete = async () => {
+        setCompletedLocally(prev => new Set([...Array.from(prev), activeLesson.id]))
         setJustCompleted(true)
         setTimeout(() => setJustCompleted(false), 3000)
+        await marcarAulaConcluidaAction(courseId, activeLesson.id)
     }
 
     const totalDone = completedLocally.size
@@ -179,18 +188,17 @@ export default function ClassroomPage({ params }: { params: Promise<{ aulaId: st
                     {/* Tabs navigation */}
                     <div className="flex gap-1 bg-slate-100 p-1 rounded-xl w-fit">
                         {([
-                            { id: "sobre",     label: "Sobre a Aula",    icon: MessageSquare },
+                            { id: "sobre", label: "Sobre a Aula", icon: MessageSquare },
                             { id: "anotacoes", label: "Minhas Anotações", icon: PenLine, count: savedNotes.length },
-                            { id: "materiais", label: "Materiais",         icon: FileDown, count: lessonMaterials.length },
+                            { id: "materiais", label: "Materiais", icon: FileDown, count: lessonMaterials.length },
                         ] as const).map(tab => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveInfoTab(tab.id)}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                                    activeInfoTab === tab.id
+                                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${activeInfoTab === tab.id
                                         ? "bg-white text-slate-900 shadow-sm"
                                         : "text-slate-500 hover:text-slate-700"
-                                }`}
+                                    }`}
                             >
                                 <tab.icon className="w-3.5 h-3.5" />
                                 {tab.label}
@@ -282,7 +290,7 @@ export default function ClassroomPage({ params }: { params: Promise<{ aulaId: st
                         <div className="grid sm:grid-cols-2 gap-2">
                             {lessonMaterials.map(m => {
                                 const style = MAT_STYLE[m.type]
-                                const Icon  = style.icon
+                                const Icon = style.icon
                                 const isExternal = m.type === "LINK"
                                 return (
                                     <a
@@ -304,7 +312,7 @@ export default function ClassroomPage({ params }: { params: Promise<{ aulaId: st
                                         </div>
                                         {isExternal
                                             ? <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-violet-500 shrink-0" />
-                                            : <FileDown    className="w-3.5 h-3.5 text-slate-300 group-hover:text-violet-500 shrink-0" />
+                                            : <FileDown className="w-3.5 h-3.5 text-slate-300 group-hover:text-violet-500 shrink-0" />
                                         }
                                     </a>
                                 )
@@ -358,13 +366,12 @@ export default function ClassroomPage({ params }: { params: Promise<{ aulaId: st
                                                         key={lesson.id}
                                                         onClick={() => !lesson.blocked && setActiveLesson(lesson)}
                                                         disabled={lesson.blocked}
-                                                        className={`w-full text-left px-4 py-3 flex gap-3 text-sm transition-all ${
-                                                            isActive
+                                                        className={`w-full text-left px-4 py-3 flex gap-3 text-sm transition-all ${isActive
                                                                 ? "bg-violet-50 border-r-2 border-violet-500"
                                                                 : lesson.blocked
                                                                     ? "opacity-40 cursor-not-allowed"
                                                                     : "hover:bg-white cursor-pointer"
-                                                        }`}
+                                                            }`}
                                                     >
                                                         <div className="mt-0.5 shrink-0">
                                                             {isDone ? (

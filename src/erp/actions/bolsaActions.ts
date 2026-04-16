@@ -18,17 +18,17 @@ export async function getBolsaByAluno(alunoId: string): Promise<BolsaAluno[]> {
 
 export async function criarBolsaAction(formData: FormData): Promise<Bolsa> {
     const bolsa = await (await getBolsaRepository()).create({
-        nome:               formData.get('nome')               as string,
-        tipo:               formData.get('tipo')               as Bolsa['tipo'],
+        nome: formData.get('nome') as string,
+        tipo: formData.get('tipo') as Bolsa['tipo'],
         percentualDesconto: Number(formData.get('percentualDesconto') ?? 0),
-        valorMaximo:        formData.get('valorMaximo') ? Number(formData.get('valorMaximo')) : null,
-        descricao:          formData.get('descricao')          as string ?? '',
-        requisitos:         formData.get('requisitos')         as string ?? '',
-        status:             'Ativa',
-        vagasTotal:         Number(formData.get('vagasTotal') ?? 999),
-        dataInicio:         formData.get('dataInicio')         as string,
-        dataFim:            formData.get('dataFim')            as string | null,
-        cursoIds:           [],
+        valorMaximo: formData.get('valorMaximo') ? Number(formData.get('valorMaximo')) : null,
+        descricao: formData.get('descricao') as string ?? '',
+        requisitos: formData.get('requisitos') as string ?? '',
+        status: 'Ativa',
+        vagasTotal: Number(formData.get('vagasTotal') ?? 999),
+        dataInicio: formData.get('dataInicio') as string,
+        dataFim: formData.get('dataFim') as string | null,
+        cursoIds: [],
     });
     revalidatePath('/financeiro/bolsas');
     return bolsa;
@@ -48,4 +48,3 @@ export async function revogarBolsaAction(bolsaAlunoId: string, motivo: string): 
     revalidatePath('/financeiro/bolsas');
 }
 
-export type { Bolsa, BolsaAluno };

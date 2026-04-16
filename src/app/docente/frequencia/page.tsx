@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState, useEffect, useCallback, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Progress } from "@/components/ui/progress"
-import { getDocenteTurmas, type Turma } from "@/lms/actions/docenteActions"
+import { getDocenteTurmas, type TurmaUI as Turma } from "@/lms/actions/docenteActions"
 import { getAulasByTurma, marcarAulaRealizadaAction } from "@/lms/actions/turmaActions"
 import { getFrequenciaAula, salvarFrequenciaAction, getResumoTurma } from "@/lms/actions/frequenciaActions"
 import { getEnrollmentsByTurma } from "@/lms/actions/enrollmentActions"
@@ -25,9 +25,9 @@ const DOCENTE_ID = 'docente-1'
 // ─── Local state for each student row ──────────────────────────────────────
 
 interface AttendanceRow {
-    alunoId:    string
-    alunoName:  string
-    presente:   boolean
+    alunoId: string
+    alunoName: string
+    presente: boolean
     observacao: string
 }
 
@@ -35,19 +35,19 @@ interface AttendanceRow {
 
 function FrequenciaContent() {
     const searchParams = useSearchParams()
-    const router       = useRouter()
+    const router = useRouter()
 
     const paramTurmaId = searchParams.get('turmaId') ?? ''
-    const paramAulaId  = searchParams.get('aulaId')  ?? ''
+    const paramAulaId = searchParams.get('aulaId') ?? ''
 
-    const [turmas,        setTurmas]        = useState<Turma[]>([])
+    const [turmas, setTurmas] = useState<Turma[]>([])
     const [selectedTurma, setSelectedTurma] = useState<string>(paramTurmaId)
-    const [aulas,         setAulas]         = useState<Aula[]>([])
-    const [selectedAula,  setSelectedAula]  = useState<string>(paramAulaId)
-    const [enrollments,   setEnrollments]   = useState<Enrollment[]>([])
-    const [resumo,        setResumo]        = useState<FrequenciaResumo[]>([])
-    const [rows,          setRows]          = useState<AttendanceRow[]>([])
-    const [saving,        setSaving]        = useState(false)
+    const [aulas, setAulas] = useState<Aula[]>([])
+    const [selectedAula, setSelectedAula] = useState<string>(paramAulaId)
+    const [enrollments, setEnrollments] = useState<Enrollment[]>([])
+    const [resumo, setResumo] = useState<FrequenciaResumo[]>([])
+    const [rows, setRows] = useState<AttendanceRow[]>([])
+    const [saving, setSaving] = useState(false)
 
     // Load turmas on mount
     useEffect(() => {
@@ -79,9 +79,9 @@ function FrequenciaContent() {
         freq.forEach(f => alunoSet.set(f.alunoId, f.alunoName))
 
         const newRows: AttendanceRow[] = Array.from(alunoSet.entries()).map(([id, name]) => ({
-            alunoId:    id,
-            alunoName:  name,
-            presente:   freqMap.get(id)?.presente ?? false,
+            alunoId: id,
+            alunoName: name,
+            presente: freqMap.get(id)?.presente ?? false,
             observacao: freqMap.get(id)?.observacao ?? '',
         }))
         setRows(newRows)
@@ -117,9 +117,9 @@ function FrequenciaContent() {
         setSaving(true)
         try {
             const presencas = rows.map(r => ({
-                alunoId:    r.alunoId,
-                alunoName:  r.alunoName,
-                presente:   r.presente,
+                alunoId: r.alunoId,
+                alunoName: r.alunoName,
+                presente: r.presente,
                 observacao: r.observacao,
             }))
             const result = await salvarFrequenciaAction(selectedAula, presencas)
@@ -139,12 +139,12 @@ function FrequenciaContent() {
         toast.success('Aula marcada como realizada.')
     }
 
-    const presentes    = rows.filter(r => r.presente).length
-    const total        = rows.length
+    const presentes = rows.filter(r => r.presente).length
+    const total = rows.length
     const pctPresentes = total > 0 ? Math.round((presentes / total) * 100) : 0
 
     const selectedAulaObj = aulas.find(a => a.id === selectedAula)
-    const alunosAbaixo    = resumo.filter(r => r.percentual < 75)
+    const alunosAbaixo = resumo.filter(r => r.percentual < 75)
 
     return (
         <div className="space-y-6">
@@ -178,11 +178,10 @@ function FrequenciaContent() {
                         <button
                             key={t.id}
                             onClick={() => selectTurma(t.id)}
-                            className={`w-full text-left px-3 py-2.5 rounded-lg text-sm border transition-all ${
-                                selectedTurma === t.id
+                            className={`w-full text-left px-3 py-2.5 rounded-lg text-sm border transition-all ${selectedTurma === t.id
                                     ? 'bg-blue-600 text-white border-blue-600 font-medium'
                                     : 'bg-white text-slate-700 border-slate-200 hover:border-blue-300 hover:bg-blue-50'
-                            }`}
+                                }`}
                         >
                             <p className="font-medium leading-tight">{t.nome}</p>
                             <p className={`text-xs mt-0.5 ${selectedTurma === t.id ? 'text-blue-100' : 'text-slate-400'}`}>
@@ -204,22 +203,20 @@ function FrequenciaContent() {
                             <button
                                 key={a.id}
                                 onClick={() => selectAula(a.id)}
-                                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm border transition-all ${
-                                    selectedAula === a.id
+                                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm border transition-all ${selectedAula === a.id
                                         ? 'bg-blue-600 text-white border-blue-600 font-medium'
                                         : 'bg-white text-slate-700 border-slate-200 hover:border-blue-300 hover:bg-blue-50'
-                                }`}
+                                    }`}
                             >
                                 <p className="font-medium leading-tight text-xs">{a.title}</p>
                                 <div className="flex items-center justify-between mt-0.5">
                                     <p className={`text-xs ${selectedAula === a.id ? 'text-blue-100' : 'text-slate-400'}`}>
                                         {new Date(a.date + 'T00:00:00').toLocaleDateString('pt-BR')}
                                     </p>
-                                    <Badge className={`text-[10px] border-none py-0 ${
-                                        a.status === 'Realizada' ? 'bg-emerald-100 text-emerald-700' :
-                                        a.status === 'Cancelada' ? 'bg-rose-100 text-rose-700' :
-                                        'bg-blue-100 text-blue-700'
-                                    }`}>{a.status}</Badge>
+                                    <Badge className={`text-[10px] border-none py-0 ${a.status === 'Realizada' ? 'bg-emerald-100 text-emerald-700' :
+                                            a.status === 'Cancelada' ? 'bg-rose-100 text-rose-700' :
+                                                'bg-blue-100 text-blue-700'
+                                        }`}>{a.status}</Badge>
                                 </div>
                             </button>
                         ))
@@ -266,11 +263,10 @@ function FrequenciaContent() {
                                         {rows.map(row => (
                                             <div
                                                 key={row.alunoId}
-                                                className={`p-3 rounded-lg border transition-all ${
-                                                    row.presente
+                                                className={`p-3 rounded-lg border transition-all ${row.presente
                                                         ? 'border-emerald-200 bg-emerald-50'
                                                         : 'border-slate-200 bg-white'
-                                                }`}
+                                                    }`}
                                             >
                                                 <div className="flex items-center justify-between gap-3">
                                                     <div className="flex-1 min-w-0">
@@ -290,11 +286,10 @@ function FrequenciaContent() {
                                                     <div className="flex items-center gap-2 shrink-0">
                                                         <button
                                                             onClick={() => togglePresenca(row.alunoId)}
-                                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
-                                                                row.presente
+                                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${row.presente
                                                                     ? 'bg-emerald-500 text-white border-emerald-500 hover:bg-emerald-600'
                                                                     : 'bg-white text-slate-500 border-slate-300 hover:border-rose-400 hover:text-rose-600'
-                                                            }`}
+                                                                }`}
                                                         >
                                                             {row.presente
                                                                 ? <><CheckCircle2 className="w-3.5 h-3.5" /> Presente</>

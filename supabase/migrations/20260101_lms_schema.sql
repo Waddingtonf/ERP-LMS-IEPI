@@ -114,17 +114,6 @@ create table if not exists public.materials (
 
 alter table public.materials enable row level security;
 
-create policy "Enrolled students can view materials"
-  on public.materials for select
-  using (
-    exists (
-      select 1 from public.enrollments e
-      join public.modules m on m.id = module_id
-      where e.aluno_id = auth.uid()
-        and (e.course_id = m.course_id or e.module_id = module_id)
-        and e.status = 'Ativo'
-    )
-  );
 
 create policy "Admins and docentes can manage materials"
   on public.materials for all
@@ -287,6 +276,21 @@ create policy "Admins and pedagogico can manage all enrollments"
   on public.enrollments for all
   using (
     exists (select 1 from public.profiles where id = auth.uid() and role in ('admin','pedagogico'))
+  );
+
+-- ─────────────────────────────────────────────
+-- RLS Deferred Policies (materials -> enrollments)
+-- ─────────────────────────────────────────────
+create policy "Enrolled students can view materials"
+  on public.materials for select
+  using (
+    exists (
+      select 1 from public.enrollments e
+      join public.modules m on m.id = module_id
+      where e.aluno_id = auth.uid()
+        and (e.course_id = m.course_id or e.module_id = module_id)
+        and e.status = 'Ativo'
+    )
   );
 
 -- ─────────────────────────────────────────────

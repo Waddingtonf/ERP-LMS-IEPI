@@ -6,10 +6,10 @@ import type { Material, MaterialTipo } from "@/lms/repositories/MaterialReposito
 const TIPO_CONFIG: Record<MaterialTipo, { label: string; icon: React.ElementType; color: string; bg: string }> = {
     'APOSTILA':  { label: 'Apostila',  icon: BookOpen,      color: 'text-violet-600',  bg: 'bg-violet-50' },
     'PDF':       { label: 'PDF',       icon: FileText,      color: 'text-red-600',     bg: 'bg-red-50' },
-    'VIDEO':     { label: 'Vídeo',     icon: Video,         color: 'text-blue-600',    bg: 'bg-blue-50' },
+    'VIDEO':     { label: 'VÃ­deo',     icon: Video,         color: 'text-blue-600',    bg: 'bg-blue-50' },
     'SLIDE':     { label: 'Slide',     icon: File,          color: 'text-orange-600',  bg: 'bg-orange-50' },
     'LINK':      { label: 'Link',      icon: Link2,         color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    'EXERCICIO': { label: 'Exercícios',icon: ClipboardList, color: 'text-amber-600',   bg: 'bg-amber-50' },
+    'EXERCICIO': { label: 'ExercÃ­cios',icon: ClipboardList, color: 'text-amber-600',   bg: 'bg-amber-50' },
 };
 
 function formatTamanho(kb: number | null): string {
@@ -19,7 +19,7 @@ function formatTamanho(kb: number | null): string {
 }
 
 export default async function AlunoMateriaisPage() {
-    const enrollmentRepo = getEnrollmentRepository();
+    const enrollmentRepo = await getEnrollmentRepository();
     // Em mock: pega turmas do aluno fixo
     const matriculas = await enrollmentRepo.findByAluno('student-1');
     const turmaIds = [...new Set(matriculas.map(m => m.turmaId).filter(Boolean))] as string[];
@@ -39,8 +39,8 @@ export default async function AlunoMateriaisPage() {
         <div className="space-y-8">
             <div className="flex items-start justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Material Didático</h1>
-                    <p className="text-slate-500 mt-1 text-sm">{totalMateriais} arquivo{totalMateriais !== 1 ? 's' : ''} disponível{totalMateriais !== 1 ? 'is' : ''} em {porTurma.length} turma{porTurma.length !== 1 ? 's' : ''}.</p>
+                    <h1 className="text-2xl font-bold text-slate-900">Material DidÃ¡tico</h1>
+                    <p className="text-slate-500 mt-1 text-sm">{totalMateriais} arquivo{totalMateriais !== 1 ? 's' : ''} disponÃ­vel{totalMateriais !== 1 ? 'is' : ''} em {porTurma.length} turma{porTurma.length !== 1 ? 's' : ''}.</p>
                 </div>
             </div>
 

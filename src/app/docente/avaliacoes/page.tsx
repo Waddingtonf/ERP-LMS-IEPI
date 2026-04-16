@@ -5,7 +5,7 @@ import { ClipboardList, Plus, Users, CheckCircle } from "lucide-react";
 
 export default async function DocenteAvaliacoesPage({ searchParams }: { searchParams: Promise<{turmaId?: string}> }) {
     const { turmaId } = await searchParams;
-    const turmaRepo = getTurmaRepository();
+    const turmaRepo = await getTurmaRepository();
     const turmas = await turmaRepo.findAll?.() ?? [];
     const selectedId = turmaId ?? turmas[0]?.id;
 
@@ -18,11 +18,11 @@ export default async function DocenteAvaliacoesPage({ searchParams }: { searchPa
         <div className="space-y-8">
             <div className="flex items-start justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Avaliações</h1>
-                    <p className="text-slate-500 mt-1 text-sm">Crie, aplique e lance notas das avaliações por turma.</p>
+                    <h1 className="text-2xl font-bold text-slate-900">AvaliaÃ§Ãµes</h1>
+                    <p className="text-slate-500 mt-1 text-sm">Crie, aplique e lance notas das avaliaÃ§Ãµes por turma.</p>
                 </div>
                 <button className="flex items-center gap-2 bg-teal-600 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-teal-700 transition-colors">
-                    <Plus className="w-4 h-4" /> Nova Avaliação
+                    <Plus className="w-4 h-4" /> Nova AvaliaÃ§Ã£o
                 </button>
             </div>
 
@@ -58,12 +58,12 @@ export default async function DocenteAvaliacoesPage({ searchParams }: { searchPa
                     <table className="w-full text-sm">
                         <thead className="bg-slate-50/70 border-b border-slate-100">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Título</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">TÃ­tulo</th>
                                 <th className="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Tipo</th>
                                 <th className="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Data</th>
-                                <th className="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Nota Máx.</th>
+                                <th className="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Nota MÃ¡x.</th>
                                 <th className="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Ações</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">AÃ§Ãµes</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -83,14 +83,14 @@ export default async function DocenteAvaliacoesPage({ searchParams }: { searchPa
                                         }`}>{av.status}</span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <a href={`/docente/avaliacoes/${av.id}/notas`} className="text-teal-600 hover:underline text-xs font-semibold">Lançar Notas</a>
+                                        <a href={`/docente/avaliacoes/${av.id}/notas`} className="text-teal-600 hover:underline text-xs font-semibold">LanÃ§ar Notas</a>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                     {avaliacoes.length === 0 && (
-                        <div className="py-12 text-center text-slate-400">Nenhuma avaliação para esta turma.</div>
+                        <div className="py-12 text-center text-slate-400">Nenhuma avaliaÃ§Ã£o para esta turma.</div>
                     )}
                 </div>
             </div>

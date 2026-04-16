@@ -1,5 +1,5 @@
 /**
- * FreeCourseService — instant enrollment for free (Gratuito) courses.
+ * FreeCourseService â€” instant enrollment for free (Gratuito) courses.
  *
  * No payment processing. Validates pre-conditions, creates an Ativo enrollment,
  * and fires a welcome notification.
@@ -26,21 +26,21 @@ export class FreeCourseService {
     async enroll(alunoId: string, cursoId: string): Promise<FreeEnrollResult> {
         const courseRepo     = await getCourseRepository();
         const userRepo       = await getUserRepository();
-        const enrollmentRepo = getEnrollmentRepository();
+        const enrollmentRepo = await getEnrollmentRepository();
 
         // Validate course
         const course = await courseRepo.findById(cursoId);
-        if (!course) return { success: false, error: 'Curso não encontrado.' };
-        if (course.tipo !== 'Gratuito') return { success: false, error: 'Este curso não é gratuito.' };
-        if (!course.isPublished) return { success: false, error: 'Curso não disponível.' };
+        if (!course) return { success: false, error: 'Curso nÃ£o encontrado.' };
+        if (course.tipo !== 'Gratuito') return { success: false, error: 'Este curso nÃ£o Ã© gratuito.' };
+        if (!course.isPublished) return { success: false, error: 'Curso nÃ£o disponÃ­vel.' };
 
         // Validate user
         const user = await userRepo.findById(alunoId);
-        if (!user) return { success: false, error: 'Usuário não encontrado.' };
+        if (!user) return { success: false, error: 'UsuÃ¡rio nÃ£o encontrado.' };
 
         // Check duplicate
         const alreadyEnrolled = await enrollmentRepo.isEnrolled(alunoId, cursoId);
-        if (alreadyEnrolled) return { success: false, error: 'Você já está matriculado neste curso.' };
+        if (alreadyEnrolled) return { success: false, error: 'VocÃª jÃ¡ estÃ¡ matriculado neste curso.' };
 
         // Create enrollment
         const today = new Date().toISOString().split('T')[0];
@@ -62,8 +62,8 @@ export class FreeCourseService {
         // Fire notification
         await this.notif.notify({
             usuarioId: alunoId,
-            titulo: `Matrícula confirmada: ${course.title}`,
-            mensagem: `Sua matrícula no curso gratuito "${course.title}" foi confirmada. Bom estudo!`,
+            titulo: `MatrÃ­cula confirmada: ${course.title}`,
+            mensagem: `Sua matrÃ­cula no curso gratuito "${course.title}" foi confirmada. Bom estudo!`,
             tipo: 'sucesso',
             metadata: { origem: 'free-course', cursoId },
         });

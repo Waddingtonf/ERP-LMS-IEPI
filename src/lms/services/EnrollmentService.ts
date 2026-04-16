@@ -35,7 +35,7 @@ export class EnrollmentService {
 
     /**
      * Processes payment via Cielo and activates the enrollment on success.
-     * @param moduleId — when provided, enroll only in that module (modular graduation)
+     * @param moduleId â€” when provided, enroll only in that module (modular graduation)
      */
     async enrollWithPayment(
         userId: string,
@@ -46,13 +46,13 @@ export class EnrollmentService {
         const courseRepo     = await getCourseRepository();
         const userRepo       = await getUserRepository();
         const paymentRepo    = await getPaymentRepository();
-        const enrollmentRepo = getEnrollmentRepository();
+        const enrollmentRepo = await getEnrollmentRepository();
 
         const course = await courseRepo.findById(courseId);
         if (!course) return { success: false, error: 'Curso nao encontrado' };
 
         const user = await userRepo.findById(userId);
-        if (!user) return { success: false, error: 'Usuário não encontrado' };
+        if (!user) return { success: false, error: 'UsuÃ¡rio nÃ£o encontrado' };
 
         // Check duplicate enrollment
         const alreadyEnrolled = await enrollmentRepo.isEnrolled(userId, courseId, moduleId);

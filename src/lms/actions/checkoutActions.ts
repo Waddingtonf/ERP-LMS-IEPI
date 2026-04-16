@@ -3,25 +3,18 @@
 import { isMockMode } from '../repositories';
 import { enrollmentService } from '../services/EnrollmentService';
 
-async function resolveStudentId(): Promise<string> {
-    if (isMockMode) return 'student-1';
-    const { createClient } = await import('@/lib/supabase/server');
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Nao autenticado');
-    return user.id;
-}
+import { requireAuth } from "@/lib/auth/session";
 
 export async function processCheckoutAction(
     courseId: string,
     formData: FormData,
     moduleId?: string,
 ) {
-    const studentId = await resolveStudentId();
+    const studentId = await requireAuth('STUDENT');
     return enrollmentService.enrollWithPayment(studentId, courseId, {
-        cardNumber:     formData.get('cardNumber')     as string,
-        holder:         formData.get('holder')         as string,
+        cardNumber: formData.get('cardNumber') as string,
+        holder: formData.get('holder') as string,
         expirationDate: formData.get('expirationDate') as string,
-        securityCode:   formData.get('securityCode')   as string,
+        securityCode: formData.get('securityCode') as string,
     }, moduleId);
 }

@@ -2,6 +2,8 @@ import AlunoNav from "./_components/AlunoNav"
 import { NotificacaoDropdown } from "@/components/shared/NotificacaoDropdown"
 import { Search } from "lucide-react"
 
+export const dynamic = "force-dynamic"
+
 export default function AlunoLayout({
     children,
 }: {

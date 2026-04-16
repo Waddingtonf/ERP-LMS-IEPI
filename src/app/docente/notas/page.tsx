@@ -1,4 +1,4 @@
-import { getAvaliacoesByTurma, getDocenteTurmas } from "@/lms/actions/docenteActions"
+﻿import { getAvaliacoesByTurma, getDocenteTurmas } from "@/lms/actions/docenteActions"
 import { PageHeader } from "@/components/layout"
 import { EduKpiGrid, AcademicPlanCard } from "@/components/educacional/dashboard-kit"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"

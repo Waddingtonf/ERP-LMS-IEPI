@@ -3,20 +3,13 @@
 import { isMockMode, getProgressoRepository } from "@/lms/repositories";
 import { revalidatePath } from "next/cache";
 
-async function resolveUserId(): Promise<string> {
-    if (isMockMode) return 'student-1';
-    const { createClient } = await import('@/lib/supabase/server');
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Não autenticado');
-    return user.id;
-}
+import { requireAuth } from "@/lib/auth/session";
 
 /**
  * Fetch progress records for the current student in a specific course.
  */
 export async function getProgressoCurso(cursoId: string) {
-    const alunoId = await resolveUserId();
+    const alunoId = await requireAuth('STUDENT');
     const repo = getProgressoRepository();
     const records = await repo.findByCurso(alunoId, cursoId);
     const percentual = await repo.getPercentual(alunoId, cursoId);
@@ -32,7 +25,7 @@ export async function marcarAulaConcluidaAction(cursoId: string, aulaId: string)
     error?: string;
 }> {
     try {
-        const alunoId = await resolveUserId();
+        const alunoId = await requireAuth('STUDENT');
         const repo = getProgressoRepository();
         await repo.marcarConcluida(alunoId, cursoId, aulaId);
         const percentual = await repo.getPercentual(alunoId, cursoId);

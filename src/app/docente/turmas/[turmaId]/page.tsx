@@ -9,7 +9,7 @@ type Props = { params: Promise<{ turmaId: string }> };
 export default async function DocenteTurmaDetailPage({ params }: Props) {
     const { turmaId } = await params;
 
-    const turmaRepo = getTurmaRepository();
+    const turmaRepo = await getTurmaRepository();
     const [turma, avaliacoes, materiais] = await Promise.all([
         turmaRepo.findById(turmaId),
         getAvaliacoesByTurma(turmaId),
@@ -47,7 +47,7 @@ export default async function DocenteTurmaDetailPage({ params }: Props) {
                         <Link href={`/docente/avaliacoes?turmaId=${turmaId}`} className="text-xs font-semibold text-teal-600 hover:underline">Gerenciar</Link>
                     </div>
                     <div className="divide-y divide-slate-100">
-                        {avaliacoes.slice(0, 5).map(av => (
+                        {avaliacoes.slice(0, 5).map((av: any) => (
                             <div key={av.id} className="px-6 py-3 flex items-center justify-between">
                                 <div>
                                     <div className="text-sm font-medium text-slate-800">{av.titulo}</div>
@@ -69,7 +69,7 @@ export default async function DocenteTurmaDetailPage({ params }: Props) {
                         <Link href={`/docente/materiais?turmaId=${turmaId}`} className="text-xs font-semibold text-teal-600 hover:underline">Gerenciar</Link>
                     </div>
                     <div className="divide-y divide-slate-100">
-                        {materiais.slice(0, 5).map(mat => (
+                        {materiais.slice(0, 5).map((mat: any) => (
                             <div key={mat.id} className="px-6 py-3 flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center shrink-0">
                                     {mat.tipo === 'VIDEO' ? <Video className="w-4 h-4 text-teal-600" /> : <FileText className="w-4 h-4 text-teal-600" />}

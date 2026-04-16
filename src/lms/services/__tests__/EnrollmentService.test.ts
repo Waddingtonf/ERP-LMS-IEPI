@@ -2,7 +2,7 @@
  * EnrollmentService tests
  * =======================
  * Uses constructor injection so Cielo can be replaced by a plain
- * jest.fn() object — no babel mock hoisting needed.
+ * jest.fn() object â€” no babel mock hoisting needed.
  *
  * Repositories are provided via jest.mock so that EnrollmentService
  * (which calls getCourseRepository() / getUserRepository() / getPaymentRepository()
@@ -14,7 +14,7 @@ import type { CieloSandboxService } from '../../services/CieloService';
 import type { MockUserRepository } from '../../repositories/MockUserRepository';
 import type { MockPaymentRepository } from '../../repositories/MockPaymentRepository';
 
-// ─── Mock the repository factory — instances created inside factory via require()
+// â”€â”€â”€ Mock the repository factory â€” instances created inside factory via require()
 // so that the same instances are shared between EnrollmentService and test assertions
 jest.mock('../../repositories', () => {
     const { MockUserRepository } = require('../../repositories/MockUserRepository');
@@ -38,16 +38,19 @@ import { getUserRepository, getPaymentRepository, getEnrollmentRepository } from
 import type { MockEnrollmentRepository } from '../../repositories/MockEnrollmentRepository'; // eslint-disable-line
 const userRepo       = getUserRepository()       as unknown as MockUserRepository;
 const paymentRepo    = getPaymentRepository()    as unknown as MockPaymentRepository;
-const enrollmentRepo = getEnrollmentRepository() as unknown as MockEnrollmentRepository;
+let enrollmentRepo: MockEnrollmentRepository;
 
 // Reset state before each test to prevent cross-test contamination
-beforeEach(() => {
+beforeEach(async () => {
+    if (!enrollmentRepo) {
+        enrollmentRepo = (await getEnrollmentRepository()) as unknown as MockEnrollmentRepository;
+    }
     userRepo.reset();
     paymentRepo.reset();
     enrollmentRepo.reset();
 });
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const validCard = {
     cardNumber: '4111111111111111',
     holder: 'TEST USER',
@@ -82,9 +85,9 @@ function makeMockCielo(
     };
 }
 
-// ─── 1. Happy Path ────────────────────────────────────────────────────────────
+// â”€â”€â”€ 1. Happy Path â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-describe('EnrollmentService — Happy Path', () => {
+describe('EnrollmentService â€” Happy Path', () => {
     let service: EnrollmentService;
     let mockCielo: ReturnType<typeof makeMockCielo>;
 
@@ -124,14 +127,14 @@ describe('EnrollmentService — Happy Path', () => {
     it('passes the course price (in cents) to Cielo', async () => {
         await service.enrollWithPayment('student-1', 'course-1', validCard);
         const arg = (mockCielo.createTransaction as jest.Mock).mock.calls[0][0];
-        // seeded course-1 price = 49900 (Oncologia para Técnicos)
+        // seeded course-1 price = 49900 (Oncologia para TÃ©cnicos)
         expect(arg.amount).toBe(49900);
     });
 });
 
-// ─── 2. Validation / Business Rules ──────────────────────────────────────────
+// â”€â”€â”€ 2. Validation / Business Rules â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-describe('EnrollmentService — Business Rule Validation', () => {
+describe('EnrollmentService â€” Business Rule Validation', () => {
     let service: EnrollmentService;
 
     beforeEach(() => {
@@ -147,7 +150,7 @@ describe('EnrollmentService — Business Rule Validation', () => {
     it('returns error when user does not exist', async () => {
         const res = await service.enrollWithPayment('ghost-user', 'course-1', validCard);
         expect(res.success).toBe(false);
-        expect(res.error).toMatch(/usuário/i);
+        expect(res.error).toMatch(/usuÃ¡rio/i);
     });
 
     it('refuses to double-enroll an already-enrolled student', async () => {
@@ -170,9 +173,9 @@ describe('EnrollmentService — Business Rule Validation', () => {
     });
 });
 
-// ─── 3. Payment Failure Scenarios ─────────────────────────────────────────────
+// â”€â”€â”€ 3. Payment Failure Scenarios â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-describe('EnrollmentService — Payment Failure Scenarios', () => {
+describe('EnrollmentService â€” Payment Failure Scenarios', () => {
     it('returns failure and does not enroll when Cielo denies authorization', async () => {
         const mockCielo = makeMockCielo(3); // status 3 = denied
         const service = new EnrollmentService(mockCielo as unknown as CieloSandboxService);
@@ -208,9 +211,9 @@ describe('EnrollmentService — Payment Failure Scenarios', () => {
     });
 });
 
-// ─── 4. isEnrolled & getStudentTransactions ───────────────────────────────────
+// â”€â”€â”€ 4. isEnrolled & getStudentTransactions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-describe('EnrollmentService — Query Methods', () => {
+describe('EnrollmentService â€” Query Methods', () => {
     let service: EnrollmentService;
 
     beforeEach(() => {

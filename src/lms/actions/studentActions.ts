@@ -1,24 +1,18 @@
 "use server";
 
-import { getUserRepository, getCourseRepository, getEnrollmentRepository, isMockMode } from "@/lms/repositories";
+import { getUserRepository, getCourseRepository, getEnrollmentRepository } from "@/lms/repositories";
 
-async function resolveStudentId(): Promise<string> {
-    if (isMockMode) return 'student-1';
-    const { createClient } = await import('@/lib/supabase/server');
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Nao autenticado');
-    return user.id;
-}
+import { requireAuth } from "@/lib/auth/session";
+import { NotFoundError } from "@/lib/errors";
 
 export async function getStudentDashboardData() {
-    const studentId = await resolveStudentId();
-    const userRepo       = await getUserRepository();
-    const courseRepo     = await getCourseRepository();
-    const enrollmentRepo = getEnrollmentRepository();
+    const studentId = await requireAuth('STUDENT');
+    const userRepo = await getUserRepository();
+    const courseRepo = await getCourseRepository();
+    const enrollmentRepo = await getEnrollmentRepository();
 
     const user = await userRepo.findById(studentId);
-    if (!user) throw new Error('Student not found');
+    if (!user) throw new NotFoundError('Student', studentId);
 
     const enrollments = await enrollmentRepo.findByAluno(studentId);
 
@@ -26,19 +20,19 @@ export async function getStudentDashboardData() {
         enrollments.map(async enr => {
             const course = await courseRepo.findById(enr.courseId);
             return {
-                id:           enr.id,
-                courseId:     enr.courseId,
-                title:        enr.courseName,
-                type:         course?.type ?? 'Curso Online',
-                moduleId:     enr.moduleId,
-                moduleName:   enr.moduleName,
-                turmaId:      enr.turmaId,
-                status:       enr.status,
+                id: enr.id,
+                courseId: enr.courseId,
+                title: enr.courseName,
+                type: course?.type ?? 'Curso Online',
+                moduleId: enr.moduleId,
+                moduleName: enr.moduleName,
+                turmaId: enr.turmaId,
+                status: enr.status,
                 dataMatricula: enr.dataMatricula,
-                amountPaid:   enr.amountPaid,
-                progress:     0,
+                amountPaid: enr.amountPaid,
+                progress: 0,
                 lastAccessed: enr.moduleName ?? 'Modulo 1',
-                thumbnail:    course?.imageUrl ?? 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=600&auto=format&fit=crop',
+                thumbnail: course?.imageUrl ?? 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=600&auto=format&fit=crop',
             };
         })
     );

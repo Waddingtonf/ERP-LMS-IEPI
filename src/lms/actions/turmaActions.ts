@@ -5,19 +5,19 @@ import { getTurmaRepository, getFrequenciaRepository } from "@/lms/repositories"
 import { Aula, Turma } from "@/lms/repositories/TurmaRepository";
 
 export async function getTurmas(): Promise<Turma[]> {
-    return getTurmaRepository().findAll();
+    return (await getTurmaRepository()).findAll();
 }
 
 export async function getTurmasByInstructor(instructorId: string): Promise<Turma[]> {
-    return getTurmaRepository().findByInstructor(instructorId);
+    return (await getTurmaRepository()).findByInstructor(instructorId);
 }
 
 export async function getTurmaById(id: string): Promise<Turma | null> {
-    return getTurmaRepository().findById(id);
+    return (await getTurmaRepository()).findById(id);
 }
 
 export async function createTurmaAction(formData: FormData) {
-    const turma = await getTurmaRepository().create({
+    const turma = (await getTurmaRepository()).create({
         courseId:       formData.get('courseId')       as string,
         courseName:     formData.get('courseName')     as string,
         code:           formData.get('code')           as string,
@@ -36,18 +36,18 @@ export async function createTurmaAction(formData: FormData) {
 }
 
 export async function updateTurmaAction(id: string, data: Partial<Omit<Turma, 'id'>>) {
-    const updated = await getTurmaRepository().update(id, data);
+    const updated = (await getTurmaRepository()).update(id, data);
     revalidatePath('/admin/turmas');
     revalidatePath('/docente/turmas');
     return updated;
 }
 
 export async function getAulasByTurma(turmaId: string): Promise<Aula[]> {
-    return getTurmaRepository().getAulas(turmaId);
+    return (await getTurmaRepository()).getAulas(turmaId);
 }
 
 export async function createAulaAction(formData: FormData) {
-    const aula = await getTurmaRepository().createAula({
+    const aula = (await getTurmaRepository()).createAula({
         turmaId:         formData.get('turmaId')      as string,
         moduleId:        formData.get('moduleId')     as string | null,
         moduleName:      formData.get('moduleName')   as string | null,
@@ -63,6 +63,6 @@ export async function createAulaAction(formData: FormData) {
 }
 
 export async function marcarAulaRealizadaAction(aulaId: string) {
-    await getTurmaRepository().updateAula(aulaId, { status: 'Realizada' });
+    (await getTurmaRepository()).updateAula(aulaId, { status: 'Realizada' });
     revalidatePath('/docente');
 }

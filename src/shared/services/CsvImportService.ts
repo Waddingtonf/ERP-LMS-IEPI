@@ -1,10 +1,10 @@
 /**
- * CsvImportService — parse & validate CSV/TSV files for bulk import.
+ * CsvImportService â€” parse & validate CSV/TSV files for bulk import.
  *
- * Edge/Node compatible (uses built-in string operations only — no fs).
+ * Edge/Node compatible (uses built-in string operations only â€” no fs).
  *
  * Supported import types:
- *  - 'alunos'   → creates users + enrollments
+ *  - 'alunos'   â†’ creates users + enrollments
  */
 
 export type ImportType = 'alunos';
@@ -31,7 +31,7 @@ export interface ImportError {
     dados?: Partial<ImportRow>;
 }
 
-// ── CSV parser ────────────────────────────────────────────────────────────────
+// â”€â”€ CSV parser â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function parseCsv(text: string): string[][] {
     const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
@@ -58,20 +58,20 @@ function parseCsv(text: string): string[][] {
         });
 }
 
-// ── Required columns ──────────────────────────────────────────────────────────
+// â”€â”€ Required columns â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const REQUIRED_ALUNO: (keyof ImportRow)[] = ['nome', 'email'];
 
-// ── Main service ─────────────────────────────────────────────────────────────
+// â”€â”€ Main service â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export class CsvImportService {
     /**
      * Parse CSV text and validate rows. Returns parsed rows and errors.
-     * Does NOT write to the database — call importAlunos() for that.
+     * Does NOT write to the database â€” call importAlunos() for that.
      */
     parse(csvText: string, type: ImportType): { rows: ImportRow[]; errors: ImportError[] } {
         const [header, ...dataLines] = parseCsv(csvText);
-        if (!header) return { rows: [], errors: [{ row: 0, mensagem: 'Arquivo vazio ou sem cabeçalho.' }] };
+        if (!header) return { rows: [], errors: [{ row: 0, mensagem: 'Arquivo vazio ou sem cabeÃ§alho.' }] };
 
         const colIndex = (name: string) =>
             header.findIndex((h) => h.toLowerCase().replace(/\s/g, '') === name.toLowerCase());
@@ -108,14 +108,14 @@ export class CsvImportService {
             let hasError = false;
             for (const campo of REQUIRED_ALUNO) {
                 if (!row[campo]) {
-                    errors.push({ row: rowNum, campo, mensagem: `Campo obrigatório "${campo}" ausente.`, dados: row });
+                    errors.push({ row: rowNum, campo, mensagem: `Campo obrigatÃ³rio "${campo}" ausente.`, dados: row });
                     hasError = true;
                 }
             }
 
             // Validate email format
             if (row.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.email)) {
-                errors.push({ row: rowNum, campo: 'email', mensagem: 'Email inválido.', dados: row });
+                errors.push({ row: rowNum, campo: 'email', mensagem: 'Email invÃ¡lido.', dados: row });
                 hasError = true;
             }
 
@@ -134,7 +134,7 @@ export class CsvImportService {
     ): Promise<ImportResult> {
         const { getUserRepository, getEnrollmentRepository } = await import('@/lms/repositories');
         const userRepo       = await getUserRepository();
-        const enrollmentRepo = getEnrollmentRepository();
+        const enrollmentRepo = await getEnrollmentRepository();
 
         const { rows, errors } = this.parse(csvText, 'alunos');
         let importados = 0;
